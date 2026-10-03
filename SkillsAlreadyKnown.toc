@@ -1,0 +1,8 @@
+## Interface: 16001
+## AllowLoadGameType: camelot
+## Title: Skills Already Known
+## Notes: Makes class trainer spells easier to read: known, level-locked, and learnable.
+## Author: cryptologiq
+## Version: 0.1.0
+
+SkillsAlreadyKnown.lua [AllowLoadGameType camelot]

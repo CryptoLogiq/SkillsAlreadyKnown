@@ -1,0 +1,30 @@
+# Codex / local agent files
+.codex/
+.agents/
+.codex-*
+codex-*
+
+# Editor and OS noise
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local packaging output
+*.zip
+*.7z
+*.tar
+*.tar.gz
+release/
+releases/
+dist/
+build/
+
+# WoW runtime/state files
+WTF/
+Cache/
+Logs/
+Errors/
