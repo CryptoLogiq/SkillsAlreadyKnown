@@ -20,6 +20,7 @@ rsync -a \
   --exclude '.gitignore' \
   --exclude '.gitattributes' \
   --exclude '.pkgmeta' \
+  --exclude 'CONTRIBUTING.md' \
   --exclude 'scripts' \
   --exclude 'release' \
   --exclude 'releases' \
