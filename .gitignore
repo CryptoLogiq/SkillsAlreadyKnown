@@ -18,6 +18,7 @@ Thumbs.db
 *.7z
 *.tar
 *.tar.gz
+*.pkg
 release/
 releases/
 dist/

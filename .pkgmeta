@@ -1,0 +1,25 @@
+package-as: SkillsAlreadyKnown
+
+enable-nolib-creation: no
+
+ignore:
+  - .git
+  - .github
+  - .gitignore
+  - .gitattributes
+  - .pkgmeta
+  - scripts
+  - release
+  - releases
+  - dist
+  - build
+  - .codex
+  - .agents
+  - "*.zip"
+  - "*.7z"
+  - "*.tar"
+  - "*.tar.gz"
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
