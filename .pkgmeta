@@ -8,6 +8,7 @@ ignore:
   - .gitignore
   - .gitattributes
   - .pkgmeta
+  - AGENTS.md
   - CONTRIBUTING.md
   - scripts
   - release
