@@ -1,6 +1,6 @@
 # SkillsAlreadyKnown
 
-Small WoW Forever addon that makes the class trainer list easier to scan.
+Small WoW Forever addon that makes class trainer and pet grimoire lists easier to scan.
 
 ## What It Does
 
@@ -8,8 +8,9 @@ Small WoW Forever addon that makes the class trainer list easier to scan.
 - Spells locked by character level are shown in red.
 - Spells that can be learned now get a green outline.
 - Icons are left untouched.
+- Warlock pet grimoires show learned, learnable, and locked states with pet-aware markers.
 
-The addon uses trainer API state such as `available`, `used`, and level requirements instead of matching localized text, so it should behave cleanly across client languages.
+The addon uses trainer API state such as `available`, `used`, level requirements, and saved pet spell data instead of relying only on localized text.
 
 ## Preview
 
@@ -41,6 +42,13 @@ Then enable **Skills Already Known** in the in-game AddOns list and reload/resta
 ```
 
 Forces a refresh and prints the current color legend.
+
+```text
+/sak pet
+/sak petdebug
+```
+
+Shows saved pet spell information and grimoire diagnostics.
 
 ## License
 

@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ ! -t 1 && -z "${SAK_TERMINAL_REEXEC:-}" && -z "${CODEX_CI:-}" && -z "${CI:-}" ]]; then
+  script="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+  title="SkillsAlreadyKnown package"
+  command="SAK_TERMINAL_REEXEC=1 '$script'; status=\$?; echo; read -r -p 'Press Enter to close...'; exit \$status"
+
+  if command -v konsole >/dev/null 2>&1; then
+    exec konsole --title "$title" -e bash -lc "$command"
+  elif command -v gnome-terminal >/dev/null 2>&1; then
+    exec gnome-terminal --title="$title" -- bash -lc "$command"
+  elif command -v xfce4-terminal >/dev/null 2>&1; then
+    exec xfce4-terminal --title="$title" --command "bash -lc \"$command\""
+  elif command -v mate-terminal >/dev/null 2>&1; then
+    exec mate-terminal --title="$title" -- bash -lc "$command"
+  elif command -v xterm >/dev/null 2>&1; then
+    exec xterm -T "$title" -e bash -lc "$command"
+  fi
+fi
+
 addon="SkillsAlreadyKnown"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 version="$(awk -F': *' '/^## Version:/ { print $2; exit }' "$root/$addon.toc")"
