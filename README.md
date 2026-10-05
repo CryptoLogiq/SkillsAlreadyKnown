@@ -1,6 +1,6 @@
 # SkillsAlreadyKnown
 
-Small WoW Forever addon that makes class trainer and pet grimoire lists easier to scan.
+Small WoW Forever addon that makes the class trainer and pet grimoire lists easier to scan.
 
 ## What It Does
 
@@ -14,7 +14,9 @@ The addon uses trainer API state such as `available`, `used`, level requirements
 
 ## Preview
 
-![Trainer preview](assets/trainer-preview.png)
+![Preview Img](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/assets/trainer-preview.png?raw=true)
+
+![Trainer Warlock Preview](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/assets/spellsbookmarks_trainer.png?raw=true)
 
 ## Compatibility
 
