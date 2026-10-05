@@ -41,9 +41,10 @@ Then enable **Skills Already Known** in the in-game AddOns list and reload/resta
 
 ```text
 /sak
+/sak debug
 ```
 
-Forces a refresh and prints the current color legend.
+Forces a refresh and prints the current color legend. `/sak debug` prints trainer row diagnostics.
 
 ```text
 /sak pet
