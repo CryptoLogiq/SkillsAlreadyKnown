@@ -10,6 +10,8 @@ local serviceTypes = {
 local hooked
 local loadedMessage
 local scrollBoxHooked
+local cachedServices
+local servicesDirty = true
 
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 local COLORS = {
@@ -41,7 +43,13 @@ local function paintParts(name, sub, state)
   local color = COLORS[state]
   if color then
     if name and name.SetTextColor then name:SetTextColor(color[1], color[2], color[3]) end
-    if sub and sub.SetTextColor and state ~= "unavailable" then sub:SetTextColor(color[1], color[2], color[3]) end
+    if sub and sub.SetTextColor then
+      if state == "unavailable" then
+        sub:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+      else
+        sub:SetTextColor(color[1], color[2], color[3])
+      end
+    end
   else
     if name and name.SetTextColor then name:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b) end
     if sub and sub.SetTextColor then sub:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b) end
@@ -126,6 +134,14 @@ local function paintKnownBg(frame, show)
   ensureKnownBg(frame):SetShown(show and true or false)
 end
 
+local function clearRowVisuals(row)
+  if not row then return end
+  paintParts(row.name or row.Name or row.Text, row.subText or row.SubText, nil)
+  paintOutline(row, false)
+  paintLearnableBg(row, false)
+  paintKnownBg(row, false)
+end
+
 local function cleanText(text)
   if type(text) ~= "string" then return "" end
   return text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("^%s+", ""):gsub("%s+$", "")
@@ -168,6 +184,19 @@ local function buildVisibleServices()
   end
 
   return out
+end
+
+local function markServicesDirty()
+  servicesDirty = true
+end
+
+local function getVisibleServices()
+  if servicesDirty or not cachedServices then
+    cachedServices = buildVisibleServices()
+    servicesDirty = nil
+  end
+
+  return cachedServices
 end
 
 local function serviceState(service)
@@ -271,7 +300,10 @@ local function paintScrollBoxRow(row, services, state)
   local name = row.name or row.Name or row.Text
   local sub = row.subText or row.SubText
 
-  if not name then return end
+  if not name then
+    clearRowVisuals(row)
+    return
+  end
 
   local service = resolveRowService(row, services, state)
   paintParts(name, sub, serviceState(service))
@@ -284,7 +316,7 @@ local function paintScrollBoxRows()
   local frame = ClassTrainerFrame
   local scrollBox = frame and frame.ScrollBox
   if not (scrollBox and scrollBox.ForEachFrame and scrollBox:IsVisible()) then return end
-  local services = buildVisibleServices()
+  local services = getVisibleServices()
   local state = { used = {}, lastPosition = 0 }
   pcall(scrollBox.ForEachFrame, scrollBox, function(row) paintScrollBoxRow(row, services, state) end)
 end
@@ -297,7 +329,7 @@ local function debugScrollBoxRows()
     return
   end
 
-  local services = buildVisibleServices()
+  local services = getVisibleServices()
   local state = { used = {}, lastPosition = 0 }
   pcall(scrollBox.ForEachFrame, scrollBox, function(row)
     local service, rowText, rowSpellID = resolveRowService(row, services, state)
@@ -343,6 +375,44 @@ local function refresh()
   paintScrollBoxRows()
 end
 
+local refreshQueued
+local function queueRefresh()
+  if refreshQueued then return end
+  refreshQueued = true
+
+  if C_Timer and C_Timer.After then
+    C_Timer.After(0, function()
+      refreshQueued = nil
+      refresh()
+    end)
+  else
+    refreshQueued = nil
+    refresh()
+  end
+end
+
+local function hookScrollBoxRows(scrollBox)
+  if not scrollBox or scrollBox.sakRowsHooked then return end
+  scrollBox.sakRowsHooked = true
+
+  if ScrollUtil and ScrollUtil.AddInitializedFrameCallback then
+    local ok = pcall(ScrollUtil.AddInitializedFrameCallback, scrollBox, function(_, row)
+      clearRowVisuals(row)
+      queueRefresh()
+    end, nil, false)
+    scrollBox.sakHasRowCallbacks = ok or nil
+  end
+
+  if scrollBox.RegisterCallback and BaseScrollBoxEvents then
+    if BaseScrollBoxEvents.OnDataRangeChanged then
+      local ok = pcall(scrollBox.RegisterCallback, scrollBox, BaseScrollBoxEvents.OnDataRangeChanged, function()
+        queueRefresh()
+      end)
+      scrollBox.sakHasRowCallbacks = scrollBox.sakHasRowCallbacks or ok or nil
+    end
+  end
+end
+
 local function hookTrainer()
   if not hooked and type(ClassTrainerFrame_Update) == "function" then
     hooksecurefunc("ClassTrainerFrame_Update", refresh)
@@ -360,9 +430,10 @@ local function hookTrainer()
   local scrollBox = ClassTrainerFrame and ClassTrainerFrame.ScrollBox
   if scrollBox and not scrollBoxHooked then
     scrollBoxHooked = true
-    if scrollBox.Update then
+    hookScrollBoxRows(scrollBox)
+    if scrollBox.Update and not scrollBox.sakHasRowCallbacks then
       hooksecurefunc(scrollBox, "Update", function()
-        C_Timer.After(0, refresh)
+        queueRefresh()
       end)
     end
   end
@@ -372,10 +443,12 @@ SLASH_SKILLSALREADYKNOWN1 = "/skillsalreadyknown"
 SLASH_SKILLSALREADYKNOWN2 = "/sak"
 SlashCmdList.SKILLSALREADYKNOWN = function(text)
   if (text or ""):lower() == "debug" then
+    markServicesDirty()
     debugScrollBoxRows()
     return
   end
 
+  markServicesDirty()
   refresh()
   print("|cffffcc00SkillsAlreadyKnown:|r grey = known, red = unavailable, green outline = learnable. /sak debug")
 end
@@ -384,6 +457,7 @@ local events = CreateFrame("Frame")
 for _, event in ipairs({
   "ADDON_LOADED",
   "PLAYER_LOGIN",
+  "PLAYER_LEVEL_UP",
   "TRAINER_SHOW",
   "TRAINER_UPDATE",
 }) do
@@ -397,7 +471,8 @@ events:SetScript("OnEvent", function(_, event, addonName)
   end
 
   hookTrainer()
-  if event == "TRAINER_SHOW" or event == "TRAINER_UPDATE" then
+  if event == "PLAYER_LEVEL_UP" or event == "TRAINER_SHOW" or event == "TRAINER_UPDATE" then
+    markServicesDirty()
     C_Timer.After(0, refresh)
     C_Timer.After(0.05, refresh)
   end
