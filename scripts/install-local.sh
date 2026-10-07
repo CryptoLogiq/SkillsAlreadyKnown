@@ -40,6 +40,7 @@ rsync -a --delete --delete-excluded \
   --exclude '.gitignore' \
   --exclude '.gitattributes' \
   --exclude '.pkgmeta' \
+  --exclude 'AGENTS.md' \
   --exclude 'CONTRIBUTING.md' \
   --exclude 'scripts' \
   --exclude 'release' \

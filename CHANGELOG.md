@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+- Refactored the addon into Core, Visuals, ClassTrainer, PetGrimoires, and Main modules.
+- Added shared in-game debug windows with colored previews and clean copyable bug-report exports.
+- Added class trainer icon markers for already known and learnable spells.
+- Added inventory detection for learnable warlock pet grimoires already owned in bags.
+- Owned learnable grimoires now show `[Read the Book]`, green outline, and tooltip guidance.
+- Improved `/sak`, `/sak debug`, `/sak pet`, and `/sak petdebug` diagnostics.
+- Improved local install/package workflow and development notes.
+
 ## 0.2.0
 
 - Added warlock pet grimoire highlighting in merchant windows.

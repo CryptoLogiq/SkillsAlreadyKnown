@@ -3,7 +3,11 @@
 ## Title: Skills Already Known
 ## Notes: Makes class trainer and pet grimoire spells easier to read.
 ## Author: cryptologiq
-## Version: 0.2.0
+## Version: 0.3.0
 ## SavedVariablesPerCharacter: SkillsAlreadyKnownDB
 
-SkillsAlreadyKnown.lua [AllowLoadGameType camelot]
+Core.lua [AllowLoadGameType camelot]
+Visuals.lua [AllowLoadGameType camelot]
+ClassTrainer.lua [AllowLoadGameType camelot]
+PetGrimoires.lua [AllowLoadGameType camelot]
+Main.lua [AllowLoadGameType camelot]
