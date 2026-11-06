@@ -1,6 +1,7 @@
 -- SkillsAlreadyKnown: warlock pet grimoire support.
 
 local SAK = SkillsAlreadyKnown
+if SAK.disabledByDev then return end
 local Visuals = SAK.Visuals
 local PetGrimoires = {}
 SAK.PetGrimoires = PetGrimoires
@@ -10,29 +11,8 @@ local petSyncQueued
 local GetItemInfoCompat = GetItemInfo or (C_Item and C_Item.GetItemInfo)
 local GetItemSpellCompat = GetItemSpell or (C_Item and C_Item.GetItemSpell)
 
-local function containerNumSlots(bag)
-  if C_Container and C_Container.GetContainerNumSlots then return C_Container.GetContainerNumSlots(bag) or 0 end
-  if GetContainerNumSlots then return GetContainerNumSlots(bag) or 0 end
-  return 0
-end
-
-local function containerItemLink(bag, slot)
-  if C_Container and C_Container.GetContainerItemLink then return C_Container.GetContainerItemLink(bag, slot) end
-  if GetContainerItemLink then return GetContainerItemLink(bag, slot) end
-end
-
 local function scanInventoryItemIDs()
-  local owned = {}
-  local maxBag = NUM_BAG_SLOTS or 4
-
-  for bag = 0, maxBag do
-    for slot = 1, containerNumSlots(bag) do
-      local itemID = SAK.ItemIDFromLink(containerItemLink(bag, slot))
-      if itemID then owned[itemID] = (owned[itemID] or 0) + 1 end
-    end
-  end
-
-  return owned
+  return SAK.ScanBagItemIDs()
 end
 
 local function currentPetFamily()
@@ -137,6 +117,7 @@ function PetGrimoires.SyncActivePetSpells()
   learned.petKey = key
   learned.petName = pet
   SAK.EnsureDB().petSpells[key] = learned
+  if SAK.Inventory then SAK.Inventory.QueueRefresh() end
 end
 
 function PetGrimoires.QueuePetSync()
@@ -184,6 +165,78 @@ local function merchantItemSpell(index, itemLink, itemName)
   return firstLine and firstLine:GetText() or itemName, nil
 end
 
+local function storeGrimoireInfo(info)
+  if not (info and info.itemID) then return info end
+  SAK.RegisterKnownItem("petGrimoire", info.itemID, {
+    itemName = info.itemName,
+    itemID = info.itemID,
+    minLevel = info.minLevel,
+    pet = info.pet,
+    petKey = info.petKey,
+    petIcon = info.petIcon,
+    petUnlockLevel = info.petUnlockLevel,
+    spell = info.spell,
+    spellID = info.spellID,
+    rank = info.rank,
+  })
+  return info
+end
+
+local function grimoireFromRegistry(itemLink)
+  local itemID = SAK.ItemIDFromLink(itemLink)
+  if not itemID then return nil end
+  local saved = SAK.EnsureDB().petGrimoires[itemID]
+  if type(saved) ~= "table" then return nil end
+  local info = {}
+  for key, value in pairs(saved) do info[key] = value end
+  info.itemLink = itemLink
+  info.itemID = info.itemID or itemID
+  return info
+end
+
+function PetGrimoires.ItemInfoFromLink(itemLink)
+  if not itemLink then return nil end
+  local cached = grimoireFromRegistry(itemLink)
+  local itemID = SAK.ItemIDFromLink(itemLink)
+  local itemName, itemMinLevel
+  if GetItemInfoCompat then
+    local name, _, _, _, minLevel = GetItemInfoCompat(itemLink)
+    itemName, itemMinLevel = name, minLevel
+  end
+
+  local tooltip = SAK.EnsureScanTooltip()
+  tooltip:ClearLines()
+  if tooltip.SetHyperlink then
+    local ok = pcall(tooltip.SetHyperlink, tooltip, itemLink)
+    if not ok and cached then return cached end
+  elseif cached then
+    return cached
+  else
+    return nil
+  end
+
+  local pet = detectPetFromTooltip(tooltip)
+  if not pet then return cached end
+  local spellName, spellID
+  if itemLink and GetItemSpellCompat then
+    spellName, spellID = GetItemSpellCompat(itemLink)
+  end
+
+  return storeGrimoireInfo({
+    itemName = itemName or (cached and cached.itemName),
+    itemLink = itemLink,
+    itemID = itemID,
+    minLevel = tonumber(itemMinLevel) or (cached and cached.minLevel) or 0,
+    pet = pet.name,
+    petKey = pet.key,
+    petIcon = pet.icon,
+    petUnlockLevel = pet.unlockLevel,
+    spell = spellName or (cached and cached.spell) or itemName,
+    spellID = spellID or (cached and cached.spellID),
+    rank = SAK.RankNumber(itemName) or (cached and cached.rank),
+  })
+end
+
 local function merchantPetGrimoire(index)
   if not (GetMerchantItemLink and GetItemInfoCompat) then return nil end
   local itemLink = GetMerchantItemLink(index)
@@ -199,7 +252,7 @@ local function merchantPetGrimoire(index)
   if not pet then return nil end
   local spellName, spellID = merchantItemSpell(index, itemLink, itemName)
 
-  return {
+  return storeGrimoireInfo({
     itemName = itemName,
     itemLink = itemLink,
     itemID = SAK.ItemIDFromLink(itemLink),
@@ -211,7 +264,7 @@ local function merchantPetGrimoire(index)
     spell = spellName,
     spellID = spellID,
     rank = SAK.RankNumber(itemName),
-  }
+  })
 end
 
 local function petKnowsGrimoire(info)
@@ -235,6 +288,10 @@ local function petKnowsGrimoire(info)
   return true
 end
 
+function PetGrimoires.KnowsItemInfo(info)
+  return petKnowsGrimoire(info)
+end
+
 local function grimoireState(info)
   if not info then return nil end
   local known = petKnowsGrimoire(info)
@@ -248,11 +305,19 @@ local function grimoireState(info)
   return nil
 end
 
+function PetGrimoires.ItemState(info)
+  return grimoireState(info)
+end
+
 local function grimoireLearnable(info)
   if not info or petKnowsGrimoire(info) then return false end
   if currentPetKey() ~= info.petKey then return false end
   local petLevel = UnitLevel and UnitLevel("pet") or UnitLevel("player") or 0
   return (info.minLevel or 0) <= petLevel
+end
+
+function PetGrimoires.ItemLearnable(info)
+  return grimoireLearnable(info)
 end
 
 local function grimoireBookOwned(info, ownedItems)
@@ -261,6 +326,10 @@ end
 
 local function grimoireActivePet(info)
   return info and currentPetKey() == info.petKey
+end
+
+function PetGrimoires.ActivePetForInfo(info)
+  return grimoireActivePet(info)
 end
 
 local function tooltipHasLine(tooltip, expected)
@@ -282,17 +351,15 @@ local function enhanceMerchantPetTooltip(tooltip, index)
     tooltip:AddLine(SAK.MERCHANT_LEARNED_LABEL, SAK.MERCHANT_LEARNED_TOOLTIP[1], SAK.MERCHANT_LEARNED_TOOLTIP[2], SAK.MERCHANT_LEARNED_TOOLTIP[3])
   end
 
-  if grimoireLearnable(info) then
-    local ownedItems = scanInventoryItemIDs()
-    if grimoireBookOwned(info, ownedItems) then
-      local line = string.format("You already own this book. Read it with your %s out.", info.pet or "pet")
-      if not tooltipHasLine(tooltip, line) then
-        tooltip:AddLine(line, SAK.MERCHANT_READ_BOOK_COLOR[1], SAK.MERCHANT_READ_BOOK_COLOR[2], SAK.MERCHANT_READ_BOOK_COLOR[3])
-      end
-      tooltip:Show()
-      return
+  local ownedItems = scanInventoryItemIDs()
+  if not petKnowsGrimoire(info) and grimoireBookOwned(info, ownedItems) then
+    local line = "You already have this book in your bags."
+    if not tooltipHasLine(tooltip, line) then
+      tooltip:AddLine(line, SAK.MERCHANT_READ_BOOK_COLOR[1], SAK.MERCHANT_READ_BOOK_COLOR[2], SAK.MERCHANT_READ_BOOK_COLOR[3])
     end
+  end
 
+  if grimoireLearnable(info) and not grimoireBookOwned(info, ownedItems) then
     local line = string.format("You can learn it! Your %s will love it!", info.pet or "pet")
     if not tooltipHasLine(tooltip, line) then
       tooltip:AddLine(line, SAK.MERCHANT_LEARNABLE_TEXT[1], SAK.MERCHANT_LEARNABLE_TEXT[2], SAK.MERCHANT_LEARNABLE_TEXT[3])
@@ -333,7 +400,7 @@ function PetGrimoires.Paint()
       local info = index <= numItems and merchantPetGrimoire(index) or nil
       local state = grimoireState(info)
       local learnable = state ~= "known" and grimoireLearnable(info)
-      local readBook = learnable and grimoireBookOwned(info, ownedItems)
+      local readBook = state ~= "known" and grimoireBookOwned(info, ownedItems)
       Visuals.PaintOutline(merchantButton, false)
       Visuals.PaintLearnableBg(merchantButton, false)
       Visuals.PaintKnownBg(merchantButton, false)
@@ -346,7 +413,7 @@ function PetGrimoires.Paint()
       Visuals.PaintMerchantKnownPrefix(name, state == "known")
       Visuals.PaintMerchantReadBookPrefix(name, readBook)
       Visuals.EnsureMerchantTextLayer(name)
-      Visuals.PaintOutline(merchantButton, learnable, readBook and SAK.MERCHANT_READ_BOOK_OUTLINE or SAK.MERCHANT_LEARNABLE_OUTLINE)
+      Visuals.PaintOutline(merchantButton, learnable or readBook, readBook and SAK.MERCHANT_READ_BOOK_OUTLINE or SAK.MERCHANT_LEARNABLE_OUTLINE)
       Visuals.PaintMerchantKnownBookOverlay(itemButton, state == "known")
       Visuals.PaintMerchantPetIcon(itemButton, info)
       Visuals.PaintMerchantLearnableBadge(itemButton, learnable and not readBook)

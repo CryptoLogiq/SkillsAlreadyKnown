@@ -3,6 +3,35 @@
 local SAK = _G.SkillsAlreadyKnown or {}
 _G.SkillsAlreadyKnown = SAK
 
+-- Check enable state before any module registers frames, hooks or slash commands.
+-- Using the actual folder name also keeps staged _dev copies from disabling themselves.
+local addonName = ...
+addonName = type(addonName) == "string" and addonName or "SkillsAlreadyKnown"
+local function devCopyEnabled()
+  if addonName:sub(-4) == "_dev" then return false end
+  local devName = addonName .. "_dev"
+  local character = UnitName and UnitName("player")
+  local loaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+  if loaded then
+    local ok, active = pcall(loaded, devName)
+    if ok and active then return true end
+  end
+  if not character then return false end
+  local ok, state
+  if C_AddOns and C_AddOns.GetAddOnEnableState then
+    ok, state = pcall(C_AddOns.GetAddOnEnableState, devName, character)
+  elseif GetAddOnEnableState then
+    ok, state = pcall(GetAddOnEnableState, character, devName)
+  end
+  return ok and type(state) == "number" and state > 0
+end
+
+SAK.disabledByDev = devCopyEnabled() or false
+if SAK.disabledByDev then
+  print("|cffffcc00SkillsAlreadyKnown:|r inactive while " .. addonName .. "_dev is enabled.")
+  return
+end
+
 SAK.WHITE = "Interface\\Buttons\\WHITE8X8"
 SAK.COLORS = {
   known = { 0.34, 0.34, 0.34 },
@@ -17,7 +46,7 @@ SAK.MERCHANT_LEARNABLE_OUTLINE = { 1, 0.82, 0.05, 0.95 }
 SAK.MERCHANT_LEARNED_TOOLTIP = { 0.25, 1, 0.25 }
 SAK.MERCHANT_LEARNABLE_ICON = "Interface\\AddOns\\SkillsAlreadyKnown\\assets\\learnable-plus.tga"
 SAK.MERCHANT_LEARNED_LABEL = "[Already Learned!]"
-SAK.MERCHANT_READ_BOOK_LABEL = "[Read the Book]"
+SAK.MERCHANT_READ_BOOK_LABEL = "[Already in your Bag]"
 SAK.MERCHANT_READ_BOOK_COLOR = { 0.25, 1, 0.25 }
 SAK.MERCHANT_READ_BOOK_OUTLINE = { 0.25, 1, 0.25, 0.95 }
 
@@ -33,6 +62,8 @@ SAK.PET_SUMMON_FALLBACK_LEVELS = {
 function SAK.EnsureDB()
   SkillsAlreadyKnownDB = SkillsAlreadyKnownDB or {}
   SkillsAlreadyKnownDB.petSpells = SkillsAlreadyKnownDB.petSpells or {}
+  SkillsAlreadyKnownDB.petGrimoires = SkillsAlreadyKnownDB.petGrimoires or {}
+  SkillsAlreadyKnownDB.itemStorage = SkillsAlreadyKnownDB.itemStorage or {}
   return SkillsAlreadyKnownDB
 end
 
@@ -117,6 +148,76 @@ end
 function SAK.ItemIDFromLink(itemLink)
   if type(itemLink) ~= "string" then return nil end
   return tonumber(itemLink:match("item:(%d+)"))
+end
+
+function SAK.ContainerNumSlots(bag)
+  if C_Container and C_Container.GetContainerNumSlots then return C_Container.GetContainerNumSlots(bag) or 0 end
+  if GetContainerNumSlots then return GetContainerNumSlots(bag) or 0 end
+  return 0
+end
+
+function SAK.ContainerItemLink(bag, slot)
+  if C_Container and C_Container.GetContainerItemLink then return C_Container.GetContainerItemLink(bag, slot) end
+  if GetContainerItemLink then return GetContainerItemLink(bag, slot) end
+end
+
+function SAK.ScanBagItemIDs()
+  local owned = {}
+  local maxBag = NUM_BAG_SLOTS or 4
+
+  for bag = 0, maxBag do
+    for slot = 1, SAK.ContainerNumSlots(bag) do
+      local itemID = SAK.ItemIDFromLink(SAK.ContainerItemLink(bag, slot))
+      if itemID then owned[itemID] = (owned[itemID] or 0) + 1 end
+    end
+  end
+
+  return owned
+end
+
+function SAK.SaveItemStorage(itemID, location, count)
+  itemID = tonumber(itemID)
+  if not (itemID and location and location ~= "") then return end
+  local storage = SAK.EnsureDB().itemStorage
+  storage[itemID] = storage[itemID] or {}
+  storage[itemID][location] = math.max(tonumber(count) or 0, 0)
+end
+
+function SAK.ClearItemStorageLocation(location)
+  if not location or location == "" then return end
+  local storage = SAK.EnsureDB().itemStorage
+  for _, locations in pairs(storage) do
+    if type(locations) == "table" then locations[location] = 0 end
+  end
+end
+
+function SAK.RegisterKnownItem(kind, itemID, data)
+  itemID = tonumber(itemID)
+  if not (kind and itemID and type(data) == "table") then return end
+  local db = SAK.EnsureDB()
+  if kind == "petGrimoire" then
+    db.petGrimoires[itemID] = db.petGrimoires[itemID] or {}
+    for key, value in pairs(data) do
+      if value ~= nil then db.petGrimoires[itemID][key] = value end
+    end
+  end
+end
+
+function SAK.ItemStorageSummary(itemID, currentLocation)
+  itemID = tonumber(itemID)
+  local storage = itemID and SAK.EnsureDB().itemStorage[itemID]
+  if type(storage) ~= "table" then return nil end
+
+  local out = {}
+  for location, count in pairs(storage) do
+    count = tonumber(count) or 0
+    if count > 0 and location ~= currentLocation then
+      out[#out + 1] = string.format("%s=%s", location, count)
+    end
+  end
+  table.sort(out)
+  if #out == 0 then return nil end
+  return table.concat(out, ", ")
 end
 
 function SAK.SpellName(spellID)

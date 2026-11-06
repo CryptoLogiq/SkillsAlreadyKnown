@@ -1,6 +1,6 @@
 # SkillsAlreadyKnown
 
-Small WoW Forever addon that makes the class trainer and pet grimoire lists easier to scan.
+Small WoW Forever addon that makes class trainer spells and warlock pet grimoires easier to identify at merchants and in your inventory.
 
 ## What It Does
 
@@ -9,8 +9,10 @@ Small WoW Forever addon that makes the class trainer and pet grimoire lists easi
 - Spells that can be learned now get a green outline.
 - Class trainer icons show learned and learnable markers.
 - Warlock pet grimoires show learned, learnable, and locked states with pet-aware markers.
-- Pet grimoires already in your bags are marked with `[Read the Book]`.
-- Debug windows provide copyable support reports for easier bug reports.
+- Pet grimoires already in your bags are marked with `[Already in your Bag]`, even if the related pet is not active.
+- Bags, bank, and guild bank can mark known or learnable pet grimoires after the addon has identified them.
+- Seen item locations are saved locally to help spot duplicates across bags, bank, and guild bank.
+- Debug windows provide colored previews and clean copyable support reports for easier bug reports.
 
 The addon uses trainer API state such as `available`, `used`, level requirements, and saved pet spell data instead of relying only on localized text.
 
@@ -31,31 +33,88 @@ Built for WoW Forever / Camelot:
 ## AllowLoadGameType: camelot
 ```
 
+### Inventory overlays
+
+Recognized warlock pet grimoires use the same markers in your inventory as at
+the merchant:
+
+- Already learned: a darkened book overlay.
+- Learnable by your active pet at its current level: a yellow outline and plus marker.
+- Demon identification: the matching pet icon.
+
+Overlays have been tested in game with **Blizzard bags** and **EllesmereUI Bags**.
+EllesmereUI integration uses its item overlay API for grid and list views.
+Other bag addons may need a dedicated integration; compatibility is not yet
+confirmed. Bank and guild bank support is implemented, but has not been validated
+in game in this test session. Stored bank locations are last-seen information,
+updated when those windows are opened.
+
+Markers refresh when books move, item information becomes available, or saved
+pet spells change. Pet knowledge is based on spellbook data saved for each demon;
+use the relevant pet to let the addon record its spells.
+
 ## Install
 
 Place the folder here:
 
 ```text
-World of Warcraft/_classic_beta_/Interface/AddOns/SkillsAlreadyKnown
+World of Warcraft/_forever_/Interface/AddOns/SkillsAlreadyKnown
 ```
 
 Then enable **Skills Already Known** in the in-game AddOns list and reload/restart the client.
 
-## Command
+## Commands
 
 ```text
 /sak
 /sak debug
 ```
 
-Opens the summary window and forces a refresh. `/sak debug` opens copyable spellbook and trainer row diagnostics.
+`/sak` opens the summary window and forces a refresh.
+`/sak debug` opens spellbook and class trainer diagnostics with a copyable support export.
 
 ```text
 /sak pet
 /sak petdebug
 ```
 
-Shows saved pet spell information and grimoire diagnostics.
+`/sak pet` shows saved pet spell information.
+`/sak petdebug` opens pet grimoire diagnostics with a copyable support export.
+
+## Local development scripts
+
+Run these commands from the development repository (`DevAddOns/SkillsAlreadyKnown`):
+
+```bash
+./scripts/install-local.sh --dry-run
+./scripts/install-local.sh
+./scripts/package.sh
+```
+
+The install script defaults to the Heroic/Battle.net client at
+`~/Games/Heroic/Prefixes/Battle.net/drive_c/Program Files (x86)/World of Warcraft/_forever_`.
+It syncs only `Interface/AddOns/SkillsAlreadyKnown_dev` inside that client. Use
+`--dry-run` to preview changes without writing files. To use another client:
+
+```bash
+SAK_WOW_ROOT="/path/to/World of Warcraft/_forever_" ./scripts/install-local.sh --dry-run
+```
+
+Both scripts run in the current terminal. Packaging creates
+`release/SkillsAlreadyKnown-<version>.zip` and refuses to overwrite an existing
+archive; update the TOC version when preparing the next deliverable.
+
+Local installs appear as **Skills Already Known [DEV]**, with their own TOC,
+saved variables, namespace and asset paths. The published CurseForge folder
+`SkillsAlreadyKnown` is never overwritten. Official builds containing the DEV
+guard stay inactive when DEV is enabled for the current character, before
+registering hooks or `/sak`. Disable DEV and reload the UI to
+resume the official copy. Older CurseForge releases without this guard still
+need to be disabled manually when testing DEV.
+Release packages keep the original addon name.
+
+The scripts require Bash, rsync and Python 3. They run from the development
+repository without requiring it to be located inside the WoW installation.
 
 ## License
 

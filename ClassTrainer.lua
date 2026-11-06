@@ -1,6 +1,7 @@
 -- SkillsAlreadyKnown: class trainer row coloring.
 
 local SAK = SkillsAlreadyKnown
+if SAK.disabledByDev then return end
 local Visuals = SAK.Visuals
 local ClassTrainer = {}
 SAK.ClassTrainer = ClassTrainer

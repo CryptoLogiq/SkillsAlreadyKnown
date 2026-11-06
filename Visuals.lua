@@ -1,6 +1,7 @@
 -- SkillsAlreadyKnown: shared visual helpers.
 
 local SAK = SkillsAlreadyKnown
+if SAK.disabledByDev then return end
 local Visuals = {}
 SAK.Visuals = Visuals
 
@@ -274,6 +275,52 @@ function Visuals.PaintMerchantLearnableBadge(itemButton, show)
   end
 end
 
+local function ensureItemDuplicateBadge(itemButton)
+  if not itemButton then return nil end
+  if itemButton.sakDuplicateBadge then return itemButton.sakDuplicateBadge end
+
+  local badge = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
+  badge:SetPoint("BOTTOMLEFT", itemButton, "BOTTOMLEFT", 1, 1)
+  badge:SetTextColor(1, 0.82, 0.05)
+  badge:SetShadowColor(0, 0, 0, 1)
+  badge:SetShadowOffset(1, -1)
+  badge:Hide()
+  itemButton.sakDuplicateBadge = badge
+  return badge
+end
+
+function Visuals.PaintItemDuplicateBadge(itemButton, text)
+  if not itemButton then return end
+  local badge = ensureItemDuplicateBadge(itemButton)
+  if text and text ~= "" then
+    badge:SetText(text)
+    badge:Show()
+  else
+    badge:Hide()
+  end
+end
+
+function Visuals.PaintItemKnownOverlay(itemButton, show)
+  Visuals.PaintMerchantKnownBookOverlay(itemButton, show)
+end
+
+function Visuals.PaintItemPetIcon(itemButton, info)
+  Visuals.PaintMerchantPetIcon(itemButton, info)
+end
+
+function Visuals.PaintItemLearnableBadge(itemButton, show)
+  Visuals.PaintMerchantLearnableBadge(itemButton, show)
+end
+
+function Visuals.ClearItemButton(itemButton)
+  if not itemButton then return end
+  Visuals.PaintOutline(itemButton, false)
+  Visuals.PaintItemKnownOverlay(itemButton, false)
+  Visuals.PaintItemPetIcon(itemButton, nil)
+  Visuals.PaintItemLearnableBadge(itemButton, false)
+  Visuals.PaintItemDuplicateBadge(itemButton, nil)
+end
+
 function Visuals.EnsureMerchantTextLayer(fontString)
   if not (fontString and fontString.SetDrawLayer) then return end
   pcall(fontString.SetDrawLayer, fontString, "OVERLAY", 7)
@@ -288,6 +335,8 @@ function Visuals.PaintMerchantKnownPrefix(fontString, show)
   text = text:gsub("^%[Already Learned!%]%s*", "")
   text = text:gsub("^|cff40ff40%[Read the Book%]|r%s*", "")
   text = text:gsub("^%[Read the Book%]%s*", "")
+  text = text:gsub("^|cff40ff40%[Already in your Bag%]|r%s*", "")
+  text = text:gsub("^%[Already in your Bag%]%s*", "")
   text = text:gsub("^|cffffffff%[Learned!%]|r%s*", "")
   text = text:gsub("^%[Learned!%]%s*", "")
   if show then text = "|cffffffff" .. SAK.MERCHANT_LEARNED_LABEL .. "|r " .. text end
@@ -303,6 +352,8 @@ function Visuals.PaintMerchantReadBookPrefix(fontString, show)
   text = text:gsub("^%[Already Learned!%]%s*", "")
   text = text:gsub("^|cff40ff40%[Read the Book%]|r%s*", "")
   text = text:gsub("^%[Read the Book%]%s*", "")
+  text = text:gsub("^|cff40ff40%[Already in your Bag%]|r%s*", "")
+  text = text:gsub("^%[Already in your Bag%]%s*", "")
   text = text:gsub("^|cffffffff%[Learned!%]|r%s*", "")
   text = text:gsub("^%[Learned!%]%s*", "")
   if show then text = "|cff40ff40" .. SAK.MERCHANT_READ_BOOK_LABEL .. "|r " .. text end

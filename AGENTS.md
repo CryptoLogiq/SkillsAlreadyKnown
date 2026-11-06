@@ -3,10 +3,12 @@
 ## Workspace Layout
 
 - Development repository: `DevAddOns/SkillsAlreadyKnown`
-- Installed/test copy: `Interface/AddOns/SkillsAlreadyKnown`
+- Installed/test copy: `~/Games/Heroic/Prefixes/Battle.net/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/SkillsAlreadyKnown_dev`
 
-Do development work in `DevAddOns/SkillsAlreadyKnown`. The `Interface/AddOns/SkillsAlreadyKnown`
-folder is managed by WoW/CurseForge/local install tests and can be overwritten.
+Do development work in `DevAddOns/SkillsAlreadyKnown`. The `Interface/AddOns/SkillsAlreadyKnown_dev`
+folder is reserved for local development tests. The published CurseForge addon
+uses `Interface/AddOns/SkillsAlreadyKnown` and must never be overwritten by the
+local install script.
 
 ## Local Testing
 
@@ -16,7 +18,11 @@ From `DevAddOns/SkillsAlreadyKnown`, run:
 ./scripts/install-local.sh
 ```
 
-This syncs the addon into `Interface/AddOns/SkillsAlreadyKnown` while excluding Git,
+Use `./scripts/install-local.sh --dry-run` to preview changes. Set `SAK_WOW_ROOT`
+to override the default Heroic client directory (`_forever_`). The development
+repository no longer needs to be inside the WoW installation.
+
+This syncs the addon into the client's `Interface/AddOns/SkillsAlreadyKnown_dev` while excluding Git,
 GitHub workflow files, scripts, release archives, and development-only metadata.
 
 ## Packaging
@@ -30,12 +36,29 @@ From `DevAddOns/SkillsAlreadyKnown`, run:
 The package script creates `release/SkillsAlreadyKnown-<version>.zip` from the addon
 contents and excludes dev-only files.
 
+Do not overwrite an already prepared/published package when preparing a new package
+for the user. Version bumps are done when packaging a deliverable zip, not for every
+individual file edit made during the same task.
+
+Use patch versions for minor fixes and polish within the current feature line, for
+example `0.3.1`, `0.3.2`, `0.3.3`, etc. Continue that sequence until the user asks
+to publish/package the accumulated changes. Use the next minor version, such as
+`0.4.0`, only for a larger feature set. After `0.4.0`, continue minor fixes as
+`0.4.1`, `0.4.2`, etc. Keep existing zips so every delivered package remains
+traceable.
+
 ## CurseForge
 
-CurseForge installation/update tests should target only the installed/test copy in
-`Interface/AddOns/SkillsAlreadyKnown`. If CurseForge rewrites that folder, keep using
-the dev repo as the source of truth and reinstall locally with `./scripts/install-local.sh`
-when needed.
+CurseForge installation/update tests target only the published copy in
+`Interface/AddOns/SkillsAlreadyKnown`. Local installs must always create
+`Interface/AddOns/SkillsAlreadyKnown_dev` with a matching `SkillsAlreadyKnown_dev.toc`,
+a `[DEV]` title, and separate namespace, frame names, saved variables and asset paths.
+Apply development renaming only to the staged install copy. Published packages
+must retain the original addon name. The official copy must skip all module initialization when the DEV copy is
+enabled for the current character, regardless of addon load order. Keep this
+guard in Core and every feature module. Do not persistently disable the official
+addon: it resumes after DEV is disabled and the UI is reloaded. Older published
+versions without this guard must still be disabled manually during DEV tests.
 
 ## Addon Behavior
 
@@ -43,11 +66,16 @@ when needed.
 - Level-locked trainer spells display only the spell name in red. Requirement text should
   keep the game's normal coloring.
 - Trainable spells get a green outline and a subtle green/dark background.
-- Spell icons are intentionally left untouched.
+- Trainer and grimoire icons can receive overlays/badges for learned, learnable,
+  or already-owned-book states.
 - Warlock pet grimoires are highlighted in merchant windows:
   - Already learned grimoires show `[Already Learned!]`, a darker book overlay, and tooltip text.
   - Learnable grimoires use yellow text/outline plus the custom `assets/learnable-plus.tga` marker.
   - Pet icons are overlaid on grimoire icons to identify the target demon.
+- Bag, bank, and guild bank item buttons may be annotated when a pet grimoire is recognized:
+  - Learned grimoires receive the learned book overlay and pet icon.
+  - Learnable grimoires receive the yellow outline and plus marker.
+  - Item locations seen in bags, bank, or guild bank are saved locally to help spot duplicates.
 - `/sak` opens the summary window and forces a refresh.
 - `/sak debug` opens a copyable diagnostics window with player spellbook scan data,
   trainer service IDs, and trainer row mapping details.
@@ -76,12 +104,20 @@ when needed.
   such as `100663xxx`, `117440xxx`, or `3238xxxx`; they are useful for diagnostics and should
   not be discarded just because they look unlike classic spell IDs.
 - Store pet metadata with pet spell data: `petKey` and display `petName`.
+- Store recognized pet grimoire item metadata by `itemID` in `SkillsAlreadyKnownDB.petGrimoires`
+  so bags/banks can be annotated without requiring the pet vendor window to be open.
+- EllesmereUI Bags integration uses `EUI_Bags.RegisterItemOverlayIcon`. Keep
+  state on addon-owned frames parented to `button._textOverlay`, never on its
+  secure item buttons. Copy location fields; callback data tables are reused.
+- Store seen item locations in `SkillsAlreadyKnownDB.itemStorage`, but treat bank and guild bank
+  data as "last seen" because they are only reliable after the player opens those windows.
 - Keep tooltip strings concise and consistent with the addon name, e.g. `[Already Learned!]`.
 - The addon is split into small modules loaded by `SkillsAlreadyKnown.toc`:
   - `Core.lua`: shared namespace, constants, saved variables, text/ID helpers, pet metadata.
   - `Visuals.lua`: reusable row, outline, overlay, icon, badge, and text painting helpers.
   - `ClassTrainer.lua`: class trainer service scanning and row coloring.
   - `PetGrimoires.lua`: warlock pet spell persistence and merchant grimoire highlighting.
+  - `Inventory.lua`: bag, bank, and guild bank item overlays for recognized books/recipes.
   - `Main.lua`: slash commands, event routing, and cross-module refresh orchestration.
 - Add future features, such as profession trainers, as new modules that reuse `Core.lua`
   and `Visuals.lua` rather than expanding an existing feature module.
