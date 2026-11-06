@@ -126,3 +126,20 @@ versions without this guard must still be disabled manually during DEV tests.
 
 The repository uses `core.fileMode=false` locally because the WoW/Wine filesystem may
 flip executable bits on normal files.
+
+## Public documentation and release communication
+
+- README.md, CHANGELOG.md, CurseForge descriptions/release notes, and suggested
+  public commit messages are for players. Describe gameplay behavior, visible
+  fixes, compatibility, and commands useful in game.
+- Do not include local development scripts or their changes, shell commands,
+  personal installation paths, Heroic/Wine setup, SAK_WOW_ROOT, dry-run options,
+  DEV deployment/isolation, packaging mechanics, or internal agent workflows in
+  player-facing documentation or suggested public commit messages.
+- Keep developer setup and script documentation in CONTRIBUTING.md and AGENTS.md.
+  These files and scripts are excluded from release packages. This separation
+  concerns the intended audience; tracked developer files remain public in Git.
+- Before preparing a commit, release zip, or publication, review player-facing
+  documentation and any proposed public message for developer-only material.
+- Describe bag compatibility precisely: Blizzard and EllesmereUI bags are
+  confirmed in game; other bag addons require validation.

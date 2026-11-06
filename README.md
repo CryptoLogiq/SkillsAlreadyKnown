@@ -43,10 +43,10 @@ the merchant:
 - Demon identification: the matching pet icon.
 
 Overlays have been tested in game with **Blizzard bags** and **EllesmereUI Bags**.
-EllesmereUI integration uses its item overlay API for grid and list views.
+EllesmereUI Bags supports overlays in grid and list views.
 Other bag addons may need a dedicated integration; compatibility is not yet
 confirmed. Bank and guild bank support is implemented, but has not been validated
-in game in this test session. Stored bank locations are last-seen information,
+in game yet. Stored bank locations are last-seen information,
 updated when those windows are opened.
 
 Markers refresh when books move, item information becomes available, or saved
@@ -80,41 +80,6 @@ Then enable **Skills Already Known** in the in-game AddOns list and reload/resta
 
 `/sak pet` shows saved pet spell information.
 `/sak petdebug` opens pet grimoire diagnostics with a copyable support export.
-
-## Local development scripts
-
-Run these commands from the development repository (`DevAddOns/SkillsAlreadyKnown`):
-
-```bash
-./scripts/install-local.sh --dry-run
-./scripts/install-local.sh
-./scripts/package.sh
-```
-
-The install script defaults to the Heroic/Battle.net client at
-`~/Games/Heroic/Prefixes/Battle.net/drive_c/Program Files (x86)/World of Warcraft/_forever_`.
-It syncs only `Interface/AddOns/SkillsAlreadyKnown_dev` inside that client. Use
-`--dry-run` to preview changes without writing files. To use another client:
-
-```bash
-SAK_WOW_ROOT="/path/to/World of Warcraft/_forever_" ./scripts/install-local.sh --dry-run
-```
-
-Both scripts run in the current terminal. Packaging creates
-`release/SkillsAlreadyKnown-<version>.zip` and refuses to overwrite an existing
-archive; update the TOC version when preparing the next deliverable.
-
-Local installs appear as **Skills Already Known [DEV]**, with their own TOC,
-saved variables, namespace and asset paths. The published CurseForge folder
-`SkillsAlreadyKnown` is never overwritten. Official builds containing the DEV
-guard stay inactive when DEV is enabled for the current character, before
-registering hooks or `/sak`. Disable DEV and reload the UI to
-resume the official copy. Older CurseForge releases without this guard still
-need to be disabled manually when testing DEV.
-Release packages keep the original addon name.
-
-The scripts require Bash, rsync and Python 3. They run from the development
-repository without requiring it to be located inside the WoW installation.
 
 ## License
 
