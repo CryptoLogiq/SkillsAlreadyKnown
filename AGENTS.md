@@ -1,5 +1,17 @@
 # SkillsAlreadyKnown Agent Notes
 
+## ABSOLUTE PRIORITY: preserve work and develop on dev
+
+Before any edit, staging or commit, verify the authoritative repository, current
+branch and working-tree/index state. Work on `dev`; `main` is reserved for explicitly
+requested publication. This check takes precedence over convenience or speed.
+Never discard local work to change branches: no hard reset, forced checkout,
+clean, branch overwrite or automatic stash/pop. Preserve staged and unstaged
+changes. Switch/create dev only when that preserves them; if a conflict prevents
+it, stop dependent changes and ask the owner how to proceed. Never continue
+editing main as a workaround. Do not merge, push, tag or publish implicitly.
+
+
 Reconciled against the working code on **2026-11-13**. This is the developer guide;
 player documentation belongs in README.md. Existing local changes are intentional:
 do not revert, stage everything, commit, bump versions or publish without a request.
@@ -735,3 +747,18 @@ rebuilding it, only after verifying its bundled patchnotes match the current sou
 No version bump for copying an existing release. Verify ZIP/notes pairing and
 archive preservation using scripts/test-patchnote-generation.py. Point the owner
 to release/latest/ for the upload ZIP and CurseForge Markdown.
+
+## Branch workflow: dev and main
+
+Standing user instruction: develop on `dev`; publish releases on `main`.
+- Check the current branch before starting development or preparing a commit.
+- Use `dev` for feature work, bug fixes, documentation and development commits.
+  If necessary, create/switch to dev while preserving existing uncommitted work;
+  never reset, discard changes or overwrite an existing branch to enforce this.
+- `main` is the publication branch. Bring reviewed, tested changes from dev into
+  main when publication is requested. Do not infer permission to merge, push,
+  tag or publish from an ordinary development task or commit preparation.
+- Release preparation can be done on dev. Publish the tested release from main;
+  ensure version, release notes and artifacts match the published revision.
+- Public README image/document URLs continue targeting main so they reference
+  published files; do not replace them with dev URLs simply because work uses dev.

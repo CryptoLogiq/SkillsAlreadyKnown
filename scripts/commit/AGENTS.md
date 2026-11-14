@@ -1,5 +1,13 @@
 # Préparation des commits
 
+PRIORITÉ ABSOLUE : vérifier le dépôt, la branche et les modifications dans Git
+avant toute édition ou préparation. Travailler sur dev ; main sert à publier sur
+demande explicite. Préserver l’index et les changements non indexés. Aucun reset,
+checkout forcé, clean, écrasement de branche ou stash/pop automatique. Si passer
+sur dev risque de perdre du travail ou provoque un conflit, suspendre les actions
+qui en dépendent et demander au propriétaire ; ne pas travailler sur main par défaut.
+
+
 Appliquer ces consignes dès qu’un commit est demandé ou préparé. Elles complètent
 le guide racine et les règles de patchnote/AGENTS.md.
 
@@ -74,3 +82,11 @@ avec un seul ZIP courant et un patchnote.md Markdown prêt pour CurseForge, issu
 des notes Lua de cette version. Garder les archives versionnées inchangées dans
 release/. Vérifier que le ZIP et ses notes correspondent. Pour republier une copie
 existante dans latest sans la reconstruire : package.sh --refresh-latest.
+
+## Branches
+
+Développement et commits de travail sur dev ; publication sur main. Vérifier la
+branche avant de préparer un commit. Conserver les changements locaux lors d’un
+changement de branche ; aucun reset ni écrasement. La fusion vers main, le push,
+les tags et la publication se font lorsqu’ils sont demandés, pas implicitement
+avec une préparation de commit. Les liens publics du README restent sur main.
