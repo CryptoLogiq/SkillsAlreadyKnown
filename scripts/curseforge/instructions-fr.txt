@@ -1,0 +1,94 @@
+MODIFICATIONS DE LA PAGE CURSEFORGE — SKILLS & MORE
+Préparé le 14 novembre 2026.
+
+À appliquer avec la prochaine version contenant ces fonctions. La version actuellement
+publiée est encore la 0.3.3 ; ne pas présenter les nouveautés comme disponibles dans
+cette ancienne archive. La version préparée est la 0.4.0.
+
+1. MODIFIER LE PROJET EXISTANT
+
+Page : https://www.curseforge.com/wow/addons/skills-already-known
+Project ID : 1725046
+
+Modifier cette fiche existante. Il n’est pas nécessaire de créer un autre projet.
+Conserver son adresse actuelle pour les liens déjà partagés ; le nom affiché peut
+être différent. Ne pas modifier les liens du dépôt GitHub sans renommage réel.
+
+2. NOM DU PROJET
+
+Skills & More
+Commande principale à présenter : /sam
+
+Le caractère & reste à confirmer dans le formulaire auteur : la documentation
+consultée n’indique pas explicitement ce caractère. Si le champ le refuse,
+utiliser Skills and More, puis conserver Skills & More dans la description.
+
+3. RÉSUMÉ COURT — À COPIER
+
+Spell ranks, talents, roles and profession learning at a glance. Train smarter and track what you learn in WoW Forever.
+
+4. DESCRIPTION
+
+Remplacer l’ancienne description par Readme_CurseForge.md, à la racine du dépôt.
+Ce README dédié remplace description.txt comme référence pour la fiche publique. Le texte est en anglais comme la fiche actuelle. Les noms des options
+françaises correspondent à ce qui est affiché en jeu.
+
+Coller ce README dans l’éditeur Markdown CurseForge : captures visibles en haut,
+liens GitHub complets et aucune installation manuelle.
+
+Le texte public ne contient ni scripts, ni instructions de développement, ni API,
+ni détails de maintenance.
+
+5. CATÉGORIES PROPOSÉES
+
+Principale : Class
+Supplémentaires : Professions / Quests & Leveling / Tooltip / Bags & Inventory
+
+Choisir les intitulés correspondants disponibles dans le formulaire. La documentation
+CurseForge permet jusqu’à quatre catégories supplémentaires. Les métiers sont
+présentés ici pour les fonctions déjà présentes : apprentissages, recettes connues
+et prochain palier ; aucune future fonction n’est annoncée comme disponible.
+
+6. LIENS ET LICENCE
+
+Source : https://github.com/CryptoLogiq/SkillsAlreadyKnown
+Issues, si le suivi du dépôt est activé :
+https://github.com/CryptoLogiq/SkillsAlreadyKnown/issues
+Licence du projet : MIT, comme actuellement.
+Jeu / version : WoW Forever ; choisir la version réellement prise en charge par
+le fichier envoyé, sans reprendre automatiquement une ancienne sélection.
+
+7. CAPTURES À AJOUTER OU ACTUALISER
+
+Légendes anglaises prêtes à copier :
+
+• Trainer markers: learnable, learned, next milestone and optional purchases.
+• Spellbook ranks and recent learning: BEST, LOW, ECO, OPTIONAL and RECENT.
+• Talent roles, leveling recommendations and PVP / PVE PVP guidance.
+• Skills & More settings — By CryptoLogiq.
+• Already-known recipes in bags and group loot-roll windows.
+
+Utiliser de vraies captures de la version qui sera envoyée. Conserver les anciennes
+captures de grimoires si elles représentent encore l’affichage actuel. L’ancien
+nom éventuellement visible doit être remplacé par une capture récente.
+
+Logo : conserver celui déjà choisi. S’il contient l’ancien nom, prévoir une version
+avec le nouveau texte avant de le remplacer. CurseForge demande une image PNG
+carrée d’au moins 400 × 400 ; ne pas utiliser la petite icône du jeu telle quelle.
+
+8. NOTES DU PROCHAIN FICHIER
+
+Archive à envoyer : release/latest/SkillsAlreadyKnown-0.4.0.zip
+Notes du fichier à coller dans l’éditeur Markdown CurseForge : release/latest/patchnote.md
+Ces notes sont générées automatiquement depuis celles de la version 0.4.0.
+release-notes.txt est un ancien brouillon ; préférer le Markdown associé au ZIP.
+
+Les textes de la page et du fichier doivent être cohérents avec la version envoyée.
+
+RÉFÉRENCES CONSULTÉES
+
+Page publique actuelle :
+https://www.curseforge.com/wow/addons/skills-already-known
+
+Guide officiel CurseForge (nom, catégories, logo et modification d’un projet) :
+https://support.curseforge.com/support/solutions/articles/9000199552-project-submission-guide-and-tips

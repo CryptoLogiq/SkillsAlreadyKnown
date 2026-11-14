@@ -1,14 +1,56 @@
 ## Interface: 16001
 ## AllowLoadGameType: camelot
-## Title: Skills Already Known
-## Notes: Makes class trainer and pet grimoire spells easier to read.
-## Author: cryptologiq
-## Version: 0.3.3
+## Title: Skills & More
+## Notes: Spell ranks, talents, roles, profession learning and training advice for WoW Forever.
+## IconTexture: Interface\AddOns\SkillsAlreadyKnown\assets\launcher-icon.tga
+## Author: CryptoLogiq
+## Version: 0.4.0
 ## SavedVariablesPerCharacter: SkillsAlreadyKnownDB
+## OptionalDeps: TrainerSpells
+
+libs/LibStub/LibStub.lua [AllowLoadGameType camelot]
+libs/LibButtonGlow-1.0/LibButtonGlow-1.0.lua [AllowLoadGameType camelot]
+libs/AceGUI-3.0/AceGUI-3.0.xml [AllowLoadGameType camelot]
+libs/CallbackHandler-1.0/CallbackHandler-1.0.xml [AllowLoadGameType camelot]
+libs/AceConfig-3.0/AceConfig-3.0.xml [AllowLoadGameType camelot]
+
+libs/LibDataBroker-1.1/LibDataBroker-1.1.lua [AllowLoadGameType camelot]
+libs/LibDBIcon-1.0/LibDBIcon-1.0.lua [AllowLoadGameType camelot]
 
 Core.lua [AllowLoadGameType camelot]
+DebugWindows.lua [AllowLoadGameType camelot]
+Diagnostics.lua [AllowLoadGameType camelot]
+Compatibility.lua [AllowLoadGameType camelot]
+Glow.lua [AllowLoadGameType camelot]
 Visuals.lua [AllowLoadGameType camelot]
+ProfessionTrainer.lua [AllowLoadGameType camelot]
 ClassTrainer.lua [AllowLoadGameType camelot]
 PetGrimoires.lua [AllowLoadGameType camelot]
 Inventory.lua [AllowLoadGameType camelot]
+data/Patchnotes.lua [AllowLoadGameType camelot]
+data/ContentUsage.lua [AllowLoadGameType camelot]
+data/ClassRoles.lua [AllowLoadGameType camelot]
+data/TalentSummaries.lua [AllowLoadGameType camelot]
+data/LevelingRecommendations.lua [AllowLoadGameType camelot]
+data/LevelingAdvice.lua [AllowLoadGameType camelot]
+data/RankOneAdvice.lua [AllowLoadGameType camelot]
+PlayerRoles.lua [AllowLoadGameType camelot]
+RankPolicy.lua [AllowLoadGameType camelot]
+RankAvailability.lua [AllowLoadGameType camelot]
+SpellRanks.lua [AllowLoadGameType camelot]
+RecentLearning.lua [AllowLoadGameType camelot]
+SpellBook.lua [AllowLoadGameType camelot]
+SpellTooltips.lua [AllowLoadGameType camelot]
+TalentTooltips.lua [AllowLoadGameType camelot]
+SpellBookTabs.lua [AllowLoadGameType camelot]
+TalentRoles.lua [AllowLoadGameType camelot]
+SpellBookRoles.lua [AllowLoadGameType camelot]
+ContentTags.lua [AllowLoadGameType camelot]
+TrainerSpellsBadges.lua [AllowLoadGameType camelot]
+RecentVisuals.lua [AllowLoadGameType camelot]
+RecipeKnowledge.lua [AllowLoadGameType camelot]
+StartupFooter.lua [AllowLoadGameType camelot]
+Settings.lua [AllowLoadGameType camelot]
+Launcher.lua [AllowLoadGameType camelot]
 Main.lua [AllowLoadGameType camelot]
+Events.lua [AllowLoadGameType camelot]

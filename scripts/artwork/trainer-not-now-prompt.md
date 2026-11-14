@@ -1,0 +1,5 @@
+# NOT NOW trainer badge
+
+Built-in image_gen edit, transparent background. Reference: trainer-next-source.png.
+
+Edit the reference fantasy MMORPG UI badge into a new matching companion status badge. Preserve the dark charcoal plaque, beveled aged gunmetal/bronze rim, straight front-on perspective and authentic classic Warcraft trainer UI style. Replace the yellow NEXT text with exact uppercase text 'NOT NOW' in vivid warm red. Add a clearly recognizable vivid red prohibition symbol (a hollow circle crossed by one diagonal slash, no emoji background) immediately to the LEFT of the words. The symbol and words must be large, bold, extremely clear for a tiny 52x16 pixel game UI overlay. Keep it a single horizontal compact badge, no extra decorations or labels. The whole plaque including its bevel must remain fully visible. Preserve genuine alpha transparency outside the plaque; no black rectangle canvas, no checkerboard. Only change the label/symbol and their color; keep the reference border and material style.

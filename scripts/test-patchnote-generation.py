@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Validate generation and packaging without touching delivered archives or WoW."""
+from pathlib import Path
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import zipfile
+
+root = Path(__file__).resolve().parent.parent
+
+def run(*args, success=True, env=None):
+    result = subprocess.run(args, text=True, capture_output=True, env=env)
+    assert (result.returncode == 0) == success, result.stdout + result.stderr
+    return result
+
+with tempfile.TemporaryDirectory() as temporary:
+    fixture = Path(temporary) / "addon"
+    (fixture / "scripts").mkdir(parents=True)
+    (fixture / "data").mkdir()
+    shutil.copytree(root / "patchnote", fixture / "patchnote")
+    for script in ("generate-patchnotes.py", "package.sh", "install-local.sh"):
+        shutil.copy(root / "scripts" / script, fixture / "scripts" / script)
+    shutil.copy(root / "SkillsAlreadyKnown.toc", fixture)
+    generator = fixture / "scripts/generate-patchnotes.py"
+    run(sys.executable, str(generator))
+    output = fixture / "data/Patchnotes.lua"
+    before = output.read_bytes()
+    run(sys.executable, str(generator), "--check")
+    run(sys.executable, str(generator))
+    assert output.read_bytes() == before
+    extra = fixture / "patchnote/0.10.0.lua"
+    extra.write_text('return {\n version = "0.10.0",\n status = "released",\n additions = {},\n fixes = {},\n}\n')
+    run(sys.executable, str(generator), "--check", success=False)
+    run(sys.executable, str(generator))
+    text = output.read_text()
+    assert text.index('version = "0.10.0"') < text.index('version = "0.3.3"')
+    extra.unlink()
+    run("bash", str(fixture / "scripts/package.sh"))
+    version = next(line.split(":", 1)[1].strip() for line in (fixture / "SkillsAlreadyKnown.toc").read_text().splitlines() if line.startswith("## Version:"))
+    archive = fixture / f"release/SkillsAlreadyKnown-{version}.zip"
+    original = archive.read_bytes()
+    latest = fixture / "release/latest"
+    latest_archive = latest / archive.name
+    notes = latest / "patchnote.md"
+    assert latest_archive.read_bytes() == original
+    markdown_before = notes.read_text()
+    assert markdown_before.startswith(f"# Skills & More — {version}\n")
+    assert "## Ajouts de fonctionnalités" in markdown_before and "## Corrections de bugs" in markdown_before
+    assert "Unreleased" not in markdown_before and "local SAK" not in markdown_before
+    generated_before = output.read_bytes()
+    run(sys.executable, str(generator), "--format", "markdown", "--check")
+    assert output.read_bytes() == generated_before
+    notes.write_text("stale")
+    run(sys.executable, str(generator), "--format", "markdown", "--check", success=False)
+    run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest")
+    assert notes.read_text() == markdown_before and archive.read_bytes() == original
+    latest_archive.unlink()
+    stale = latest / "SkillsAlreadyKnown-0.0.0.zip"
+    stale.write_bytes(b"old latest copy")
+    keep = latest / "keep.txt"
+    keep.write_text("preserve unrelated files")
+    run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest")
+    assert latest_archive.read_bytes() == original and not stale.exists() and keep.exists()
+    # A source edit must not silently pair new notes with an old immutable ZIP.
+    release_notes = fixture / f"patchnote/{version}.lua"
+    saved = release_notes.read_text()
+    release_notes.write_text(saved.replace("additions = {", 'additions = {\n    "Unpackaged change",', 1))
+    run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest", success=False)
+    assert archive.read_bytes() == original and notes.read_text() == markdown_before
+    release_notes.write_text(saved)
+    with zipfile.ZipFile(archive) as package:
+        names = package.namelist()
+        assert "SkillsAlreadyKnown/data/Patchnotes.lua" in names
+        assert not any("/patchnote/" in name or "/scripts/" in name or name.endswith("AGENTS.md") for name in names)
+        assert b'"Unreleased"' in package.read("SkillsAlreadyKnown/data/Patchnotes.lua")
+    run("bash", str(fixture / "scripts/package.sh"), success=False)
+    assert archive.read_bytes() == original
+    wow = Path(temporary) / "wow"
+    (wow / "Interface/AddOns").mkdir(parents=True)
+    env = dict(os.environ, SAK_WOW_ROOT=str(wow))
+    output.write_text("stale source intentionally retained during dry run")
+    run("bash", str(fixture / "scripts/install-local.sh"), "--dry-run", env=env)
+    assert output.read_text() == "stale source intentionally retained during dry run"
+    assert not (wow / "Interface/AddOns/SkillsAlreadyKnown_dev").exists()
+    run("bash", str(fixture / "scripts/install-local.sh"), env=env)
+    installed = wow / "Interface/AddOns/SkillsAlreadyKnown_dev"
+    assert "SkillsAlreadyKnown_dev" in (installed / "data/Patchnotes.lua").read_text()
+    assert not (installed / "patchnote").exists()
+    assert not (installed / "Patchnotes.lua").exists()
+    assert output.read_text() == "stale source intentionally retained during dry run"
+print("PASS: Lua/Markdown generation, latest ZIP/notes pairing, stale checks, archive protection, exclusions and staged DEV generation/dry-run")

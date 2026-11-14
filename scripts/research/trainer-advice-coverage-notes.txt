@@ -1,0 +1,16 @@
+Connected catalogue: 165 class/spec/role rules, 81 numeric base anchors, nine classes.
+Source: eco-spells-forever.lua. See ../../data/LevelingAdvice.lua for every active row.
+
+Included: source-backed optionnel_selon_usage, optionnel_leveling, rangs_reportables,
+rang_1_suffisant; plus individually reviewed Rogue Pick Pocket and Distract.
+
+Not automatically enabled: a_verifier/a_conserver entries, broad Rogue dagger/control
+list, conditional level/build entries lacking tracked build state, rank-one-only
+interrupt usage (Earth Shock is not an optional damage upgrade), and pet grimoires
+(which belong to the merchant module).
+Shadow Word: Death is pending Forever ID resolution: classic 32379 is absent from
+the installed Forever trainer data. Do not silently guess a custom replacement ID.
+Wrath 5176 and Shadow Bolt 686 are starting-spell anchors and need not be sold at rank 1.
+
+OPTIONAL is conditional purchase advice. Keep all content/build caveats in its
+tooltip. Trainer status NEW + remains independent and continues to mean learnable.

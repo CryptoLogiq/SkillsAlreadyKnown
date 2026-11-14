@@ -1,0 +1,19 @@
+FOREVER — NOTES SUR LES RANGS (verification du 12 novembre 2026)
+
+Sources officielles :
+1. https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-10-2026
+2. https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/1
+
+Le correctif du 10 novembre egalise le cout de tous les rangs de Tir des arcanes
+et Invocation de faucon a 11 % de mana de base : il augmente avec le niveau.
+Cela ne prouve pas que tous les sorts de toutes les classes suivent cette regle.
+Notre formulation est donc « pas d'economie de mana garantie » ; ECO vise l'or
+non depense pour apprendre les rangs, pour un usage de leveling precis.
+
+Les notes de beta evoquent une perte de benefice des bonus de degats/soins et
+certaines penalites de declenchement pour les rangs anciens. La mise a jour du
+2 novembre leve plusieurs penalites de talents et maintient une exception pour
+Blizzard. Il faut eviter de reprendre les annonces anciennes comme regle universelle.
+Les notes consultees n'etablissent pas de penalite generale de toucher liee au
+rang. Les limites de niveau de certains controles restent un sujet distinct.
+BEST signifie plus haut rang appris : ni toucher garanti ni rang maximal du jeu.

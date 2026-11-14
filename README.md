@@ -1,86 +1,93 @@
-# SkillsAlreadyKnown
+# Skills & More
 
-Small WoW Forever addon that makes class trainer spells and warlock pet grimoires easier to identify at merchants and in your inventory.
+See what to learn, compare spell ranks and save training gold while leveling in **WoW Forever**.
 
-## What It Does
+## Screenshots
 
-- Known trainer spells are shown in grey.
-- Spells locked by character level are shown in red.
-- Spells that can be learned now get a green outline.
-- Class trainer icons show learned and learnable markers.
-- Warlock pet grimoires show learned, learnable, and locked states with pet-aware markers.
-- Pet grimoires already in your bags are marked with `[Already in your Bag]`, even if the related pet is not active.
-- Bags, bank, and guild bank can mark known or learnable pet grimoires after the addon has identified them.
-- Seen item locations are saved locally to help spot duplicates across bags, bank, and guild bank.
-- Debug windows provide colored previews and clean copyable support reports for easier bug reports.
+These screenshots show an older version and will be updated to reflect Skills & More.
 
-The addon uses trainer API state such as `available`, `used`, level requirements, and saved pet spell data instead of relying only on localized text.
+![Class trainer](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/trainer-preview.png)
 
-## Preview
+![Warlock pet grimoires](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/spellsbookmarks_trainer.png)
 
-![Preview Img](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/assets/trainer-preview.png?raw=true)
+![Already-owned grimoire](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/spellsbookmarks_in_possesion_tooltip_updated.png)
 
-![Trainer Warlock Preview](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/assets/spellsbookmarks_trainer.png?raw=true)
+## Spell markers
 
-![Owned Grimoire Preview](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/assets/spellsbookmarks_in_possesion_tooltip_updated.png?raw=true)
+| Marker | Meaning |
+| --- | --- |
+| **NEW +** | Learnable now. |
+| **✓** | Already learned. |
+| **NEXT** | Next learning milestone, with a yellow outline and background. |
+| **NOT NOW** | Not yet available. |
+| **BEST** | Highest rank you have learned, even if it is the only one. |
+| **LOW** | An older rank: you already know a higher one. |
+| **BUY NEW RANK** | An accessible higher rank remains to learn. |
+| **ECO** | Rank 1 can suffice for the recommended use while leveling. |
+| **OPTIONAL** | A spell or extra rank whose purchase can wait for your selected roles. |
+| **RECENT** | Part of your latest recorded learning. |
 
-## Compatibility
+Trainer markers use green, yellow, red or grey outlines. NEW + can also glow. In the spellbook, OPTIONAL appears beside BEST when applicable. Hover spells for explanations, including ECO and OPTIONAL advice on action bars.
 
-Built for WoW Forever / Camelot:
+**ECO saves training gold, not guaranteed mana.** OPTIONAL does not mean useless. Advice covers selected spells and must suit every role you choose. Selecting PvP suspends ECO and OPTIONAL. BUY NEW RANK uses TrainerSpells or information from the trainer you have opened; it does not check your gold.
 
-```toc
-## Interface: 16001
-## AllowLoadGameType: camelot
-```
+## Recent learning
 
-### Inventory overlays
+**RECENT** appears just below spell and talent icons in supported views. Your latest learned spells, talent ranks and recipes are listed in **Apprentissages récents** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it. Learning outside a trainer visit is also tracked.
 
-Recognized warlock pet grimoires use the same markers in your inventory as at
-the merchant:
+On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection. Custom profession windows may require consulting the list in the options.
 
-- Already learned: a darkened book overlay.
-- Learnable by your active pet at its current level: a yellow outline and plus marker.
-- Demon identification: the matching pet icon.
+## Roles and specializations
 
-Overlays have been tested in game with **Blizzard bags** and **EllesmereUI Bags**.
-EllesmereUI Bags supports overlays in grid and list views.
-Other bag addons may need a dedicated integration; compatibility is not yet
-confirmed. Bank and guild bank support is implemented, but has not been validated
-in game yet. Stored bank locations are last-seen information,
-updated when those windows are opened.
+Choose your roles and specializations in **Talent Spec and Role**. Only roles available to your class are offered; PvP is a separate activity.
 
-Markers refresh when books move, item information becomes available, or saved
-pet spells change. Pet knowledge is based on spellbook data saved for each demon;
-use the relevant pet to let the addon record its spells.
+On first use, a specialization is suggested from your spent talent points, or from the solo leveling recommendation if no tree dominates. Review the summaries, then select **Valider mes choix → OK** to activate your advice. Closing or choosing **Plus tard** keeps the proposal inactive and offers it again next time you log in or reload.
 
-## Install
+Role labels appear beside talent-tree titles and the active spellbook school. Hover for a specialization overview, advantages and drawbacks. **LEVELING** identifies the main solo leveling recommendation. Before level 10, spellbook school tabs also show these summaries.
 
-Place the folder here:
+**PVP** and **PVE PVP** mark selected talents and learnable trainer spells, with explanations on hover. Unmarked entries have no recommendation.
 
-```text
-World of Warcraft/_forever_/Interface/AddOns/SkillsAlreadyKnown
-```
+## Books and recipes
 
-Then enable **Skills Already Known** in the in-game AddOns list and reload/restart the client.
+Warlock pet grimoires show learned or learnable status, a yellow **+** when appropriate, and demon icons at merchants and in your bags. Merchants also flag books you already own. Summon each demon to record its learned spells.
+
+**ALREADY KNOWN** marks learned recipes in bags and group or raid loot-roll windows when the game's tooltip confirms them. It never chooses a loot roll for you.
+
+## Settings
+
+Open **Options → AddOns → Skills & More**, or type `/sam settings`.
+
+- **Affichage** — control icons, outlines, text and backgrounds, with separate display zones.
+- **Talent Spec and Role** — choose roles, specializations and leveling advice.
+- **Apprentissages récents** — review your latest learning.
+- **Diagnostics** — copy support reports.
+- **Réinitialisation** — restore defaults or reopen the first-use window, with confirmation.
+- **Patchnotes** — browse features and fixes by version.
+
+Settings apply immediately and are saved per character. The minimap button opens settings with a left click or the summary with a right click. You can hide it in **Affichage**, or use the launcher through HidingBar or Titan Panel.
 
 ## Commands
 
-```text
-/sak
-/sak debug
-```
+| Command | Opens |
+| --- | --- |
+| `/sam` | Summary and refresh. |
+| `/sam settings` | Settings. |
+| `/sam debug` | Class trainer report. |
+| `/sam bookdebug` | Spellbook report. |
+| `/sam pet` | Saved pet spells. |
+| `/sam petdebug` | Pet grimoire report. |
+| `/sam conflicts` | Compatibility report. |
 
-`/sak` opens the summary window and forces a refresh.
-`/sak debug` opens spellbook and class trainer diagnostics with a copyable support export.
+For a bug report, reproduce the issue with the relevant window open, then share its **Copy Export** report.
 
-```text
-/sak pet
-/sak petdebug
-```
+## Compatibility
 
-`/sak pet` shows saved pet spell information.
-`/sak petdebug` opens pet grimoire diagnostics with a copyable support export.
+Bag markers are confirmed with **Blizzard bags** and **EllesmereUI Bags**. Other bag addons are not yet confirmed.
 
-## License
+DarkMode and TrainerSpells have dedicated compatibility handling. With TrainerSpells active, its trainer text stays unchanged. Its class list can show ECO / OPTIONAL, PVP / PVE PVP and RECENT when space allows; toggle these markers in **Affichage**.
 
-MIT
+## Installation
+
+Place `SkillsAlreadyKnown` in `World of Warcraft/_forever_/Interface/AddOns`, then enable it in the game's AddOns list.
+
+By **CryptoLogiq** · [MIT License](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/LICENSE)

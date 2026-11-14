@@ -18,6 +18,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate player patchnotes
+        run: python3 scripts/generate-patchnotes.py
+
       - name: Package addon
         uses: BigWigsMods/packager@v2
         env:

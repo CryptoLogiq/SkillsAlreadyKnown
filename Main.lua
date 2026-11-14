@@ -2,34 +2,57 @@
 
 local SAK = SkillsAlreadyKnown
 if SAK.disabledByDev then return end
-local loadedMessage
 
 function SAK.Refresh()
-  if SAK.ClassTrainer then SAK.ClassTrainer.Refresh() end
-  if SAK.PetGrimoires then SAK.PetGrimoires.Paint() end
-  if SAK.Inventory then SAK.Inventory.Refresh() end
+  if SAK.RecentVisuals then SAK.RecentVisuals.Refresh() end
+  if SAK.TrainerSpellsBadges then
+    SAK.TrainerSpellsBadges.Refresh()
+  end
+  if SAK.RecipeKnowledge then
+    SAK.RecipeKnowledge.RefreshRolls()
+  end
+  if SAK.ContentTags then
+    SAK.ContentTags.Refresh()
+  end
+  if SAK.ClassTrainer then
+    SAK.ClassTrainer.Refresh()
+  end
+  if SAK.PetGrimoires then
+    SAK.PetGrimoires.Paint()
+  end
+  if SAK.Inventory then
+    SAK.Inventory.Refresh()
+  end
+  if SAK.SpellBook then
+    SAK.SpellBook.Refresh()
+  end
+  if SAK.TalentRoles then
+    SAK.TalentRoles.Refresh()
+  end
 end
 
 function SAK.SummaryText()
   local lines = {
-    "SkillsAlreadyKnown",
+    "Skills & More — By CryptoLogiq",
     "",
-    "Class trainer:",
-    "- Grey = already known.",
-    "- Red = locked by character level.",
-    "- Green outline = learnable now.",
+    "Maîtres : NEW + = apprenable, coche verte = appris, NEXT = prochain palier, NOT NOW = indisponible.",
+    "Métiers : NEXT indique le prochain palier d'apprentissage.",
+    "Grimoire : BEST = plus haut rang appris ; LOW = ancien rang déjà remplacé ; BUY NEW RANK = rang supérieur accessible à apprendre.",
+    "Conseils : ECO = rang suffisant pour l'usage conseillé ; OPTIONAL = achat reportable selon tes rôles. L'économie concerne l'or d'apprentissage.",
+    "RECENT : derniers sorts, talents et recettes appris, conservés après rechargement. Consulte Apprentissages récents dans les options.",
+    "Rôles et talents : résumés des spécialisations, recommandation LEVELING et repères PVP / PVE PVP sur les entrées renseignées.",
+    "Livres de démons : grimoires appris, apprenables et déjà possédés. Invoque chaque démon pour enregistrer ses sorts.",
+    "ALREADY KNOWN : recettes déjà apprises dans les sacs et les jets de dés reconnus.",
+    "Affichage : icônes par zone, contours, textes et fonds réglables séparément.",
+    "Minicarte : clic gauche pour les options, clic droit pour ce résumé.",
     "",
-    "Warlock pet grimoires:",
-    "- [Already Learned!] marks saved pet spells.",
-    "- Yellow outline/text = learnable now.",
-    "- Red text = locked by level.",
-    "- Bags, bank, and guild bank show known/learnable grimoire markers when data is available.",
-    "",
-    "Commands:",
-    "/sak",
-    "/sak debug",
-    "/sak pet",
-    "/sak petdebug",
+    "Commandes :",
+    "/sam settings — options, rôles et spécialisations",
+    "/sam debug — maître de classe",
+    "/sam bookdebug — grimoire",
+    "/sam pet — sorts du familier",
+    "/sam petdebug — grimoires du familier",
+    "/sam conflicts — compatibilité",
   }
   return table.concat(lines, "\n")
 end
@@ -37,15 +60,26 @@ end
 function SAK.ShowSummaryWindow()
   SAK.ClassTrainer.MarkDirty()
   SAK.Refresh()
-  SAK.ShowDebugTextWindow("Summary", "Skills Already Known", SAK.SummaryText(), SAK.SummaryText)
+  SAK.ShowDebugTextWindow("Summary", "Skills & More", SAK.SummaryText(), SAK.SummaryText)
 end
 
-SLASH_SKILLSALREADYKNOWN1 = "/skillsalreadyknown"
-SLASH_SKILLSALREADYKNOWN2 = "/sak"
+SLASH_SKILLSALREADYKNOWN1 = "/skillsandmore"
+SLASH_SKILLSALREADYKNOWN3 = "/skillsalreadyknown"
+SLASH_SKILLSALREADYKNOWN2 = "/sam"
 SlashCmdList.SKILLSALREADYKNOWN = function(text)
   text = (text or ""):lower()
-  if text == "debug" then
+  if text == "settings" or text == "profile" then
+    if SAK.RankPolicy then SAK.RankPolicy.ShowSettings() end
+    return
+  elseif text == "bookdebug" then
+    if SAK.SpellBook then SAK.SpellBook.ShowDebugWindow()
+    else SAK.ShowDebugTextWindow("SpellBook", "Skills & More — Spellbook Debug", "Spellbook module not loaded.") end
+    return
+  elseif text == "debug" then
     SAK.ClassTrainer.ShowDebugWindow()
+    return
+  elseif text == "conflicts" then
+    SAK.Diagnostics.ShowWindow()
     return
   elseif text == "pet" then
     SAK.PetGrimoires.ShowSummaryWindow()
@@ -57,60 +91,6 @@ SlashCmdList.SKILLSALREADYKNOWN = function(text)
 
   SAK.ShowSummaryWindow()
 end
-
-local events = CreateFrame("Frame")
-for _, event in ipairs({
-  "ADDON_LOADED",
-  "BAG_UPDATE_DELAYED",
-  "GET_ITEM_INFO_RECEIVED",
-  "BANKFRAME_OPENED",
-  "BANKFRAME_CLOSED",
-  "GUILDBANKFRAME_OPENED",
-  "GUILDBANKFRAME_CLOSED",
-  "GUILDBANKBAGSLOTS_CHANGED",
-  "MERCHANT_SHOW",
-  "MERCHANT_UPDATE",
-  "PLAYER_LOGIN",
-  "PLAYER_LEVEL_UP",
-  "SPELLS_CHANGED",
-  "TRAINER_SHOW",
-  "TRAINER_UPDATE",
-  "UNIT_PET",
-}) do
-  pcall(events.RegisterEvent, events, event)
-end
-
-events:SetScript("OnEvent", function(_, event, addonName)
-  if event == "ADDON_LOADED" then
-    if addonName ~= "SkillsAlreadyKnown" and addonName ~= "Blizzard_TrainerUI" and addonName ~= "Blizzard_Merchant" and addonName ~= "Blizzard_GuildBankUI" and addonName ~= "EllesmereUIBags" then return end
-    SAK.EnsureDB()
-  end
-
-  if event == "PLAYER_LOGIN" and not loadedMessage then
-    loadedMessage = true
-    SAK.EnsureDB()
-    print("|cffffcc00SkillsAlreadyKnown:|r loaded. /sak")
-  end
-
-  SAK.ClassTrainer.Hook()
-  SAK.PetGrimoires.Hook()
-  SAK.Inventory.Hook()
-  if event == "PLAYER_LEVEL_UP" or event == "TRAINER_SHOW" or event == "TRAINER_UPDATE" then
-    SAK.ClassTrainer.MarkDirty()
-    C_Timer.After(0, SAK.Refresh)
-    C_Timer.After(0.05, SAK.Refresh)
-  end
-
-  if event == "MERCHANT_SHOW" or event == "MERCHANT_UPDATE" then
-    SAK.PetGrimoires.QueuePetSync()
-    C_Timer.After(0, SAK.PetGrimoires.Paint)
-    C_Timer.After(0.1, SAK.PetGrimoires.Paint)
-  elseif event == "SPELLS_CHANGED" or (event == "UNIT_PET" and addonName == "player") then
-    SAK.PetGrimoires.QueuePetSync()
-    C_Timer.After(0.6, SAK.PetGrimoires.Paint)
-  end
-
-  if event == "PLAYER_LOGIN" or event == "PLAYER_LEVEL_UP" or event == "GET_ITEM_INFO_RECEIVED" or event == "BAG_UPDATE_DELAYED" or event == "BANKFRAME_OPENED" or event == "GUILDBANKFRAME_OPENED" or event == "GUILDBANKBAGSLOTS_CHANGED" or event == "MERCHANT_SHOW" or event == "MERCHANT_UPDATE" or event == "SPELLS_CHANGED" or event == "UNIT_PET" then
-    SAK.Inventory.QueueRefresh()
-  end
-end)
+SAK.slashHandler = SlashCmdList.SKILLSALREADYKNOWN
+SLASH_SKILLSALREADYKNOWNCONFLICTS1 = "/samconflicts"
+SlashCmdList.SKILLSALREADYKNOWNCONFLICTS = function() SAK.Diagnostics.ShowWindow() end

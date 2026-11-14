@@ -13,11 +13,16 @@ local serviceTypes = {
   header = true,
 }
 
-local hooked
-local scrollBoxHooked
+local updateHooked
+local hookedFrame
+local hookedScrollBox
+local lastPaint = { rows = 0, matched = 0 }
+local paintedRows = setmetatable({}, { __mode = "k" })
 local cachedServices
 local servicesDirty = true
 local refreshQueued
+local initializerHooked
+local initializedRows = setmetatable({}, { __mode = "k" })
 
 local function getServiceInfo(index)
   if not GetTrainerServiceInfo then return end
@@ -53,11 +58,13 @@ local function buildVisibleServices()
   local out = {}
   if not GetNumTrainerServices then return out end
 
+  local nextProfessionStep = SAK.ProfessionTrainer and SAK.ProfessionTrainer.NextStepIndex()
   for index = 1, GetNumTrainerServices() do
     local name, subText, serviceType, levelReq = getServiceInfo(index)
     if name and serviceType ~= "header" then
       out[#out + 1] = {
         index = index,
+        professionStep = index == nextProfessionStep,
         name = name,
         subText = subText,
         serviceType = serviceType,
@@ -68,6 +75,7 @@ local function buildVisibleServices()
     end
   end
 
+  if SAK.RankAvailability then SAK.RankAvailability.SetServices(out) end
   return out
 end
 
@@ -93,6 +101,30 @@ end
 
 local function serviceLearnable(service)
   return service and service.serviceType == "available"
+end
+
+local function serviceOutline(service)
+  if not service or service.serviceType == "header" then return nil, "none" end
+  if service.serviceType == "used" then return SAK.TRAINER_OUTLINES.known, "known" end
+  if service.serviceType == "available" then return SAK.TRAINER_OUTLINES.available, "available" end
+  if service.serviceType ~= "unavailable" then return nil, "none" end
+  if service.professionStep then return SAK.TRAINER_OUTLINES.soon, "soon" end
+
+  local playerLevel = tonumber(UnitLevel("player")) or 0
+  local required = tonumber(service.levelReq) or 0
+  local nextEvenLevel = playerLevel + 2 - (playerLevel % 2)
+  if required > playerLevel and required <= nextEvenLevel then
+    return SAK.TRAINER_OUTLINES.soon, "soon"
+  end
+  return SAK.TRAINER_OUTLINES.unavailable, "unavailable"
+end
+
+local function serviceBadge(service)
+  if service and service.serviceType == "used" then return "known" end
+  local _, borderState = serviceOutline(service)
+  if borderState == "available" then return "new" end
+  if borderState == "soon" then return "next" end
+  if borderState == "unavailable" then return "notnow" end
 end
 
 local function playerSpellBookBanks()
@@ -206,22 +238,37 @@ local function serviceMatchesRow(service, rowText)
 end
 
 local function elementData(row)
-  if not (row and row.GetElementData) then return nil end
-  local ok, data = pcall(row.GetElementData, row)
-  if ok and type(data) == "table" then return data end
-  return nil
+  if not row then return nil end
+  local data
+  if row.GetElementData then
+    local ok, value = pcall(row.GetElementData, row)
+    if ok then data = value end
+  end
+  if type(data) ~= "table" then data = initializedRows[row] end
+  for _ = 1, 4 do
+    if type(data) ~= "table" then return nil end
+    if type(data.GetData) == "function" then
+      local ok, value = pcall(data.GetData, data)
+      if not ok then return nil end
+      data = value
+    elseif type(data.data) == "table" then
+      data = data.data
+    else
+      return data
+    end
+  end
 end
 
 local function elementDataIndex(row)
   local data = elementData(row)
   if not data then return nil end
-  return data.index or data.serviceIndex or data.trainerServiceIndex
+  return data.skillIndex or data.index or data.serviceIndex or data.trainerServiceIndex
 end
 
 local function findSpellID(data, depth)
   if type(data) ~= "table" or (depth or 0) > 3 then return nil end
 
-  for _, key in ipairs({ "spellID", "spellId", "spellIDLearned", "learnedSpellID", "learnedSpellId", "id" }) do
+  for _, key in ipairs({ "spellID", "spellId", "spellIDLearned", "learnedSpellID", "learnedSpellId" }) do
     local value = data[key]
     if type(value) == "number" and value > 0 then return value end
   end
@@ -284,6 +331,18 @@ local function resolveRowService(row, services, state)
   return service, rowText, rowSpellID
 end
 
+local function paintPurchaseAdvice(row, service)
+  local kind
+  if service and service.serviceType ~= "used" and SAK.RankPolicy and SAK.RankPolicy.PurchaseAdvice then
+    local _, class = UnitClass("player")
+    kind = SAK.RankPolicy.PurchaseAdvice(class, service.spellID, SAK.RankNumber(service.subText))
+  end
+  Visuals.PaintTrainerAdvice(row, kind)
+  if SAK.ContentTags then
+    SAK.ContentTags.PaintTrainer(row, service)
+  end
+end
+
 local function paintScrollBoxRow(row, services, state)
   if not row or (row.IsForbidden and row:IsForbidden()) then return end
 
@@ -296,27 +355,93 @@ local function paintScrollBoxRow(row, services, state)
   end
 
   local service = resolveRowService(row, services, state)
+  lastPaint.rows = lastPaint.rows + 1
+  if service then lastPaint.matched = lastPaint.matched + 1 end
   local stateName = serviceState(service)
   local learnable = serviceLearnable(service)
-  Visuals.PaintParts(name, sub, stateName)
-  Visuals.PaintOutline(row, learnable)
+  Visuals.PaintTrainerParts(name, sub, stateName)
+  local outlineColor, borderState = serviceOutline(service)
+  Visuals.PaintOutline(row, outlineColor ~= nil, outlineColor)
   Visuals.PaintLearnableBg(row, learnable)
+  Visuals.PaintSoonBg(row, borderState == "soon")
   Visuals.PaintKnownBg(row, stateName == "known")
   Visuals.PaintIconKnownOverlay(row, stateName == "known")
-  Visuals.PaintLearnableBadge(row, learnable)
+  Visuals.PaintTrainerBadge(row, serviceBadge(service))
+  paintPurchaseAdvice(row, service)
+  paintedRows[row] = { state = stateName or "normal", time = GetTime and GetTime() or 0 }
+end
+
+local function rowVisible(row)
+  if not row or (row.IsForbidden and row:IsForbidden()) then return false end
+  if row.IsVisible then return row:IsVisible() end
+  if row.IsShown then return row:IsShown() end
+  return true
+end
+
+local function forEachVisibleTrainerRow(callback)
+  local visited = {}
+  local function visit(row)
+    if not visited[row] and rowVisible(row) then
+      visited[row] = true
+      callback(row)
+    end
+  end
+  local scrollBox = ClassTrainerFrame and ClassTrainerFrame.ScrollBox
+  if scrollBox and scrollBox.ForEachFrame and scrollBox:IsVisible() then
+    scrollBox:ForEachFrame(visit)
+  end
+  -- Profession milestone buttons can live outside the scrolling recipe list.
+  visit(ClassTrainerFrame and ClassTrainerFrame.skillStepButton)
+  -- TrainerSpells hides Blizzard's scroll target and creates its own ScrollBox.
+  -- Both lists initialize rows through ClassTrainerFrame_InitServiceButton.
+  local extra = {}
+  for row in pairs(initializedRows) do
+    if not visited[row] and rowVisible(row) then extra[#extra + 1] = row end
+  end
+  table.sort(extra, function(a, b)
+    return (elementDataIndex(a) or math.huge) < (elementDataIndex(b) or math.huge)
+  end)
+  for _, row in ipairs(extra) do visit(row) end
 end
 
 local function paintScrollBoxRows()
+  if not ClassTrainerFrame then return end
+  if ClassTrainerFrame.IsShown and not ClassTrainerFrame:IsShown() then return end
+  local services = getVisibleServices()
+  lastPaint = { rows = 0, matched = 0, time = GetTime and GetTime() or 0 }
+  local state = { used = {}, lastPosition = 0 }
+  local ok, err = pcall(forEachVisibleTrainerRow, function(row) paintScrollBoxRow(row, services, state) end)
+  if not ok and SAK.Diagnostics then SAK.Diagnostics.Record("Trainer row paint error", err) end
+end
+
+function ClassTrainer.GetDiagnostics()
   local frame = ClassTrainerFrame
   local scrollBox = frame and frame.ScrollBox
-  if not (scrollBox and scrollBox.ForEachFrame and scrollBox:IsVisible()) then return end
-  local services = getVisibleServices()
-  local state = { used = {}, lastPosition = 0 }
-  pcall(scrollBox.ForEachFrame, scrollBox, function(row) paintScrollBoxRow(row, services, state) end)
+  return {
+    initializerHooked = initializerHooked == true,
+    updateHooked = updateHooked == true,
+    showHooked = frame ~= nil and hookedFrame == frame,
+    scrollHooked = scrollBox ~= nil and hookedScrollBox == scrollBox,
+    rowCallbacks = scrollBox ~= nil and scrollBox.sakHasRowCallbacks == true,
+    updateAvailable = type(ClassTrainerFrame_Update) == "function",
+    rows = lastPaint.rows, matched = lastPaint.matched, time = lastPaint.time,
+  }
+end
+
+local function colorOf(fontString)
+  if not (fontString and fontString.GetTextColor) then return "unknown" end
+  local r, g, b = fontString:GetTextColor()
+  if type(r) ~= "number" or type(g) ~= "number" or type(b) ~= "number" then return "unknown" end
+  return string.format("%.2f,%.2f,%.2f", r, g, b)
 end
 
 local function buildDebugText()
   local lines = {}
+  local info = ClassTrainer.GetDiagnostics()
+  lines[#lines + 1] = string.format(
+    "SAK trainer refresh: updateAvailable=%s updateHooked=%s showHooked=%s scrollHooked=%s rowCallbacks=%s lastRows=%s lastMatched=%s lastPaintTime=%s initializerHooked=%s",
+    tostring(info.updateAvailable), tostring(info.updateHooked), tostring(info.showHooked), tostring(info.scrollHooked),
+    tostring(info.rowCallbacks), tostring(info.rows), tostring(info.matched), tostring(info.time), tostring(info.initializerHooked))
   local learned, learnedTotal = scanPlayerSpellBook()
   local className, classFilename, classID
   if UnitClass then
@@ -347,7 +472,7 @@ local function buildDebugText()
   lines[#lines + 1] = string.format("SAK trainer services: visible=%s", tostring(#services))
   for _, service in ipairs(services) do
     lines[#lines + 1] = string.format(
-      "SAK trainer service: idx=%s spell=%s savedID=%s knownByScan=%s type=%s level=%s name='%s' display='%s'",
+      "SAK trainer service: idx=%s spell=%s savedID=%s knownByScan=%s type=%s level=%s name='%s' display='%s' nextProfessionStep=%s",
       tostring(service.index),
       tostring(service.spellID),
       tostring(service.spellID and learned.byID and learned.byID[tostring(service.spellID)]),
@@ -355,20 +480,23 @@ local function buildDebugText()
       tostring(service.serviceType),
       tostring(service.levelReq),
       tostring(service.name),
-      tostring(service.display)
+      tostring(service.display),
+      tostring(service.professionStep)
     )
   end
   lines[#lines + 1] = ""
 
   local frame = ClassTrainerFrame
   local scrollBox = frame and frame.ScrollBox
-  if not (scrollBox and scrollBox.ForEachFrame and scrollBox:IsVisible()) then
-    lines[#lines + 1] = "SkillsAlreadyKnown: no visible trainer ScrollBox."
+  if not frame then
+    lines[#lines + 1] = "Skills & More: no visible trainer ScrollBox."
     return table.concat(lines, "\n")
   end
 
   local state = { used = {}, lastPosition = 0 }
-  pcall(scrollBox.ForEachFrame, scrollBox, function(row)
+  local rowCount = 0
+  local ok, err = pcall(forEachVisibleTrainerRow, function(row)
+    rowCount = rowCount + 1
     local service, rowText, rowSpellID = resolveRowService(row, services, state)
     lines[#lines + 1] = string.format(
       "SAK trainer row: row='%s' rowSpell=%s -> idx=%s spell=%s savedID=%s knownByScan=%s type=%s level=%s display='%s'",
@@ -382,10 +510,24 @@ local function buildDebugText()
       tostring(service and service.levelReq),
       tostring(service and service.display)
     )
+    local name = row.name or row.Name or row.Text
+    local rawName = SAK.TextOf(name) or ""
+    local painted = paintedRows[row]
+    local _, borderState = serviceOutline(service)
+    lines[#lines + 1] = string.format(
+      "SAK trainer colors: expectedState=%s actualNameRGB=%s actualRequirementRGB=%s embeddedColor=%s lastPaintState=%s lastPaintTime=%s borderState=%s",
+      tostring(serviceState(service) or "normal"), colorOf(name), colorOf(row.subText or row.SubText),
+      tostring(rawName:find("|c%x%x%x%x%x%x%x%x") ~= nil),
+      tostring(painted and painted.state), tostring(painted and painted.time), borderState)
+    lines[#lines + 1] = "SAK trainer badge: expected=" .. tostring(serviceBadge(service))
   end)
+  if not ok then
+    lines[#lines + 1] = "SAK trainer debug scan failed: " .. tostring(err)
+    if SAK.Diagnostics then SAK.Diagnostics.Record("Trainer debug scan error", err) end
+  end
 
-  if #lines == 0 then
-    lines[#lines + 1] = "SkillsAlreadyKnown: trainer ScrollBox is visible, but no rows were found."
+  if rowCount == 0 then
+    lines[#lines + 1] = "Skills & More: trainer ScrollBox is visible, but no rows were found."
   end
 
   return table.concat(lines, "\n")
@@ -393,7 +535,7 @@ end
 
 function ClassTrainer.ShowDebugWindow()
   ClassTrainer.MarkDirty()
-  SAK.ShowDebugTextWindow("Trainer", "Skills Already Known Trainer Debug", buildDebugText(), buildDebugText)
+  SAK.ShowDebugTextWindow("Trainer", "Skills & More Trainer Debug", buildDebugText(), buildDebugText)
 end
 
 function ClassTrainer.Debug()
@@ -410,17 +552,27 @@ local function paintClassicRows()
     local subTextFrame = _G["ClassTrainerSkill" .. visible .. "SubText"]
     if button and button:IsShown() then
       local index = button:GetID()
-      local name, _, serviceType, levelReq = getServiceInfo(index)
+      local name, rankText, serviceType, levelReq = getServiceInfo(index)
       if name and serviceType ~= "header" then
         local state
         if serviceType == "used" then state = "known"
         elseif (tonumber(levelReq) or 0) > (UnitLevel("player") or 0) then state = "unavailable" end
-        Visuals.PaintParts(text, subTextFrame, state)
-        Visuals.PaintOutline(button, serviceType == "available")
+        Visuals.PaintTrainerParts(text, subTextFrame, state)
+        local service = {
+          serviceType = serviceType,
+          levelReq = levelReq,
+          professionStep = SAK.ProfessionTrainer and SAK.ProfessionTrainer.IsNextStep(index),
+        }
+        local outlineColor, borderState = serviceOutline(service)
+        Visuals.PaintOutline(button, outlineColor ~= nil, outlineColor)
         Visuals.PaintLearnableBg(button, serviceType == "available")
+        Visuals.PaintSoonBg(button, borderState == "soon")
         Visuals.PaintKnownBg(button, state == "known")
         Visuals.PaintIconKnownOverlay(button, state == "known")
-        Visuals.PaintLearnableBadge(button, serviceType == "available")
+        Visuals.PaintTrainerBadge(button, serviceBadge(service))
+        paintPurchaseAdvice(button, { serviceType = serviceType, spellID = getServiceSpellID(index), subText = rankText })
+      elseif SAK.ContentTags then
+        SAK.ContentTags.HideTrainer(button)
       end
     elseif button then
       Visuals.ClearRow(button)
@@ -469,27 +621,38 @@ local function hookScrollBoxRows(scrollBox)
 end
 
 function ClassTrainer.Hook()
-  if not hooked and type(ClassTrainerFrame_Update) == "function" then
-    hooksecurefunc("ClassTrainerFrame_Update", ClassTrainer.Refresh)
-    hooked = true
-  end
-
-  if ClassTrainerFrame and ClassTrainerFrame.HookScript and hooked ~= "show" then
-    ClassTrainerFrame:HookScript("OnShow", function()
-      C_Timer.After(0, ClassTrainer.Refresh)
-      C_Timer.After(0.05, ClassTrainer.Refresh)
+  if not initializerHooked and type(ClassTrainerFrame_InitServiceButton) == "function" then
+    hooksecurefunc("ClassTrainerFrame_InitServiceButton", function(row, data)
+      if not row or (row.IsForbidden and row:IsForbidden()) then return end
+      initializedRows[row] = data or {}
+      queueRefresh()
     end)
-    hooked = "show"
+    initializerHooked = true
+  end
+  -- The frame and legacy update function may become available independently.
+  -- Do not let an OnShow hook prevent a later update-function hook.
+  if not updateHooked and type(ClassTrainerFrame_Update) == "function" then
+    hooksecurefunc("ClassTrainerFrame_Update", queueRefresh)
+    updateHooked = true
   end
 
-  local scrollBox = ClassTrainerFrame and ClassTrainerFrame.ScrollBox
-  if scrollBox and not scrollBoxHooked then
-    scrollBoxHooked = true
+  local frame = ClassTrainerFrame
+  if frame and frame.HookScript and hookedFrame ~= frame then
+    frame:HookScript("OnShow", function()
+      ClassTrainer.MarkDirty()
+      queueRefresh()
+    end)
+    hookedFrame = frame
+  end
+
+  local scrollBox = frame and frame.ScrollBox
+  if scrollBox and hookedScrollBox ~= scrollBox then
+    hookedScrollBox = scrollBox
     hookScrollBoxRows(scrollBox)
-    if scrollBox.Update and not scrollBox.sakHasRowCallbacks then
-      hooksecurefunc(scrollBox, "Update", function()
-        queueRefresh()
-      end)
+    -- Initialization callbacks do not cover every repaint of existing rows.
+    -- Run after Update and defer our paint until other synchronous hooks finish.
+    if type(scrollBox.Update) == "function" then
+      hooksecurefunc(scrollBox, "Update", queueRefresh)
     end
   end
 end

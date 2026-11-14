@@ -1,0 +1,640 @@
+SKILLS ALREADY KNOWN — RECHERCHE ECO FOREVER
+Recherche du 12 novembre 2026. Guides Wowhead Forever, patch affiche 1.60.1.
+
+PERIMETRE ET ETAT
+Inventaire des candidats cites dans les sections d'apprentissage des guides des
+9 classes ci-dessous : 28 profils (Farouche DPS et tank separes).
+Ce catalogue couvre les recommandations trouvees, pas une preuve d'exhaustivite
+de tous les sorts du client ni une politique validee pour chaque build hybride.
+Ce catalogue n'est pas charge comme regles executables. La selection active
+limitee est documentee en fin de fichier et definie dans RankPolicy.lua.
+Les noms anglais servent de references documentaires. Les ID/rangs du client
+Forever et les traductions restent a relever avant toute integration.
+Une ligne du CSV peut regrouper plusieurs sorts. Les 261 associations sort/profil
+comprennent des exclusions et des cas a verifier, pas 261 recommandations actives.
+132 libelles distincts, dont un libelle generique non executable pour le Mage.
+La correction Apaisement ajoute un groupe : 81 groupes au total dans le CSV.
+
+LECTURE
+- Rang 1 suffisant : seulement pour l'usage decrit pendant le leveling.
+- Rangs reportables : les rangs suivants apportent quelque chose ; achat differable.
+- Optionnel : le sort peut etre utile en dehors du parcours de leveling indique.
+- A verifier : contradiction du guide, donnees incompletes ou recommandation risquee.
+- Grimoires : achat marchand distinct du panneau des maitres de classe.
+- Choisir une spe ne suffit pas toujours : groupe, tanking/soin secondaire, PvP,
+  arme utilisee et demon actif peuvent modifier la recommandation.
+- Les defensifs, interruptions, controles et soins d'urgence ne deviennent pas ECO
+  automatiquement parce qu'un guide les place dans une liste optionnelle.
+- Downranking pour economiser de la mana n'implique pas de ne pas acheter les rangs.
+- Les niveaux des tableaux Wowhead peuvent etre ceux du dernier rang : ne pas les
+  reutiliser comme niveau du premier apprentissage.
+
+POLITIQUE PROPOSEE POUR LA FUTURE GUI
+Classe detectee automatiquement ; spe cible choisie par le joueur et conservee
+par personnage. Distinguer Farouche DPS / tank et les parcours hybrides.
+Autoriser « Je ne sais pas / Plus tard » sans activer de recommandations.
+Demander le contexte solo / donjons et les roles secondaires, avec PvP optionnel.
+Presenter le choix apres connexion hors combat, une seule fois apres reponse ;
+ne pas le redemander a chaque reload. Conserver une demande differee non bloquante.
+Rendre choix et contexte modifiables dans la GUI, puis rafraichir les badges.
+Expliquer chaque conseil dans l'infobulle ; ECO reste un conseil, sans achat
+automatique, masquage ni modification des prix/services.
+Le choix de profil et /sak settings sont implementes. Le catalogue complet et
+la distinction explicite solo/donjons restent a integrer apres validation.
+
+INDEX — RANG 1 SUFFISANT POUR UN USAGE PRECIS
+- druid / feral: Entangling Roots. Leveling Farouche; conserver le controle au rang 1.
+- druid / feral: Entangling Roots. Farouche tank; garder les premiers rangs; duree/fiabilite du controle a comparer.
+- paladin / retribution: Devotion Aura | Lay on Hands. Leveling Vindicte du guide, pas tank ni soin; rangs superieurs peuvent avoir des benefices.
+- paladin / retribution: Blessing of Sacrifice. Rang 1 pour usage anti-controle PvP; peut etre reporte entierement en solo.
+- priest / discipline: Resurrection | Psychic Scream | Mind Soothe | Shackle Undead. Rang 1 permet un usage de base; les rangs superieurs restent utiles, notamment cibles/duree/PvP.
+- warlock / affliction: Drain Soul. Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+- warlock / affliction: Curse of Recklessness. Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+- warlock / affliction: Searing Pain. Finisher rapide optionnel pour le parcours Affliction seulement.
+- warlock / demonology: Drain Soul. Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+- warlock / demonology: Curse of Recklessness. Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+- warlock / destruction: Drain Soul. Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+- warlock / destruction: Curse of Recklessness. Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+
+CAS DISTINCT : Earth Shock rang 1 suffit pour interrompre, pas pour les degats.
+
+LISTE PAR CLASSE / SPECIALISATION / USAGE
+Les conditions ci-dessous sont une synthese et une proposition de tri SAK ;
+les regles d'exclusion et de prudence sont nos choix, pas des citations du guide.
+
+
+DRUID / BALANCE / DPS
+Source : https://www.wowhead.com/forever/guide/classes/druid/balance/dps-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Swipe, Demoralizing Roar, Enrage
+  Rangs : futurs
+  Condition : Utiles au parcours ours avant 40; reportables apres passage effectif au gameplay Moonkin sans ours.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Bash, Dash, Tranquility
+  Rangs : selon_usage
+  Condition : Utilitaire; conserver si interruption, fuite ou soutien de groupe. Pas ECO automatique.
+  Statut : source
+
+DRUID / FERAL / DPS
+Source : https://www.wowhead.com/forever/guide/classes/druid/feral/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Abolish Poison, Track Humanoids, Cower, Soothe Animal, Starfire
+  Rangs : tous
+  Condition : Farouche DPS; poison selon contenu; Cower surtout inutile solo; pas une regle Equilibre ou soin.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Entangling Roots
+  Rangs : >1
+  Condition : Leveling Farouche; conserver le controle au rang 1.
+  Statut : source
+
+DRUID / FERAL / TANK
+Source : https://www.wowhead.com/forever/guide/classes/druid/feral/tank-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Abolish Poison, Track Humanoids, Cower, Soothe Animal, Starfire, Tranquility, Hurricane
+  Rangs : tous
+  Condition : Farouche tank; usages hors forme et soutien de groupe peuvent justifier l'achat.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Entangling Roots
+  Rangs : >1
+  Condition : Farouche tank; garder les premiers rangs; duree/fiabilite du controle a comparer.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Hibernate
+  Rangs : >1
+  Condition : Premier rang utile; rangs suivants reportables, pas identiques en duree/cibles.
+  Statut : source
+
+DRUID / RESTORATION / SOIN
+Source : https://www.wowhead.com/forever/guide/classes/druid/restoration/healer-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Tranquility
+  Rangs : superieurs
+  Condition : Liste optionnelle mais recommande dans rotation de soin de groupe; ne pas marquer automatiquement.
+  Statut : a_verifier
+
+  A verifier : pas de marquage automatique
+  Sorts : Barkskin
+  Rangs : 1
+  Condition : Classe optionnel par le guide mais defensif de securite; exclure du marquage automatique.
+  Statut : a_verifier
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Bash, Dash, Faerie Fire, Hibernate, Hurricane, Moonfire, Nature's Grasp, Starfire, Wrath
+  Rangs : superieurs
+  Condition : Restauration soin; acheter les degats si leveling solo. Le guide cite des rangs tardifs, pas une preuve que le rang 1 suffit.
+  Statut : source
+
+HUNTER / BEAST-MASTERY / DPS
+Source : https://www.wowhead.com/forever/guide/classes/hunter/beast-mastery/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Aspect of the Monkey, Track Humanoids, Eagle Eye, Flare
+  Rangs : selon_usage
+  Condition : Pistage utile en quetes; Flare PvP; Monkey survie/melee, notamment Survie. Aucun classement general sur la seule specialisation.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Track Beasts
+  Rangs : 1
+  Condition : Le guide le cite comme facultatif mais souligne l'utilite des pistages en leveling.
+  Statut : source
+
+HUNTER / MARKSMANSHIP / DPS
+Source : https://www.wowhead.com/forever/guide/classes/hunter/marksmanship/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Aspect of the Monkey, Track Humanoids, Eagle Eye, Flare
+  Rangs : selon_usage
+  Condition : Pistage utile en quetes; Flare PvP; Monkey survie/melee, notamment Survie. Aucun classement general sur la seule specialisation.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Track Beasts
+  Rangs : 1
+  Condition : Pistage utile en quetes; report seulement si le joueur ne l'utilise pas.
+  Statut : source
+
+HUNTER / SURVIVAL / DPS
+Source : https://www.wowhead.com/forever/guide/classes/hunter/survival/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Aspect of the Monkey, Track Humanoids, Eagle Eye, Flare
+  Rangs : selon_usage
+  Condition : Pistage utile en quetes; Flare PvP; Monkey survie/melee, notamment Survie. Aucun classement general sur la seule specialisation.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Track Beasts
+  Rangs : 1
+  Condition : Pistage utile en quetes; report seulement si le joueur ne l'utilise pas.
+  Statut : source
+
+MAGE / ARCANE / DPS
+Source : https://www.wowhead.com/forever/guide/classes/mage/arcane/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Dampen Magic, Amplify Magic, Slow Fall, Mana Shield, Fire Ward, Frost Ward, Scorch
+  Rangs : selon_usage
+  Condition : Liste optionnelle du guide; protections et chute lente utiles selon zone; Scorch a conserver si build/debuff le demande.
+  Statut : source
+
+MAGE / FIRE / DPS
+Source : https://www.wowhead.com/forever/guide/classes/mage/fire/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Dampen Magic, Amplify Magic, Slow Fall, Mana Shield, Fire Ward, Frost Ward, Scorch
+  Rangs : selon_usage
+  Condition : Liste optionnelle du guide; protections et chute lente utiles selon zone; Scorch a conserver si build/debuff le demande.
+  Statut : source
+
+MAGE / FROST / DPS
+Source : https://www.wowhead.com/forever/guide/classes/mage/frost/dps-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Non-Frost damage spells
+  Rangs : superieurs
+  Condition : Conseil general du guide seulement; exclure toute regle generique: Fire Blast et Arcane Explosion restent utiles.
+  Statut : a_verifier
+
+  Facultatif selon usage / role
+  Sorts : Dampen Magic, Amplify Magic
+  Rangs : tous
+  Condition : Faible priorite pendant le leveling Givre.
+  Statut : source
+
+PALADIN / HOLY / SOIN
+Source : https://www.wowhead.com/forever/guide/classes/paladin/holy/healer-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Seal of Fury, Righteous Fury, Seal of Justice, Turn Undead
+  Rangs : selon_usage
+  Condition : Sacre soin; tanking hybride, generation de menace et controle changent les priorites.
+  Statut : source
+
+PALADIN / PROTECTION / TANK
+Source : https://www.wowhead.com/forever/guide/classes/paladin/protection/tank-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Seal of Justice, Shadow Resistance Aura, Frost Resistance Aura, Fire Resistance Aura
+  Rangs : selon_usage
+  Condition : Resistances selon contenu; aucune extrapolation a une ligne vide du tableau.
+  Statut : source
+
+PALADIN / RETRIBUTION / DPS
+Source : https://www.wowhead.com/forever/guide/classes/paladin/retribution/dps-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Blessing of Protection, Blessing of Freedom, Purify, Cleanse, Divine Protection
+  Rangs : superieurs
+  Condition : Prose rang 1 seulement mais tableau parfois tous; verifier rangs reels et effets avant politique.
+  Statut : a_verifier
+
+  Depend du niveau / build
+  Sorts : Seal of Righteousness
+  Rangs : intermediaires
+  Condition : Le guide recommande de le maintenir avant 20 puis a nouveau avec Unsealed Wrath; pas de skip definitif.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Seal of Fury
+  Rangs : tous
+  Condition : Seulement si aucun tanking prevu.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Seal of Justice, Concentration Aura, Turn Undead, Holy Wrath
+  Rangs : tous
+  Condition : Leveling solo Vindicte; utilitaire ou contenu morts-vivants/PvP a prendre en compte.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Exorcism
+  Rangs : superieurs
+  Condition : A maintenir si combats contre morts-vivants ou demons.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Devotion Aura, Lay on Hands
+  Rangs : >1
+  Condition : Leveling Vindicte du guide, pas tank ni soin; rangs superieurs peuvent avoir des benefices.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Blessing of Sacrifice
+  Rangs : >1
+  Condition : Rang 1 pour usage anti-controle PvP; peut etre reporte entierement en solo.
+  Statut : source
+
+PRIEST / DISCIPLINE / SOIN
+Source : https://www.wowhead.com/forever/guide/classes/priest/discipline/healer-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Smite, Holy Fire
+  Rangs : intermediaires
+  Condition : Report de certains rangs pendant phase baguette avant environ 40; reevaluer ensuite.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Resurrection, Psychic Scream, Mind Soothe, Shackle Undead
+  Rangs : >1
+  Condition : Rang 1 permet un usage de base; les rangs superieurs restent utiles, notamment cibles/duree/PvP.
+  Statut : source
+
+PRIEST / HOLY / SOIN
+Source : https://www.wowhead.com/forever/guide/classes/priest/holy/healer-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Levitate
+  Rangs : 1
+  Condition : Utilitaire; ce sort n'est pas une economie de rangs multiples.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Resurrection, Devouring Plague, Mind Control, Shadow Word: Death
+  Rangs : superieurs
+  Condition : Soin en groupe; les degats peuvent compter en solo. Ne pas marquer le premier achat de Resurrection.
+  Statut : source
+
+PRIEST / SHADOW / DPS
+Source : https://www.wowhead.com/forever/guide/classes/priest/shadow/dps-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Smite, Holy Fire
+  Rangs : futurs
+  Condition : Une fois la rotation Ombre operationnelle; ne pas supprimer les outils utiles des premiers niveaux.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Mind Control, Resurrection, Fade, Shackle Undead, Divine Spirit, Greater Heal
+  Rangs : superieurs
+  Condition : Report possible en leveling Ombre; capacite sur cibles de haut niveau, menace, soin/groupe a verifier. Pas equivalence de tous les rangs.
+  Statut : source
+
+ROGUE / ASSASSINATION / DPS
+Source : https://www.wowhead.com/forever/guide/classes/rogue/assassination/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Pick Pocket, Backstab, Gouge, Expose Armor, Garrote, Feint, Rupture, Distract, Detect Traps, Cheap Shot, Kidney Shot, Disarm Trap, Blind, Ambush
+  Rangs : selon_usage
+  Condition : Liste large du guide a trier: dagues/build pour Backstab; menace pour Feint; controles a conserver; ne pas activer globalement.
+  Statut : a_verifier
+
+ROGUE / COMBAT / DPS
+Source : https://www.wowhead.com/forever/guide/classes/rogue/combat/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Pick Pocket, Backstab, Gouge, Expose Armor, Garrote, Feint, Rupture, Distract, Detect Traps, Cheap Shot, Kidney Shot, Disarm Trap, Blind, Ambush
+  Rangs : selon_usage
+  Condition : Liste large du guide a trier: dagues/build pour Backstab; menace pour Feint; controles a conserver; ne pas activer globalement.
+  Statut : a_verifier
+
+ROGUE / SUBTLETY / DPS
+Source : https://www.wowhead.com/forever/guide/classes/rogue/subtlety/dps-leveling-tips
+
+  A conserver dans ce profil
+  Sorts : Ambush
+  Rangs : utilises
+  Condition : Absente de la liste optionnelle Finesse: ne pas extrapoler Combat/Assassinat.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Pick Pocket, Backstab, Gouge, Expose Armor, Garrote, Feint, Rupture, Distract, Detect Traps, Cheap Shot, Kidney Shot, Disarm Trap, Blind
+  Rangs : selon_usage
+  Condition : Liste large du guide a trier: dagues/build pour Backstab; menace pour Feint; controles a conserver; ne pas activer globalement.
+  Statut : a_verifier
+
+SHAMAN / ELEMENTAL / DPS
+Source : https://www.wowhead.com/forever/guide/classes/shaman/elemental/dps-leveling-tips
+
+  Facultatif selon usage / role
+  Sorts : Frostbrand Weapon, Frost Resistance Totem, Far Sight, Fire Resistance Totem, Nature Resistance Totem, Windwall Totem
+  Rangs : selon_usage
+  Condition : Resistances selon zone/groupe; Frostbrand selon PvP; pas de skip si besoin specifique.
+  Statut : source
+
+  Rang 1 pour un usage seulement, pas pour tous les degats
+  Sorts : Earth Shock
+  Rangs : 1 pour interruption
+  Condition : Le rang 1 est conseille pour interrompre a faible cout; cela ne rend PAS les rangs de degats facultatifs.
+  Statut : source
+
+SHAMAN / ENHANCEMENT / DPS
+Source : https://www.wowhead.com/forever/guide/classes/shaman/enhancement/dps-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Call of the Elements, Call of the Ancestors, Call of the Spirits, Totemic Call
+  Rangs : selon_usage
+  Condition : Cites optionnels; verifier disponibilite et cout dans client Forever; Rappel totemique peut economiser la mana.
+  Statut : a_verifier
+
+SHAMAN / RESTORATION / SOIN
+Source : https://www.wowhead.com/forever/guide/classes/shaman/restoration/healer-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Lesser Healing Wave
+  Rangs : superieurs
+  Condition : Le guide le classe optionnel mais soin d'urgence utile; pas de marquage automatique sur role soin.
+  Statut : a_verifier
+
+  Facultatif selon usage / role
+  Sorts : Frostbrand Weapon, Frost Resistance Totem, Far Sight, Fire Resistance Totem, Nature Resistance Totem, Windwall Totem
+  Rangs : selon_usage
+  Condition : Resistances selon zone/groupe; Frostbrand selon PvP; pas de skip si besoin specifique.
+  Statut : source
+
+WARLOCK / AFFLICTION / DPS
+Source : https://www.wowhead.com/forever/guide/classes/warlock/affliction/dps-leveling-tips
+
+  Grimoires selon demon utilise
+  Sorts : Torment, Consume Shadows, Suffering, Lash of Pain, Seduction
+  Rangs : selon_demon
+  Condition : Tourment pendant tanking du Marcheur; soin si demon principal; Souffrance AoE; Fouet si Sayaad; Seduction controle.
+  Statut : source
+
+  Grimoires facultatifs
+  Sorts : Soothing Kiss, Lesser Invisibility
+  Rangs : selon_usage
+  Condition : Grimoires demon: scope marchand distinct du maitre de classe.
+  Statut : source
+
+  Achat reportable pendant le leveling
+  Sorts : Curse of Weakness, Drain Mana, Detect Invisibility, Subjugate Demon, Rain of Fire, Soul Fire
+  Rangs : futurs
+  Condition : Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique.
+  Statut : source
+
+  Achat reportable pendant le leveling
+  Sorts : Create Firestone
+  Rangs : futurs
+  Condition : Faible apport Affliction; guide privilegie Spellstone a partir de 36.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Curse of Tongues, Health Funnel, Unending Breath, Ritual of Summoning, Eye of Kilrogg, Sense Demons, Banish, Shadow Ward
+  Rangs : selon_usage
+  Condition : Casting adverse/PvP; soin demon; quetes sous-marines; donjons et controle: condition par usage, pas par seule spe.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Drain Soul
+  Rangs : >1
+  Condition : Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Curse of Recklessness
+  Rangs : >1
+  Condition : Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Searing Pain
+  Rangs : >1
+  Condition : Finisher rapide optionnel pour le parcours Affliction seulement.
+  Statut : source
+
+WARLOCK / DEMONOLOGY / DPS
+Source : https://www.wowhead.com/forever/guide/classes/warlock/demonology/dps-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Create Firestone
+  Rangs : futurs apres 36
+  Condition : Remplacee par Spellstone dans le parcours presente.
+  Statut : source
+
+  Depend du niveau / build
+  Sorts : Immolate
+  Rangs : rangs apres 20
+  Condition : Le guide maintient les premiers rangs; suivants surtout utiles en pulls individuels.
+  Statut : source
+
+  Grimoires selon demon utilise
+  Sorts : Torment, Consume Shadows, Suffering, Lash of Pain, Seduction
+  Rangs : selon_demon
+  Condition : Tourment pendant tanking du Marcheur; soin si demon principal; Souffrance AoE; Fouet si Sayaad; Seduction controle.
+  Statut : source
+
+  Grimoires facultatifs
+  Sorts : Soothing Kiss, Lesser Invisibility
+  Rangs : selon_usage
+  Condition : Grimoires demon: scope marchand distinct du maitre de classe.
+  Statut : source
+
+  Achat reportable pendant le leveling
+  Sorts : Curse of Weakness, Drain Mana, Detect Invisibility, Subjugate Demon, Rain of Fire, Soul Fire
+  Rangs : futurs
+  Condition : Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Curse of Tongues, Health Funnel, Unending Breath, Ritual of Summoning, Eye of Kilrogg, Sense Demons, Banish, Shadow Ward
+  Rangs : selon_usage
+  Condition : Casting adverse/PvP; soin demon; quetes sous-marines; donjons et controle: condition par usage, pas par seule spe.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Shadow Bolt
+  Rangs : superieurs
+  Condition : Ouverture possible; filler du parcours repose sur Drain Life/Searing Pain; pas regle Destruction.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Drain Soul
+  Rangs : >1
+  Condition : Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Curse of Recklessness
+  Rangs : >1
+  Condition : Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+  Statut : source
+
+WARLOCK / DESTRUCTION / DPS
+Source : https://www.wowhead.com/forever/guide/classes/warlock/destruction/dps-leveling-tips
+
+  Depend du niveau / build
+  Sorts : Create Firestone, Create Spellstone
+  Rangs : selon_build
+  Condition : Spellstone au parcours solo apres 36; Firestone redevient utile au parcours donjons Incinerate vers 40.
+  Statut : source
+
+  Depend du niveau / build
+  Sorts : Incinerate
+  Rangs : selon_build
+  Condition : Guide l'associe au build donjons; rang initial lie au talent, pas forcement achat du trainer.
+  Statut : source
+
+  Grimoires selon demon utilise
+  Sorts : Torment, Consume Shadows, Suffering, Lash of Pain, Seduction
+  Rangs : selon_demon
+  Condition : Tourment pendant tanking du Marcheur; soin si demon principal; Souffrance AoE; Fouet si Sayaad; Seduction controle.
+  Statut : source
+
+  Grimoires selon demon utilise
+  Sorts : Firebolt, Blood Pact, Fire Shield
+  Rangs : selon_demon
+  Condition : Utiles pour le diablotin en donjon; ne pas acheter pour un demon jamais utilise.
+  Statut : source
+
+  Grimoires facultatifs
+  Sorts : Soothing Kiss, Lesser Invisibility
+  Rangs : selon_usage
+  Condition : Grimoires demon: scope marchand distinct du maitre de classe.
+  Statut : source
+
+  Achat reportable pendant le leveling
+  Sorts : Curse of Weakness, Drain Mana, Detect Invisibility, Subjugate Demon, Rain of Fire, Soul Fire
+  Rangs : futurs
+  Condition : Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Curse of Tongues, Health Funnel, Unending Breath, Ritual of Summoning, Eye of Kilrogg, Sense Demons, Banish, Shadow Ward
+  Rangs : selon_usage
+  Condition : Casting adverse/PvP; soin demon; quetes sous-marines; donjons et controle: condition par usage, pas par seule spe.
+  Statut : source
+
+  Facultatif selon usage / role
+  Sorts : Searing Pain
+  Rangs : superieurs
+  Condition : Option PvP; ne pas copier cette regle en Demonologie avec Demonic Brand.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Drain Soul
+  Rangs : >1
+  Condition : Pour generation de fragments en fin de combat pendant leveling; reevaluer usages de degats.
+  Statut : source
+
+  Rang 1 suffisant pour l'usage indique
+  Sorts : Curse of Recklessness
+  Rangs : >1
+  Condition : Pour empecher la fuite ou retirer l'effet de Fear; premier achat lui-meme situationnel.
+  Statut : source
+
+WARRIOR / ARMS / DPS
+Source : https://www.wowhead.com/forever/guide/classes/warrior/arms/dps-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Thunder Clap, Hamstring, Demoralizing Shout
+  Rangs : selon_usage
+  Condition : Liste optionnelle contredite partiellement par rotation/survie; pas ECO automatique.
+  Statut : a_verifier
+
+  Facultatif selon usage / role
+  Sorts : Mocking Blow
+  Rangs : superieurs
+  Condition : Hors tanking; conserver si besoin de reprise ponctuelle.
+  Statut : source
+
+WARRIOR / FURY / DPS
+Source : https://www.wowhead.com/forever/guide/classes/warrior/fury/dps-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Cleave
+  Rangs : 2-5
+  Condition : Le guide cite cette plage; verifier coherence avec build et besoins AoE.
+  Statut : a_verifier
+
+  Facultatif selon usage / role
+  Sorts : Slam
+  Rangs : tous
+  Condition : Parcours Fureur du guide; ne pas appliquer a Armes utilisant Improved Slam.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Mocking Blow
+  Rangs : 2-5
+  Condition : Le guide donne explicitement cette plage; conserver le premier rang si utile.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Thunder Clap
+  Rangs : 3-6
+  Condition : Conserver les rangs inferieurs; ne signifie pas rang 1 suffisant.
+  Statut : source
+
+WARRIOR / PROTECTION / TANK
+Source : https://www.wowhead.com/forever/guide/classes/warrior/protection/tank-leveling-tips
+
+  A verifier : pas de marquage automatique
+  Sorts : Disarm, Intimidating Shout, Pummel
+  Rangs : selon_usage
+  Condition : Cites optionnels, mais desarmement/fuite/interruption utiles; exclure du marquage automatique.
+  Statut : a_verifier
+
+  Facultatif selon usage / role
+  Sorts : Slam, Whirlwind
+  Rangs : selon_usage
+  Condition : Parcours Protection bouclier; pas regle DPS.
+  Statut : source
+
+  Rangs superieurs reportables (pas equivalence des rangs)
+  Sorts : Overpower
+  Rangs : 2-3
+  Condition : Plage explicite du guide; usages de posture/build a confirmer.
+  Statut : source
+
+CORRECTION APRES CONTROLE DE LA FICHE DE SORT (12 novembre 2026)
+Apaisement / Mind Soothe (453) : le guide Discipline presente le rang 1 comme
+suffisant, mais la fiche de sort Forever limite les cibles au niveau 40.
+La ligne du catalogue est donc a verifier selon les cibles. Aucune regle ECO
+automatique pour ce sort. Source :
+https://www.wowhead.com/forever/spell=453/mind-soothe
+
+IMPLEMENTATION INITIALE
+RankPolicy.lua retient 10 ancres de rang 1 pour une premiere politique prudente.
+La selection de profil est implementee dans /sak settings. La recherche reste
+un inventaire documentaire ; la plupart des sorts optionnels ne sont pas actifs.

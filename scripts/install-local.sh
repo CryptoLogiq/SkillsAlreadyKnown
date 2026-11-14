@@ -41,6 +41,9 @@ printf 'Source: %s\nTarget: %s\n' "$root" "$target"
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
 
+# Generate into staging so --dry-run never changes the working tree.
+python3 "$root/scripts/generate-patchnotes.py" --output "$stage/Patchnotes.lua"
+
 rsync -a \
   --exclude '.git' \
   --exclude '.github' \
@@ -49,6 +52,7 @@ rsync -a \
   --exclude '.pkgmeta' \
   --exclude 'AGENTS.md' \
   --exclude 'CONTRIBUTING.md' \
+  --exclude 'patchnote' \
   --exclude 'scripts' \
   --exclude 'release' \
   --exclude 'releases' \
@@ -63,17 +67,23 @@ rsync -a \
   --exclude '*.tar.gz' \
   "$root/" "$stage/"
 
+mkdir -p "$stage/data"
+mv "$stage/Patchnotes.lua" "$stage/data/Patchnotes.lua"
+
 # Give the development copy its own TOC, namespace, saved variables and asset paths.
 # The source and published package keep their original names.
 python3 - "$stage" "$addon" "$dev_addon" <<'PYDEV'
 from pathlib import Path
 import sys
 stage, addon, dev_addon = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
-for path in stage.glob("*.lua"):
+for path in stage.rglob("*.lua"):
+    # Transform addon-owned modules and nested data, never vendored libraries.
+    if path.relative_to(stage).parts[0] == "libs":
+        continue
     path.write_text(path.read_text().replace(addon, dev_addon))
 toc = stage / (addon + ".toc")
 text = toc.read_text().replace(addon, dev_addon)
-text = text.replace("## Title: Skills Already Known", "## Title: Skills Already Known [DEV]")
+text = text.replace("## Title: Skills & More", "## Title: Skills & More [DEV]")
 (stage / (dev_addon + ".toc")).write_text(text)
 toc.unlink()
 PYDEV

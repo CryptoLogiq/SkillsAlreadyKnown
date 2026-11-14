@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Preserve upstream library bytes and formatting verbatim.
+libs/** -text -whitespace

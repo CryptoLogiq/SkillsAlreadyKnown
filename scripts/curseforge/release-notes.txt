@@ -1,0 +1,29 @@
+Version 0.4.0
+
+Skills Already Known is now Skills & More — By CryptoLogiq.
+The main command is now /sam.
+
+NEW FEATURES
+
+• Trainer markers: NEW +, learned check, NEXT and NOT NOW, with colored outlines and an optional NEW + glow.
+• Spellbook rank markers: BEST, LOW and BUY NEW RANK.
+• Role-based ECO and OPTIONAL training advice, with explanations in spell tooltips.
+• RECENT markers and a saved list of your latest learned spells, talents and recipes. First use can highlight known spells from your latest accessible level tier.
+• ALREADY KNOWN markers for learned recipes in bags and group or raid loot-roll windows.
+• Class-appropriate role and specialization choices, confirmed before advice becomes active.
+• Specialization summaries, advantages, drawbacks and leveling recommendations.
+• Role labels, LEVELING recommendations and selected PVP / PVE PVP markers.
+• Purchase advice, usage markers and RECENT in the TrainerSpells class list where space allows.
+• Separate display zones and controls for icons, outlines, text and backgrounds.
+• A minimap button, HidingBar / Titan Panel launcher, reset confirmations and in-game patchnotes.
+
+BUG FIXES
+
+• Unlearned and future-level ranks no longer cause incorrect LOW markers.
+• Eligible unranked spells can receive OPTIONAL advice, including Eye of Kilrogg.
+• Spellbook markers hide when switching to another addon's tab.
+• Specialization labels remain recognized when DarkMode recolors titles.
+• TrainerSpells list markers follow the correct spells while scrolling.
+• The next profession training step shows NEXT with its yellow background.
+• Talent usage markers and RECENT sit below icons to keep their images and spent points visible.
+• Reset and first-use confirmation buttons work correctly; dismissing the first-use window no longer repeatedly reopens it during play.

@@ -10,6 +10,7 @@ ignore:
   - .pkgmeta
   - AGENTS.md
   - CONTRIBUTING.md
+  - patchnote
   - scripts
   - release
   - releases

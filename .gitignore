@@ -29,3 +29,7 @@ WTF/
 Cache/
 Logs/
 Errors/
+
+# Local third-party research data (not redistributable)
+scripts/research/pets-trainerspells-local/
+scripts/research/trainerspells-local/

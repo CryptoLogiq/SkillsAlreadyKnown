@@ -207,7 +207,8 @@ function PetGrimoires.ItemInfoFromLink(itemLink)
   local tooltip = SAK.EnsureScanTooltip()
   tooltip:ClearLines()
   if tooltip.SetHyperlink then
-    local ok = pcall(tooltip.SetHyperlink, tooltip, itemLink)
+    local ok, err = pcall(tooltip.SetHyperlink, tooltip, itemLink)
+    if not ok and SAK.Diagnostics then SAK.Diagnostics.Record("Item tooltip scan error", err) end
     if not ok and cached then return cached end
   elseif cached then
     return cached
@@ -343,6 +344,7 @@ local function tooltipHasLine(tooltip, expected)
 end
 
 local function enhanceMerchantPetTooltip(tooltip, index)
+  if SAK.DisplayEnabled and not SAK.DisplayEnabled("text") then return end
   if not (tooltip and tooltip.AddLine and index) then return end
   local info = merchantPetGrimoire(index)
   if not info then return end
@@ -494,7 +496,7 @@ end
 
 function PetGrimoires.ShowDebugWindow()
   PetGrimoires.SyncActivePetSpells()
-  SAK.ShowDebugTextWindow("Pet", "Skills Already Known Pet Debug", buildMerchantDebugText(), function()
+  SAK.ShowDebugTextWindow("Pet", "Skills & More Pet Debug", buildMerchantDebugText(), function()
     PetGrimoires.SyncActivePetSpells()
     return buildMerchantDebugText()
   end)
@@ -518,11 +520,11 @@ end
 
 function PetGrimoires.ShowSummaryWindow()
   PetGrimoires.Paint()
-  SAK.ShowDebugTextWindow("PetSummary", "Skills Already Known Pet Summary", PetGrimoires.SummaryText(), PetGrimoires.SummaryText)
+  SAK.ShowDebugTextWindow("PetSummary", "Skills & More Pet Summary", PetGrimoires.SummaryText(), PetGrimoires.SummaryText)
 end
 
 function PetGrimoires.PrintSummary()
-  SAK.ShowDebugTextWindow("PetSummary", "Skills Already Known Pet Summary", PetGrimoires.SummaryText(), PetGrimoires.SummaryText)
+  SAK.ShowDebugTextWindow("PetSummary", "Skills & More Pet Summary", PetGrimoires.SummaryText(), PetGrimoires.SummaryText)
 end
 
 function PetGrimoires.Hook()

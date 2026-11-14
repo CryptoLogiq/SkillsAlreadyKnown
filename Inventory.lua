@@ -55,7 +55,12 @@ local function paintItemButton(button, itemLink, location)
   if not itemLink then return end
 
   local kind, info = classifyItem(itemLink)
-  if not info then return end
+  if not info then
+    if location == LOCATION_BAGS and SAK.RecipeKnowledge then
+      SAK.RecipeKnowledge.Paint(button, itemLink, "iconsInventory", false)
+    end
+    return
+  end
   local state
   local learnable
 
@@ -220,6 +225,7 @@ local function addTooltipLine(tooltip, text, color)
 end
 
 local function enhanceItemTooltip(tooltip, itemLink, location)
+  if SAK.DisplayEnabled and not SAK.DisplayEnabled("text") then return end
   local kind, info = classifyItem(itemLink)
   if not info then return end
 
@@ -321,4 +327,16 @@ function Inventory.Hook()
       paintGuildBank()
     end)
   end
+end
+
+function Inventory.GetDiagnostics()
+  local count = 0
+  for _ in pairs(ellesmereItems) do count = count + 1 end
+  return {
+    available = EUI_Bags ~= nil,
+    registered = ellesmereRegistered ~= nil and ellesmereRegistered == EUI_Bags,
+    callbackIntact = EUI_Bags ~= nil and EUI_Bags.itemOverlayIcons ~= nil
+      and EUI_Bags.itemOverlayIcons["SkillsAlreadyKnown"] == paintEllesmereItem or false,
+    trackedButtons = count,
+  }
 end

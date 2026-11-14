@@ -1,0 +1,12 @@
+Built-in imagegen; transparent background; reference spellbook-optional-source.png.
+Use case: logo-brand. Asset type: tiny World of Warcraft addon UI badge, sibling to
+the supplied reference image. Create a single horizontal plaque with exact text
+"ALREADY KNOWN" in uppercase bold serif letters, bright silver-white. Match the
+reference's thin aged bronze chamfered frame and near-black charcoal inset. Keep
+the lettering large, crisp, clean, flat front view, no other symbols or words.
+Roughly 6:1 plaque proportions with minimal rim, readable at 88x16 pixels.
+Transparent background outside the plaque, no shadow beyond border. The reference
+is for visual style only; replace its OPTIONAL text completely.
+Runtime asset: alpha-cropped, resized to 512x128 RGBA, uncompressed TGA.
+
+Original output retained at /home/cryptologiq/.codex/generated_images/01a1ae3b-944b-7aa1-8755-d11aefd22421/exec-f3360481-51be-488b-a695-a59bb0ecd755.png

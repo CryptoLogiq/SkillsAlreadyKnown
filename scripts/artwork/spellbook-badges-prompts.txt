@@ -1,0 +1,23 @@
+Built-in image_gen, transparent background, one call per badge.
+Reference: trainer-eco-source.png. New sibling assets; original trainer badge retained.
+Prompt template:
+Use case: logo-brand. Create one small horizontal fantasy game spellbook UI badge
+matching the reference dark charcoal inset and aged bronze chamfered border.
+Text exactly LABEL, uppercase, large bold readable serif, COLOR. No other words,
+parentheses or symbols. Compact proportions roughly 2.8:1, minimal thick rim,
+readable at 36 by 14 screen pixels. Isolated transparent background. Flat front
+view, classic WoW artisan UI. No watermark or distant shadow.
+LABEL/COLOR: ECO / cyan blue; BEST / emerald green; LOW / silver gray.
+Generated source PNGs retained beside this prompt. Runtime TGAs are uncompressed
+128x64 RGBA with alpha, cropped to content and proportionally resampled.
+
+OPTIONAL sibling: built-in image_gen using spellbook-best-source.png as reference.
+Exact text OPTIONAL, cyan blue uppercase serif, bronze beveled border, near-black
+inset, wider plaque approximately 5:1, transparent background, readable at 64x16.
+Runtime uncompressed 256x64 RGBA TGA cropped to alpha bounds and resampled.
+
+BUY NEW RANK sibling: built-in image_gen, reference spellbook-best-source.png.
+Exact uppercase serif text BUY NEW RANK in gold, dark inset and thin bronze
+beveled clipped-corner border. One line, approximately 6:1 plaque, transparent.
+Runtime TGA uncompressed RGBA 512x128, alpha cropped and proportionally rendered
+at 88x16 UI pixels. Original source PNG retained.
