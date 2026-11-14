@@ -1,5 +1,6 @@
 -- Shared RECENT badge; never changes native button fields or scripts.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then return end
 local Visuals = {}
 SAK.RecentVisuals = Visuals
@@ -38,7 +39,7 @@ function Visuals.Paint(owner, icon, id, kind, zone)
     display:SetScript("OnEnter", function(self)
       if not SAK.DisplayEnabled("text") or not GameTooltip then return end
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-      GameTooltip:AddLine("RECENT — récemment appris", 1, 0.82, 0.1)
+      GameTooltip:AddLine(L("RECENT — récemment appris"), 1, 0.82, 0.1)
       GameTooltip:AddLine(SAK.RecentLearning.Description(), 1, 1, 1, true)
       GameTooltip:Show()
     end)

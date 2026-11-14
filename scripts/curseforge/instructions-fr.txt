@@ -92,3 +92,9 @@ https://www.curseforge.com/wow/addons/skills-already-known
 
 Guide officiel CurseForge (nom, catégories, logo et modification d’un projet) :
 https://support.curseforge.com/support/solutions/articles/9000199552-project-submission-guide-and-tips
+
+PUBLICATION AUTOMATIQUE
+
+Voir automatic-releases-fr.txt pour activer les bêtas depuis dev et les stables
+depuis main. Une fois le secret configuré et le workflow poussé, l’envoi du ZIP
+et des notes est automatique ; les opérations manuelles ci-dessus restent un recours.

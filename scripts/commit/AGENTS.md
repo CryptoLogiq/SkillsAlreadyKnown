@@ -90,3 +90,26 @@ branche avant de préparer un commit. Conserver les changements locaux lors d’
 changement de branche ; aucun reset ni écrasement. La fusion vers main, le push,
 les tags et la publication se font lorsqu’ils sont demandés, pas implicitement
 avec une préparation de commit. Les liens publics du README restent sur main.
+
+Les prochains builds utilisent SkillsAndMore-<version>.zip dans release/ et
+release/latest/. Le dossier interne reste SkillsAlreadyKnown pour conserver les
+mises à jour et sauvegardes. Ne pas renommer les archives déjà livrées implicitement.
+
+## Textes dans le code
+
+Aucun nouveau texte destiné aux joueurs en dur dans la logique : utiliser une clé
+stable et lisible via L("CLE_DU_TEXTE"), avec ses valeurs dans les deux catalogues.
+Ne pas ajouter de phrase française/anglaise comme clé ni de repli rédigé en dur.
+Les anciennes clés basées sur des phrases sont héritées ; ne pas étendre ce modèle.
+Utiliser des phrases complètes avec paramètres pour les messages dynamiques.
+Seuls les textes internes de debug/support peuvent rester en anglais dans le code ;
+les boutons et commandes de ces fenêtres restent traduits. Vérifier les ajouts et
+la couverture des traductions avant de préparer le commit.
+
+
+## Vérification GitHub / CurseForge avant livraison
+
+Lire `scripts/curseforge/AGENTS.md`. Un push sur dev peut publier automatiquement
+une bêta ; main et son tag de version servent aux versions stables. Préparer un
+commit n'autorise pas le push. Contrôler les exclusions Git ET celles du paquet,
+les fichiers réellement suivis et le contenu du ZIP. Aucun token dans le dépôt.

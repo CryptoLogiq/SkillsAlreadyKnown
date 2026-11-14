@@ -1,5 +1,6 @@
 -- Conseils d'achat selon les roles choisis et les donnees de sorts.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -237,7 +238,7 @@ function Policy.OptionalAdvice(class, family, rank)
   if rank > 1 then
     local reason = rankOneAdvice(class, family)
     if reason then
-      return "Rangs supplémentaires facultatifs pendant le leveling. " .. reason, "rank-one"
+      return L("Rangs supplémentaires facultatifs pendant le leveling. ") .. reason, "rank-one"
     end
   end
 
@@ -303,7 +304,7 @@ function Policy.ShowSettings(firstUse)
   if InCombatLockdown and InCombatLockdown() then
     Policy.pending = true
     Policy.pendingFirstUse = firstUse == true
-    print("|cffffcc00Skills & More:|r configuration disponible après le combat.")
+    print(L("|cffffcc00Skills & More:|r configuration disponible après le combat."))
     return
   end
 
@@ -337,4 +338,14 @@ function Policy.MaybePrompt()
     end
     Policy.ShowSettings(true)
   end
+end
+
+if SAK.Localization then
+  SAK.Localization.RegisterInitializer(function()
+    -- Keep the existing catalogue reference used by rank comparisons.
+    for index = #purchaseCatalogue, 1, -1 do purchaseCatalogue[index] = nil end
+    for _, rule in ipairs(buildPurchaseCatalogue()) do
+      purchaseCatalogue[#purchaseCatalogue + 1] = rule
+    end
+  end)
 end

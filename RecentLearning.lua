@@ -1,5 +1,6 @@
 -- Confirmed learning, grouped by trainer visit and saved per character.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then return end
 local Recent = {}
 SAK.RecentLearning = Recent
@@ -179,26 +180,26 @@ end
 function Recent.Description()
   local tier = storage().initialTier
   if tier then
-    return "Sélection initiale : sorts déjà connus du palier de niveau " .. tier .. ". Les prochains apprentissages remplaceront cette liste."
+    return L("Sélection initiale : sorts déjà connus du palier de niveau ") .. tier .. L(". Les prochains apprentissages remplaceront cette liste.")
   end
-  return "Fait partie de tes derniers apprentissages enregistrés. La liste est conservée après rechargement."
+  return L("Fait partie de tes derniers apprentissages enregistrés. La liste est conservée après rechargement.")
 end
 
 function Recent.Summary()
-  local lines = { "RECENT — derniers apprentissages", "La liste est remplacée lorsqu'une nouvelle visite apporte des apprentissages. Les talents et recettes appris hors visite sont aussi suivis.", "" }
+  local lines = { L("RECENT — derniers apprentissages"), L("La liste est remplacée lorsqu'une nouvelle visite apporte des apprentissages. Les talents et recettes appris hors visite sont aussi suivis."), "" }
   if storage().initialTier then
-    lines[#lines + 1] = "Première utilisation : sorts déjà connus du palier de niveau " .. storage().initialTier .. ". Il s'agit d'une sélection initiale, pas d'un historique d'achats."
+    lines[#lines + 1] = L("Première utilisation : sorts déjà connus du palier de niveau ") .. storage().initialTier .. L(". Il s'agit d'une sélection initiale, pas d'un historique d'achats.")
     lines[#lines + 1] = ""
   end
-  for _, category in ipairs({ { "spells", "Sorts / compétences" }, { "recipes", "Recettes" }, { "talents", "Talents" } }) do
+  for _, category in ipairs({ { "spells", L("Sorts / compétences") }, { "recipes", L("Recettes") }, { "talents", L("Talents") } }) do
     lines[#lines + 1] = category[2]
     local entries = {}
     for id, entry in pairs(storage()[category[1]] or {}) do
       entries[#entries + 1] = (entry.name or (category[1] ~= "talents" and spellName(id)) or ("#" .. id))
-        .. (entry.rank and (" — rang " .. entry.rank) or "")
+        .. (entry.rank and (L(" — rang ") .. entry.rank) or "")
     end
     table.sort(entries)
-    if #entries == 0 then lines[#lines + 1] = "Aucun apprentissage enregistré." end
+    if #entries == 0 then lines[#lines + 1] = L("Aucun apprentissage enregistré.") end
     for _, name in ipairs(entries) do lines[#lines + 1] = "• " .. name end
     lines[#lines + 1] = ""
   end

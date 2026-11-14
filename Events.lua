@@ -4,6 +4,8 @@ if SAK.disabledByDev then
   return
 end
 
+local addonName = ...
+addonName = type(addonName) == "string" and addonName or "SkillsAlreadyKnown"
 local loadedMessage = false
 local watchedAddons = {
   SkillsAlreadyKnown = true,
@@ -137,6 +139,11 @@ local function handleEvent(_, event, detail)
     if detail == "DarkMode" then
       C_Timer.After(0, SAK.Refresh)
     end
+  end
+
+  if SAK.Localization and (event == "PLAYER_LOGIN"
+    or (event == "ADDON_LOADED" and detail == addonName)) then
+    SAK.Localization.Initialize()
   end
 
   if SAK.RecentLearning then SAK.RecentLearning.HandleEvent(event, detail) end

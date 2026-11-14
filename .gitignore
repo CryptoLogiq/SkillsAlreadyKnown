@@ -33,3 +33,16 @@ Errors/
 # Local third-party research data (not redistributable)
 scripts/research/pets-trainerspells-local/
 scripts/research/trainerspells-local/
+
+# Pinned CI packaging tool checkout
+.packager/
+__pycache__/
+
+# Local secrets are never source files
+.env
+.env.*
+
+# Private credentials and Python bytecode
+.aws/
+*.pyc
+*.pyo

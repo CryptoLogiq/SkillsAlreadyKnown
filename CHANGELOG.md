@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- Add French and English translations, automatic client-language detection and a saved language choice in the options. Reload to apply language changes.
+
 ## 0.4.0
 
 ### Features

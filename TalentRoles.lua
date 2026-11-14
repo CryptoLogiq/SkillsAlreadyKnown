@@ -53,6 +53,11 @@ end
 
 local function getTitleNames(index, tree)
   local names = { [SAK.NormalizeText(SAK.CleanText(tree.name))] = true }
+  if SAK.Localization then
+    for _, name in ipairs(SAK.Localization.NameVariants(tree.name)) do
+      names[SAK.NormalizeText(SAK.CleanText(name))] = true
+    end
+  end
   if GetTalentTabInfo then
     local ok, first, second = pcall(GetTalentTabInfo, index)
     local name = type(first) == "string" and first or second

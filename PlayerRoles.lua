@@ -1,5 +1,6 @@
 -- Roles, specialisations et preferences du personnage.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -43,7 +44,7 @@ function PlayerRoles.RoleLabels()
   local texture = "|TInterface\\LFGFrame\\UI-LFG-ICON-ROLES:16:16:0:0:256:256:"
   return {
     tank = texture .. "0:66:67:132|t Tank",
-    heal = texture .. "67:132:0:66|t Heal",
+    heal = texture .. "67:132:0:66|t " .. L("Heal"),
     dps = texture .. "67:132:67:132|t DPS",
     pvp = "|TInterface\\Icons\\Ability_DualWield:16:16|t PvP",
   }
@@ -494,4 +495,8 @@ function PlayerRoles.ConfirmSelection(snapshot)
   db.replayStartupOnLogin = nil
   notifyRoleChanges()
   return true
+end
+
+if SAK.Localization then
+  SAK.Localization.RegisterTable(PlayerRoles.Roles)
 end

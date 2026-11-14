@@ -2,6 +2,7 @@
 set -euo pipefail
 
 addon="SkillsAlreadyKnown"
+archive_name="SkillsAndMore"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 version="$(awk -F': *' '/^## Version:/ { print $2; exit }' "$root/$addon.toc")"
 refresh_latest=false
@@ -15,7 +16,12 @@ if (( $# > 1 )); then
   exit 1
 fi
 out_dir="$root/release"
-zip_path="$out_dir/$addon-$version.zip"
+zip_path="$out_dir/$archive_name-$version.zip"
+# Older releases keep their original filename and remain protected.
+legacy_zip_path="$out_dir/$addon-$version.zip"
+if [[ ! -e "$zip_path" && -e "$legacy_zip_path" ]]; then
+  zip_path="$legacy_zip_path"
+fi
 if [[ -z "$version" || "$version" == *[!0-9A-Za-z._-]* ]]; then
   echo "Invalid addon version: $version" >&2
   exit 1
@@ -59,6 +65,19 @@ rsync -a \
   --exclude '.codex' \
   --exclude '.agents' \
   --exclude '.aws' \
+  --exclude 'WTF' \
+  --exclude 'Cache' \
+  --exclude 'Logs' \
+  --exclude 'Errors' \
+  --exclude '.vscode' \
+  --exclude '.idea' \
+  --exclude '.packager' \
+  --exclude '__pycache__' \
+  --exclude '.env' \
+  --exclude '.env.*' \
+  --exclude '*.pyc' \
+  --exclude '*.pyo' \
+  --exclude '*.pkg' \
   --exclude '*.zip' \
   --exclude '*.7z' \
   --exclude '*.tar' \
@@ -115,10 +134,11 @@ for source, name in ((archive, archive.name), (stage / "patchnote.md", "patchnot
         os.replace(target, latest / name)
     finally:
         target.unlink(missing_ok=True)
-for previous in latest.glob(addon + "-*.zip"):
-    if previous.name != archive.name:
-        previous.unlink()
+for pattern in (addon + "-*.zip", "SkillsAndMore-*.zip"):
+    for previous in latest.glob(pattern):
+        if previous.name != archive.name:
+            previous.unlink()
 PYLATEST
 
-echo "$out_dir/latest/$addon-$version.zip"
+echo "$out_dir/latest/$(basename "$zip_path")"
 echo "$out_dir/latest/patchnote.md"

@@ -3,32 +3,21 @@
 local SAK = _G.SkillsAlreadyKnown or {}
 _G.SkillsAlreadyKnown = SAK
 
--- Check enable state before any module registers frames, hooks or slash commands.
--- Using the actual folder name also keeps staged _dev copies from disabling themselves.
+-- OptionalDeps loads an enabled DEV copy first. A checkbox alone is not proof
+-- that DEV loaded successfully, so never disable the official copy on that basis.
 local addonName = ...
 addonName = type(addonName) == "string" and addonName or "SkillsAlreadyKnown"
 local function devCopyEnabled()
   if addonName:sub(-4) == "_dev" then return false end
-  local devName = addonName .. "_dev"
-  local character = UnitName and UnitName("player")
   local loaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
-  if loaded then
-    local ok, active = pcall(loaded, devName)
-    if ok and active then return true end
-  end
-  if not character then return false end
-  local ok, state
-  if C_AddOns and C_AddOns.GetAddOnEnableState then
-    ok, state = pcall(C_AddOns.GetAddOnEnableState, devName, character)
-  elseif GetAddOnEnableState then
-    ok, state = pcall(GetAddOnEnableState, character, devName)
-  end
-  return ok and type(state) == "number" and state > 0
+  if not loaded then return false end
+  local ok, active = pcall(loaded, addonName .. "_dev")
+  return ok and active == true
 end
 
 SAK.disabledByDev = devCopyEnabled() or false
 if SAK.disabledByDev then
-  print("|cffffcc00Skills & More:|r inactive while " .. addonName .. "_dev is enabled.")
+  print("|cffffcc00Skills & More:|r inactive while " .. addonName .. "_dev is loaded.")
   return
 end
 
