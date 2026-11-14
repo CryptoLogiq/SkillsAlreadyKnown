@@ -119,6 +119,13 @@ with zipfile.ZipFile(args[0], 'w', zipfile.ZIP_DEFLATED) as out:
         original = archive.read_bytes()
         command(beta, "bash", "scripts/ci-packager.sh", "publish", success=False, env=env)
         assert archive.read_bytes() == original
+        # Exercise upload-only metadata without credentials or network requests.
+        upload_probe = parent / "upload-probe.sh"
+        upload_probe.write_text('#!/usr/bin/env bash\nset -eu\n[[ -s "$archive" && "${archive##*/}" == "$archive_name" ]]\n[[ "$archive_label" == "0.4.1-beta.42.1" && "$archive_version" == "$archive_label" ]]\n[[ " $* " == *" -c "* && " $* " == *" -z "* && " $* " != *" -d "* ]]\n')
+        command(beta, "bash", "scripts/ci-packager.sh", "publish",
+                env=dict(env, SAM_PACKAGER=str(upload_probe), CF_API_TOKEN="test-only",
+                         GH_API_TOKEN="test-only"))
+        assert archive.read_bytes() == original
         command(beta, "bash", "scripts/ci-packager.sh", "build", success=False, env=env)
         # Missing files and source/artifact divergence must prevent publishing.
         with zipfile.ZipFile(archive, "a") as package:

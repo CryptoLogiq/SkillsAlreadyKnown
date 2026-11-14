@@ -50,6 +50,9 @@ else
 fi
 # A dev push is packaged as its validated beta tag in this same workflow run.
 # This avoids starting a second workflow from a GITHUB_TOKEN-created tag.
+# With -z, upstream skips initializing upload metadata as well as ZIP creation.
+# Supply it explicitly so upload-only mode sends the already verified archive.
+archive="$archive" archive_name="${archive##*/}" archive_label="$version" archive_version="$version" \
 GITHUB_EVENT_NAME=workflow_dispatch GITHUB_REF="refs/tags/$tag" GITHUB_REF_NAME="$tag" \
   bash "$packager" "${args[@]}"
 python3 "$root/scripts/verify-ci-release.py"
