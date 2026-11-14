@@ -9,6 +9,7 @@ ignore:
   - .gitattributes
   - .pkgmeta
   - AGENTS.md
+  - "**/AGENTS.md"
   - CONTRIBUTING.md
   - patchnote
   - scripts
@@ -18,11 +19,28 @@ ignore:
   - build
   - .codex
   - .agents
+  - .aws
   - "*.zip"
   - "*.7z"
   - "*.tar"
   - "*.tar.gz"
+  - "WTF"
+  - "Cache"
+  - "Logs"
+  - "Errors"
+  - ".vscode"
+  - ".idea"
+  - ".packager"
+  - "__pycache__"
+  - ".env"
+  - ".env.*"
+  - "*.pyc"
+  - "*.pyo"
+  - "*.pkg"
+
+plain-copy:
+  - libs
 
 manual-changelog:
-  filename: CHANGELOG.md
+  filename: release/latest/patchnote.md
   markup-type: markdown

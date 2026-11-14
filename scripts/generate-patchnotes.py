@@ -52,6 +52,10 @@ def markdown(root, version=None):
         raise ValueError("Markdown requires a released major.minor.patch version")
     source = (root / "patchnote" / (version + ".lua")).read_text()
     title = re.search(r"^## Title:\s*(.+)", toc, re.M)[1]
+    return render_markdown(title, version, source)
+
+
+def render_markdown(title, version, source):
     lines = [f"# {title} — {version}"]
     decoder = json.JSONDecoder()
     for key, heading in (("additions", "Ajouts de fonctionnalités"), ("fixes", "Corrections de bugs")):

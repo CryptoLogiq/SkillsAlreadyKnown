@@ -1,5 +1,6 @@
 -- Shared DataBroker launcher for minimap buttons and display addons.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -32,8 +33,8 @@ end
 local function onTooltipShow(tooltip)
   tooltip:AddLine("Skills & More", 1, 0.82, 0.05)
   tooltip:AddLine("By CryptoLogiq", 0.8, 0.8, 0.8)
-  tooltip:AddLine("Clic gauche : options", 1, 1, 1)
-  tooltip:AddLine("Clic droit : résumé et commandes", 1, 1, 1)
+  tooltip:AddLine(L("Clic gauche : options"), 1, 1, 1)
+  tooltip:AddLine(L("Clic droit : résumé et commandes"), 1, 1, 1)
 end
 
 function Launcher.IsVisible()

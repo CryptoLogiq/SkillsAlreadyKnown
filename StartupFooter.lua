@@ -1,5 +1,6 @@
 -- Startup buttons use the same parent and template as AceGUI's Close button.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -24,12 +25,12 @@ end
 local function createButtons(root)
   if not later then
     later = CreateFrame("Button", nil, root, "UIPanelButtonTemplate")
-    later:SetText("Plus tard")
+    later:SetText(L("Plus tard"))
     later:SetHeight(20)
     later:SetScript("OnClick", function() SAK.Settings.CloseStartup() end)
 
     confirm = CreateFrame("Button", nil, root, "UIPanelButtonTemplate")
-    confirm:SetText("Valider mes choix")
+    confirm:SetText(L("Valider mes choix"))
     confirm:SetHeight(20)
     confirm:SetScript("OnClick", function() SAK.Settings.ConfirmSelection() end)
   end

@@ -1,5 +1,6 @@
 -- Explications des badges dans les infobulles du grimoire et des sorts.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -16,7 +17,7 @@ local recentHooks = setmetatable({}, { __mode = "k" })
 local function addRecent(tooltip, id)
   if not tooltip or not id or not SAK.RecentLearning or not SAK.DisplayEnabled("recent")
     or not SAK.DisplayEnabled("text") or recentMarks[tooltip] == id then return end
-  if not SAK.RecentLearning.Contains("spells", id) and not SAK.RecentLearning.Contains("recipes", id) then return end
+  if not SAK.RecentLearning.Contains("spells", id) and not SAK.RecentLearning.Contains("recipes", id) and not SAK.RecentLearning.Contains("pets", id) then return end
   recentMarks[tooltip] = id
   if tooltip.HookScript and not recentHooks[tooltip] then
     recentHooks[tooltip] = true
@@ -27,25 +28,25 @@ local function addRecent(tooltip, id)
 end
 
 Book.Explanations = {
-  eco = "Rang suffisant pour pex selon ton rôle. Économie de pièces d'or en reportant les achats de rangs, pas d'économie de mana garantie.",
-  best = "Plus haut rang appris, même s'il est seul : dégâts, soins et effets de ce rang. Ne garantit pas de toucher ni d'être le rang maximal du jeu.",
-  low = "Rang inférieur appris : dégâts, soins ou effets peuvent être moins efficaces. Certains contrôles ont une limite de niveau. Pas d'économie de mana garantie.",
-  mana = "Dans Forever, le coût en mana peut augmenter avec ton niveau même sans acheter de rang supérieur, selon le sort.",
-  effects = "Les rangs très anciens peuvent moins profiter des bonus de dégâts/soins. Les limites de cible et les pénalités de déclenchement dépendent du sort ; ce n'est pas une pénalité générale au toucher.",
+  eco = L("Rang suffisant pour pex selon ton rôle. Économie de pièces d'or en reportant les achats de rangs, pas d'économie de mana garantie."),
+  best = L("Plus haut rang appris, même s'il est seul : dégâts, soins et effets de ce rang. Ne garantit pas de toucher ni d'être le rang maximal du jeu."),
+  low = L("Rang inférieur appris : dégâts, soins ou effets peuvent être moins efficaces. Certains contrôles ont une limite de niveau. Pas d'économie de mana garantie."),
+  mana = L("Dans Forever, le coût en mana peut augmenter avec ton niveau même sans acheter de rang supérieur, selon le sort."),
+  effects = L("Les rangs très anciens peuvent moins profiter des bonus de dégâts/soins. Les limites de cible et les pénalités de déclenchement dépendent du sort ; ce n'est pas une pénalité générale au toucher."),
 }
 
 local optionalMessages = {
   ["rank-one"] = {
-    title = "OPTIONAL — seuls les rangs supplémentaires sont facultatifs.",
-    detail = "Le rang 1 suffit pour l'usage conseillé pendant le leveling selon ton rôle. Le sort lui-même reste utile ; les rangs supérieurs peuvent améliorer ses effets.",
+    title = L("OPTIONAL — seuls les rangs supplémentaires sont facultatifs."),
+    detail = L("Le rang 1 suffit pour l'usage conseillé pendant le leveling selon ton rôle. Le sort lui-même reste utile ; les rangs supérieurs peuvent améliorer ses effets."),
   },
   ["higher-ranks"] = {
-    title = "OPTIONAL — l'achat de ce rang supplémentaire peut attendre pendant le leveling.",
-    detail = "Ce conseil concerne ce rang, pas l'utilité du sort lui-même. Il ne signifie pas que le rang 1 suffit dans tous les cas.",
+    title = L("OPTIONAL — l'achat de ce rang supplémentaire peut attendre pendant le leveling."),
+    detail = L("Ce conseil concerne ce rang, pas l'utilité du sort lui-même. Il ne signifie pas que le rang 1 suffit dans tous les cas."),
   },
   spell = {
-    title = "OPTIONAL — achat facultatif pendant le leveling selon tes rôles et spécialisations.",
-    detail = "Utile selon la situation ; tu peux l'apprendre et l'utiliser.",
+    title = L("OPTIONAL — achat facultatif pendant le leveling selon tes rôles et spécialisations."),
+    detail = L("Utile selon la situation ; tu peux l'apprendre et l'utiliser."),
   },
 }
 
@@ -55,13 +56,13 @@ local function addRankDescription(tooltip, state, adviceOnly)
     tooltip:AddLine(state.reason, 0.8, 0.9, 1, true)
     tooltip:AddLine(Book.Explanations.mana, 0.8, 0.8, 0.8, true)
   elseif state.kind == "buy" then
-    tooltip:AddLine("BUY NEW RANK — rang " .. state.upgrade.rank .. " accessible à ton niveau, pas encore appris.", 1, 0.82, 0.1, true)
-    tooltip:AddLine("Rang appris : " .. state.rank .. ". Niveau requis : " .. state.upgrade.level .. ". Vérifie le prix chez le maître de classe.", 1, 0.9, 0.6, true)
+    tooltip:AddLine(L("BUY NEW RANK — rang ") .. state.upgrade.rank .. L(" accessible à ton niveau, pas encore appris."), 1, 0.82, 0.1, true)
+    tooltip:AddLine(L("Rang appris : ") .. state.rank .. L(". Niveau requis : ") .. state.upgrade.level .. L(". Vérifie le prix chez le maître de classe."), 1, 0.9, 0.6, true)
   elseif not adviceOnly and state.kind == "best" then
     tooltip:AddLine("BEST — " .. Book.Explanations.best, 0.2, 1, 0.2, true)
     tooltip:AddLine(Book.Explanations.effects, 0.8, 0.8, 0.8, true)
   elseif not adviceOnly then
-    tooltip:AddLine("LOW — rang inférieur au rang " .. state.highest .. " appris. " .. Book.Explanations.low, 0.7, 0.7, 0.7, true)
+    tooltip:AddLine(L("LOW — rang inférieur au rang ") .. state.highest .. L(" appris. ") .. Book.Explanations.low, 0.7, 0.7, 0.7, true)
     tooltip:AddLine(Book.Explanations.effects, 0.8, 0.8, 0.8, true)
   end
 end
@@ -80,7 +81,7 @@ local function addOptionalDescription(tooltip, state)
     tooltip:AddLine(message.detail, 0.8, 0.9, 1, true)
   end
 
-  tooltip:AddLine("Reporter cet achat permet d'économiser de l'or pendant le leveling.", 0.8, 0.8, 0.8, true)
+  tooltip:AddLine(L("Reporter cet achat permet d'économiser de l'or pendant le leveling."), 0.8, 0.8, 0.8, true)
 end
 
 local function hasPurchaseAdvice(state)
@@ -124,10 +125,10 @@ local function annotateTooltip(tooltip, state, adviceOnly)
 end
 
 function Book.AddTooltip(tooltip, slot, spellBank)
-  if spellBank ~= Book.PlayerBank() then
+  if spellBank ~= Book.PlayerBank() and (not Book.PetBank or spellBank ~= Book.PetBank()) then
     return
   end
-  local state = Book.StateForSlot(slot)
+  local state = Book.StateForSlot(slot, spellBank)
   addRecent(tooltip, state and state.id)
   annotateTooltip(tooltip, state, false)
 end
@@ -224,4 +225,9 @@ function Tooltips.Hook()
   hookSpellTooltips()
   hookBookTooltips()
   hookTrainerTooltips()
+end
+
+if SAK.Localization then
+  SAK.Localization.RegisterTable(Book.Explanations)
+  SAK.Localization.RegisterTable(optionalMessages)
 end

@@ -1,0 +1,67 @@
+PUBLICATION AUTOMATIQUE — SKILLS & MORE
+
+Une seule chaîne GitHub Actions : tests, génération des notes, packager officiel,
+vérification du ZIP puis envoi à CurseForge et GitHub.
+
+ACTIVATION UNIQUE
+
+1. Sur CurseForge, créer un token API autorisé à envoyer les fichiers du projet.
+   Ne jamais le mettre dans un fichier du dépôt ni le coller dans une conversation.
+   Guide officiel :
+   https://support.curseforge.com/support/solutions/articles/9000197281-automatic-packaging
+
+2. Dans les secrets Actions de ce dépôt :
+   https://github.com/CryptoLogiq/SkillsAlreadyKnown/settings/secrets/actions
+   Ajouter un secret de dépôt nommé CF_API_TOKEN et y enregistrer ce token.
+   L’ancien nom CF_API_KEY est aussi accepté, s’il existe déjà.
+   GITHUB_TOKEN est fourni automatiquement par GitHub Actions.
+
+3. Inclure le workflow et tous les nouveaux fichiers de code/traduction/tests dans
+   le commit, puis pousser dev. Le nouveau workflow doit être présent dans le commit
+   envoyé pour remplacer l’ancien workflow de publication.
+
+4. Consulter Actions > Test and release.
+   Sans secret CurseForge : tests et fichiers téléchargeables uniquement.
+   Avec secret : les pushes autorisés publient les fichiers automatiquement.
+   Le résumé du run indique explicitement si l’envoi était activé.
+
+Ne pas ajouter en parallèle le webhook de packaging CurseForge : il ferait double
+emploi avec GitHub Actions et pourrait créer une seconde archive pour le même push.
+
+BÊTAS DEPUIS DEV
+
+Chaque push sur dev passe les tests. Une réussite prépare une version unique,
+par exemple 0.4.1-beta.42.1 : 42 est le numéro du workflow, 1 sa tentative.
+Une nouvelle tentative reçoit un nouveau nom, sans écraser l’archive précédente.
+
+Si le TOC porte encore la version de la dernière release (Unreleased.basedOn),
+la bêta cible automatiquement le prochain patch. Si une prochaine version plus
+haute est déjà préparée dans le TOC, cette version sert de base.
+
+Les notes viennent uniquement d’Unreleased.lua. Le numéro du TOC et l’historique
+en jeu sont adaptés dans la copie de travail CI, jamais dans la branche source.
+Le tag bêta pointe sur le commit testé ; il est envoyé uniquement si la publication
+est activée. GitHub marque ces releases comme préversions et CurseForge comme bêtas.
+
+STABLES DEPUIS MAIN
+
+Préparer le numéro de version et déplacer les notes Unreleased dans le fichier Lua
+de cette version. Remettre Unreleased à vide avec basedOn égal à cette version.
+Faire valider les changements sur main, puis pousser un tag vX.Y.Z sur ce commit.
+Le workflow refuse une stable si le tag et le TOC diffèrent, si le commit n’appartient
+pas à main ou si des notes Unreleased n’ont pas été intégrées à la release.
+
+FICHIERS ET RÉGLAGES
+
+• Nom du ZIP : SkillsAndMore-<version>.zip.
+• Dossier interne et sauvegardes : SkillsAlreadyKnown, pour conserver les mises à jour.
+• Notes : patchnote.md, générées depuis les mêmes tables Lua que l’historique en jeu.
+• ZIP et Markdown disponibles ensemble dans les artefacts du workflow.
+• Quand l’envoi est actif : même ZIP sur CurseForge et GitHub, notes dans les deux
+  descriptions et patchnote.md également joint à la release GitHub.
+• Le bouton Run workflow permet un essai sur dev sans aucun envoi.
+• Les pull requests vers dev ou main exécutent les tests uniquement.
+• Le script install-local.sh continue à gérer uniquement la copie DEV locale.
+• Le script package.sh reste disponible pour une archive locale sans envoi.
+
+Le projet CurseForge configuré est 1725046. Aucun secret n’est inclus dans le code.

@@ -1,5 +1,6 @@
 -- Reviewed rank-one advice; source context: scripts/research/eco-spells-forever.lua.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -16,7 +17,7 @@ SAK.RankOneRules = {
           guardian = true,
         },
       },
-      reason = "Le rang 1 conserve une immobilisation de secours en Farouche. Les rangs suivants améliorent le contrôle.",
+      reason = L("Le rang 1 conserve une immobilisation de secours en Farouche. Les rangs suivants améliorent le contrôle."),
     },
   },
   PALADIN = {
@@ -26,7 +27,7 @@ SAK.RankOneRules = {
           retribution = true,
         },
       },
-      reason = "Aura de dévotion : le rang 1 peut suffire pendant le leveling Vindicte, hors rôle tank.",
+      reason = L("Aura de dévotion : le rang 1 peut suffire pendant le leveling Vindicte, hors rôle tank."),
     },
     [633] = {
       contexts = {
@@ -34,7 +35,7 @@ SAK.RankOneRules = {
           retribution = true,
         },
       },
-      reason = "Imposition des mains : le guide Vindicte propose de conserver le rang 1 pendant le leveling.",
+      reason = L("Imposition des mains : le guide Vindicte propose de conserver le rang 1 pendant le leveling."),
     },
     [6940] = {
       contexts = {
@@ -42,7 +43,7 @@ SAK.RankOneRules = {
           retribution = true,
         },
       },
-      reason = "Le rang 1 de Bénédiction de sacrifice conserve l'usage de transfert de dégâts ; les rangs suivants restent utiles.",
+      reason = L("Le rang 1 de Bénédiction de sacrifice conserve l'usage de transfert de dégâts ; les rangs suivants restent utiles."),
     },
   },
   PRIEST = {
@@ -50,7 +51,7 @@ SAK.RankOneRules = {
       contexts = {
         heal = true,
       },
-      reason = "Résurrection : le rang 1 permet de ressusciter ; les rangs suivants rendent davantage de vie et de mana.",
+      reason = L("Résurrection : le rang 1 permet de ressusciter ; les rangs suivants rendent davantage de vie et de mana."),
     },
     [8122] = {
       contexts = {
@@ -58,7 +59,7 @@ SAK.RankOneRules = {
           discipline = true,
         },
       },
-      reason = "Cri psychique : le rang 1 garde un contrôle de secours ; les rangs suivants peuvent toucher davantage de cibles.",
+      reason = L("Cri psychique : le rang 1 garde un contrôle de secours ; les rangs suivants peuvent toucher davantage de cibles."),
     },
     [9484] = {
       contexts = {
@@ -66,7 +67,7 @@ SAK.RankOneRules = {
           discipline = true,
         },
       },
-      reason = "Entraves : le rang 1 conserve un contrôle de base ; les rangs suivants améliorent sa durée.",
+      reason = L("Entraves : le rang 1 conserve un contrôle de base ; les rangs suivants améliorent sa durée."),
     },
   },
   WARLOCK = {
@@ -74,13 +75,13 @@ SAK.RankOneRules = {
       contexts = {
         dps = true,
       },
-      reason = "Le rang 1 de Malédiction de témérité conserve l'effet empêchant la fuite, sans rechercher son effet offensif maximal.",
+      reason = L("Le rang 1 de Malédiction de témérité conserve l'effet empêchant la fuite, sans rechercher son effet offensif maximal."),
     },
     [1120] = {
       contexts = {
         dps = true,
       },
-      reason = "Drain d'âme : le rang 1 suffit pour récupérer un fragment en fin de combat. Ce conseil ne compare pas les dégâts.",
+      reason = L("Drain d'âme : le rang 1 suffit pour récupérer un fragment en fin de combat. Ce conseil ne compare pas les dégâts."),
     },
     [5676] = {
       contexts = {
@@ -88,7 +89,11 @@ SAK.RankOneRules = {
           affliction = true,
         },
       },
-      reason = "Douleur brûlante : le guide Affliction propose le rang 1 comme petit sort de finition. Ce conseil ne s'applique pas à Démonologie.",
+      reason = L("Douleur brûlante : le guide Affliction propose le rang 1 comme petit sort de finition. Ce conseil ne s'applique pas à Démonologie."),
     },
   },
 }
+
+if SAK.Localization then
+  SAK.Localization.RegisterTable(SAK.RankOneRules)
+end

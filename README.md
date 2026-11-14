@@ -33,7 +33,7 @@ Trainer markers use green, yellow, red or grey outlines. NEW + can also glow. In
 
 ## Recent learning
 
-**RECENT** appears just below spell and talent icons in supported views. Your latest learned spells, talent ranks and recipes are listed in **Apprentissages récents** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it. Learning outside a trainer visit is also tracked.
+**RECENT** appears just below spell and talent icons in supported views. Your latest learned spells, pet abilities, talent ranks and recipes are listed in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it. Learning outside a trainer visit is also tracked.
 
 On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection. Custom profession windows may require consulting the list in the options.
 
@@ -41,7 +41,7 @@ On first use, already-known spells from your latest accessible level tier are se
 
 Choose your roles and specializations in **Talent Spec and Role**. Only roles available to your class are offered; PvP is a separate activity.
 
-On first use, a specialization is suggested from your spent talent points, or from the solo leveling recommendation if no tree dominates. Review the summaries, then select **Valider mes choix → OK** to activate your advice. Closing or choosing **Plus tard** keeps the proposal inactive and offers it again next time you log in or reload.
+On first use, a specialization is suggested from your spent talent points, or from the solo leveling recommendation if no tree dominates. Review the summaries, then select **Confirm my choices → OK** to activate your advice. Closing or choosing **Later** keeps the proposal inactive and offers it again next time you log in or reload.
 
 Role labels appear beside talent-tree titles and the active spellbook school. Hover for a specialization overview, advantages and drawbacks. **LEVELING** identifies the main solo leveling recommendation. Before level 10, spellbook school tabs also show these summaries.
 
@@ -49,7 +49,7 @@ Role labels appear beside talent-tree titles and the active spellbook school. Ho
 
 ## Books and recipes
 
-Warlock pet grimoires show learned or learnable status, a yellow **+** when appropriate, and demon icons at merchants and in your bags. Merchants also flag books you already own. Summon each demon to record its learned spells.
+Warlock pet grimoires show learned or learnable status, a yellow **+** when appropriate, and demon icons at merchants and in your bags. Merchants also flag books you already own. Summon each demon once to record its learned spells. Book markers then stay available whichever demon is active; a bright gold border highlights books for your summoned demon. Pet spellbooks use BEST, LOW, BUY NEW RANK and RECENT, with upgrade alerts limited to ranks available at your pet’s level.
 
 **ALREADY KNOWN** marks learned recipes in bags and group or raid loot-roll windows when the game's tooltip confirms them. It never chooses a loot roll for you.
 
@@ -57,14 +57,15 @@ Warlock pet grimoires show learned or learnable status, a yellow **+** when appr
 
 Open **Options → AddOns → Skills & More**, or type `/sam settings`.
 
-- **Affichage** — control icons, outlines, text and backgrounds, with separate display zones.
+- **Language** — automatic game-client detection, French or English; reload to apply changes.
+- **Display** — control icons, outlines, text and backgrounds, with separate display zones.
 - **Talent Spec and Role** — choose roles, specializations and leveling advice.
-- **Apprentissages récents** — review your latest learning.
+- **Recent learning** — review your latest learning.
 - **Diagnostics** — copy support reports.
-- **Réinitialisation** — restore defaults or reopen the first-use window, with confirmation.
+- **Reset** — restore defaults or reopen the first-use window, with confirmation.
 - **Patchnotes** — browse features and fixes by version.
 
-Settings apply immediately and are saved per character. The minimap button opens settings with a left click or the summary with a right click. You can hide it in **Affichage**, or use the launcher through HidingBar or Titan Panel.
+Settings apply immediately and are saved per character. The minimap button opens settings with a left click or the summary with a right click. You can hide it in **Display**, or use the launcher through HidingBar or Titan Panel.
 
 ## Commands
 
@@ -84,7 +85,7 @@ For a bug report, reproduce the issue with the relevant window open, then share 
 
 Bag markers are confirmed with **Blizzard bags** and **EllesmereUI Bags**. Other bag addons are not yet confirmed.
 
-DarkMode and TrainerSpells have dedicated compatibility handling. With TrainerSpells active, its trainer text stays unchanged. Its class list can show ECO / OPTIONAL, PVP / PVE PVP and RECENT when space allows; toggle these markers in **Affichage**.
+DarkMode and TrainerSpells have dedicated compatibility handling. With TrainerSpells active, its trainer text stays unchanged. Its class list can show ECO / OPTIONAL, PVP / PVE PVP and RECENT when space allows; toggle these markers in **Display**.
 
 ## Installation
 

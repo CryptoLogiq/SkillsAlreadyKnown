@@ -1,5 +1,6 @@
 -- Shared PvP/PvE advice and small native badges; no purchase or talent automation.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -14,8 +15,8 @@ local talentDisplays = setmetatable({}, { __mode = "k" })
 local driver, elapsed
 local talentStats = { visited = 0, matched = 0 }
 local labels = {
-  pvp = { text = "PVP", width = 30, color = { 1, 0.35, 0.4 }, description = "Principalement intéressant contre les joueurs. Cela n’exclut pas un usage PvE." },
-  mixed = { text = "PVE PVP", width = 60, color = { 0.35, 0.85, 1 }, description = "Utile en PvE et contre les joueurs, selon ta spécialisation et le combat." },
+  pvp = { text = "PVP", width = 30, color = { 1, 0.35, 0.4 }, description = L("Principalement intéressant contre les joueurs. Cela n’exclut pas un usage PvE.") },
+  mixed = { text = "PVE PVP", width = 60, color = { 0.35, 0.85, 1 }, description = L("Utile en PvE et contre les joueurs, selon ta spécialisation et le combat.") },
 }
 
 local function visible(frame)
@@ -99,7 +100,7 @@ local function tooltip(display)
   GameTooltip:AddLine(spellName(entry.spellID) or entry.name, 1, 0.82, 0.05)
   GameTooltip:AddLine(spec.text .. " — " .. spec.description, spec.color[1], spec.color[2], spec.color[3], true)
   GameTooltip:AddLine(entry.reason, 1, 1, 1, true)
-  GameTooltip:AddLine("Repère d’usage, pas une obligation de talent ou d’achat.", 0.8, 0.8, 0.8, true)
+  GameTooltip:AddLine(L("Repère d’usage, pas une obligation de talent ou d’achat."), 0.8, 0.8, 0.8, true)
   GameTooltip:Show()
 end
 
@@ -334,4 +335,8 @@ function Tags.GetDiagnostics()
     if visible(display) then trainerShown = trainerShown + 1 end
   end
   return { visited = talentStats.visited, matched = talentStats.matched, trainerShown = trainerShown }
+end
+
+if SAK.Localization then
+  SAK.Localization.RegisterTable(labels)
 end

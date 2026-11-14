@@ -4,6 +4,8 @@ if SAK.disabledByDev then
   return
 end
 
+local addonName = ...
+addonName = type(addonName) == "string" and addonName or "SkillsAlreadyKnown"
 local loadedMessage = false
 local watchedAddons = {
   SkillsAlreadyKnown = true,
@@ -25,6 +27,7 @@ local watchedAddons = {
 local spellbookEvents = {
   PLAYER_LOGIN = true,
   PLAYER_LEVEL_UP = true,
+  UNIT_PET = true,
   SPELLS_CHANGED = true,
   LEARNED_SPELL_IN_SKILL_LINE = true,
 }
@@ -87,7 +90,7 @@ local function refreshSpellBook(event, detail)
 
   SAK.SpellBook.Hook()
   local providerLoaded = event == "ADDON_LOADED" and detail == "TrainerSpells"
-  if spellbookEvents[event] or providerLoaded then
+  if (spellbookEvents[event] and (event ~= "UNIT_PET" or detail == "player")) or providerLoaded then
     if SAK.RankAvailability then
       SAK.RankAvailability.MarkDirty()
     end
@@ -107,11 +110,12 @@ local function refreshTrainer(event)
 end
 
 local function refreshPetSpells(event, unit)
+  if not SAK.PetGrimoires or not SAK.PetGrimoires.QueuePetSync then return end
   if merchantEvents[event] then
     SAK.PetGrimoires.QueuePetSync()
     C_Timer.After(0, SAK.PetGrimoires.Paint)
     C_Timer.After(0.1, SAK.PetGrimoires.Paint)
-  elseif event == "SPELLS_CHANGED" or (event == "UNIT_PET" and unit == "player") then
+  elseif event == "PLAYER_LOGIN" or event == "SPELLS_CHANGED" or (event == "UNIT_PET" and unit == "player") then
     SAK.PetGrimoires.QueuePetSync()
     C_Timer.After(0.6, SAK.PetGrimoires.Paint)
   end
@@ -137,6 +141,11 @@ local function handleEvent(_, event, detail)
     if detail == "DarkMode" then
       C_Timer.After(0, SAK.Refresh)
     end
+  end
+
+  if SAK.Localization and (event == "PLAYER_LOGIN"
+    or (event == "ADDON_LOADED" and detail == addonName)) then
+    SAK.Localization.Initialize()
   end
 
   if SAK.RecentLearning then SAK.RecentLearning.HandleEvent(event, detail) end
@@ -196,6 +205,7 @@ for _, event in ipairs({
   "GUILDBANKBAGSLOTS_CHANGED",
   "MERCHANT_SHOW",
   "MERCHANT_UPDATE",
+  "MERCHANT_CLOSED",
   "PLAYER_LOGIN",
   "PLAYER_REGEN_ENABLED",
   "LEARNED_SPELL_IN_SKILL_LINE",
