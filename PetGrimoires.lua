@@ -8,6 +8,8 @@ SAK.PetGrimoires = PetGrimoires
 
 local merchantHooked
 local petSyncQueued
+local petRevision = 0
+local trainerSync = {}
 local GetItemInfoCompat = GetItemInfo or (C_Item and C_Item.GetItemInfo)
 local GetItemSpellCompat = GetItemSpell or (C_Item and C_Item.GetItemSpell)
 
@@ -56,8 +58,9 @@ local function readPetSpellBookEntry(index, bank)
   if C_SpellBook and C_SpellBook.GetSpellBookItemInfo then
     local ok, info = pcall(C_SpellBook.GetSpellBookItemInfo, index, bank)
     if ok and type(info) == "table" then
-      local id = info.actionID or info.spellID
+      local id = info.spellID or info.actionID
       if type(id) == "number" and id > 0 then spellID = id end
+      if info.name then return info.name, info.subName, spellID end
     end
   end
 
@@ -108,15 +111,90 @@ local function scanPetSpellBook()
   return learned, count
 end
 
+-- Share confirmed knowledge with TrainerSpells using its catalogue's pet keys.
+-- Unknown entries remain under TrainerSpells' control; never copy negative guesses.
+function PetGrimoires.SyncTrainerSpellsKnown()
+  local catalogue, character = TrainerSpells_PetData, TrainerSpells_Character
+  if type(catalogue) ~= "table" or type(character) ~= "table" then return end
+  local saved = SAK.EnsureDB().petSpells
+  local learned = character.learnedSpellsPet
+  if trainerSync.catalogue == catalogue and trainerSync.character == character
+    and trainerSync.saved == saved and trainerSync.learned == learned
+    and trainerSync.revision == petRevision then return end
+
+  local changed = false
+  for family, levels in pairs(catalogue) do
+    local linkedPets = {}
+    for _, spells in pairs(type(levels) == "table" and levels or {}) do
+      for spellID in pairs(type(spells) == "table" and spells or {}) do
+        for _, pet in pairs(saved) do
+          if type(pet) == "table" and pet.byID
+            and (pet.byID[tostring(spellID)] or pet.byID[tonumber(spellID)]) then
+            linkedPets[pet] = true
+          end
+        end
+      end
+    end
+    for _, spells in pairs(type(levels) == "table" and levels or {}) do
+      for spellID, entry in pairs(type(spells) == "table" and spells or {}) do
+        local id = tonumber(spellID)
+        if id and id > 0 and type(entry) == "table" then
+          local known
+          for key, pet in pairs(saved) do
+            if type(pet) == "table" then
+              known = pet.byID and (pet.byID[tostring(id)] or pet.byID[id])
+              if not known and (linkedPets[pet] or SAK.PetKey(key) == SAK.PetKey(family))
+                and tonumber(entry.rank) then
+                local getName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
+                local name = getName and getName(id)
+                local rank = name and ((pet.byName and pet.byName[name]) or pet[name])
+                known = tonumber(rank) and tonumber(rank) >= tonumber(entry.rank)
+              end
+              if known then break end
+            end
+          end
+          if known then
+            character.learnedSpellsPet = character.learnedSpellsPet or {}
+            local records = character.learnedSpellsPet
+            records[family] = records[family] or {}
+            if records[family][id] ~= true then
+              records[family][id] = true
+              changed = true
+            end
+          end
+        end
+      end
+    end
+  end
+  trainerSync = { catalogue = catalogue, character = character, saved = saved,
+    learned = character.learnedSpellsPet, revision = petRevision }
+  if changed and type(TrainerSpells_Refresh) == "function" then TrainerSpells_Refresh() end
+end
+
 function PetGrimoires.SyncActivePetSpells()
   local pet = currentPetFamily()
   if not pet then return end
 
-  local learned = scanPetSpellBook()
+  local learned, count = scanPetSpellBook()
+  -- The pet book can be empty briefly while summoning or loading.
+  if count == 0 then return end
   local key = SAK.PetKey(pet)
   learned.petKey = key
   learned.petName = pet
+  local previous = SAK.EnsureDB().petSpells[key]
+  local changed = not previous
+  for id, rank in pairs(learned.byID) do
+    if not previous or not previous.byID or previous.byID[id] ~= rank then
+      changed = true
+      if previous and SAK.RecentLearning then
+        SAK.RecentLearning.Record("pets", tonumber(id), nil, rank)
+      end
+    end
+  end
   SAK.EnsureDB().petSpells[key] = learned
+  if changed and SAK.SpellBook then SAK.SpellBook.MarkDirty() end
+  petRevision = petRevision + 1
+  PetGrimoires.SyncTrainerSpellsKnown()
   if SAK.Inventory then SAK.Inventory.QueueRefresh() end
 end
 
@@ -289,6 +367,41 @@ local function petKnowsGrimoire(info)
   return true
 end
 
+function PetGrimoires.FindUpgrade(family, spell)
+  if spell.ranked == false then return end
+  if SAK.RankPolicy and not SAK.RankPolicy.BuyRankEnabled() then return end
+  local level = UnitLevel and UnitLevel("pet") or 0
+  if not level or level < 1 then level = UnitLevel and UnitLevel("player") or 0 end
+  local getName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
+  local best
+  local function consider(id, rank, required, name)
+    id, rank, required = tonumber(id), tonumber(rank), tonumber(required)
+    if not id or not rank or not required or rank <= family.max or required > level then return end
+    name = name or (getName and getName(id))
+    if name and SAK.NormalizeText(name) == SAK.NormalizeText(spell.name)
+      and (not best or rank > best.rank) then
+      best = { id = id, rank = rank, level = required }
+    end
+  end
+  for _, levels in pairs(type(TrainerSpells_PetData) == "table" and TrainerSpells_PetData or {}) do
+    local matched = false
+    for _, spells in pairs(levels) do
+      for id in pairs(spells) do if family.ids[tonumber(id)] then matched = true end end
+    end
+    if matched then
+      for required, spells in pairs(levels) do
+        for id, data in pairs(spells) do consider(id, data.rank, required) end
+      end
+    end
+  end
+  for _, info in pairs(SAK.EnsureDB().petGrimoires or {}) do
+    if info.petKey == currentPetKey() then
+      consider(info.spellID, info.rank, info.minLevel, info.spell)
+    end
+  end
+  return best
+end
+
 function PetGrimoires.KnowsItemInfo(info)
   return petKnowsGrimoire(info)
 end
@@ -298,10 +411,7 @@ local function grimoireState(info)
   local known = petKnowsGrimoire(info)
   if known then return "known" end
 
-  local activePet = currentPetKey() == info.petKey
-  local playerLevel = UnitLevel and UnitLevel("player") or 0
-  local petLevel = UnitLevel and UnitLevel("pet") or playerLevel
-  local level = activePet and petLevel or playerLevel
+  local level = UnitLevel and UnitLevel("player") or 0
   if (info.minLevel or 0) > level then return "unavailable" end
   return nil
 end
@@ -312,9 +422,8 @@ end
 
 local function grimoireLearnable(info)
   if not info or petKnowsGrimoire(info) then return false end
-  if currentPetKey() ~= info.petKey then return false end
-  local petLevel = UnitLevel and UnitLevel("pet") or UnitLevel("player") or 0
-  return (info.minLevel or 0) <= petLevel
+  local level = UnitLevel and UnitLevel("player") or 0
+  return (info.minLevel or 0) <= level
 end
 
 function PetGrimoires.ItemLearnable(info)
@@ -409,13 +518,16 @@ function PetGrimoires.Paint()
       Visuals.PaintMerchantBg(merchantButton)
       Visuals.PaintMerchantKnownPrefix(name, false)
       Visuals.PaintMerchantReadBookPrefix(name, false)
-      Visuals.PaintMerchantBg(merchantButton, state == "known" and not grimoireActivePet(info))
+      Visuals.PaintMerchantBg(merchantButton, state == "known")
       Visuals.PaintParts(name, nil, state == "known" and nil or state)
       Visuals.PaintMerchantLearnableText(name, learnable and not readBook)
       Visuals.PaintMerchantKnownPrefix(name, state == "known")
       Visuals.PaintMerchantReadBookPrefix(name, readBook)
       Visuals.EnsureMerchantTextLayer(name)
       Visuals.PaintOutline(merchantButton, learnable or readBook, readBook and SAK.MERCHANT_READ_BOOK_OUTLINE or SAK.MERCHANT_LEARNABLE_OUTLINE)
+      if SAK.RecentVisuals then
+        SAK.RecentVisuals.Paint(itemButton, itemButton, info and info.spellID, "pets", "iconsMerchant")
+      end
       Visuals.PaintMerchantKnownBookOverlay(itemButton, state == "known")
       Visuals.PaintMerchantPetIcon(itemButton, info)
       Visuals.PaintMerchantLearnableBadge(itemButton, learnable and not readBook)
@@ -427,6 +539,7 @@ function PetGrimoires.Paint()
       Visuals.PaintMerchantKnownPrefix(name, false)
       Visuals.PaintMerchantReadBookPrefix(name, false)
       local itemButton = Visuals.MerchantItemButton(visible, merchantButton)
+      if SAK.RecentVisuals then SAK.RecentVisuals.Paint(itemButton, itemButton, nil, "pets", "iconsMerchant") end
       Visuals.PaintMerchantKnownBookOverlay(itemButton, false)
       Visuals.PaintMerchantPetIcon(itemButton, nil)
       Visuals.PaintMerchantLearnableBadge(itemButton, false)

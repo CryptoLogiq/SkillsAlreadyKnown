@@ -17,7 +17,7 @@ local recentHooks = setmetatable({}, { __mode = "k" })
 local function addRecent(tooltip, id)
   if not tooltip or not id or not SAK.RecentLearning or not SAK.DisplayEnabled("recent")
     or not SAK.DisplayEnabled("text") or recentMarks[tooltip] == id then return end
-  if not SAK.RecentLearning.Contains("spells", id) and not SAK.RecentLearning.Contains("recipes", id) then return end
+  if not SAK.RecentLearning.Contains("spells", id) and not SAK.RecentLearning.Contains("recipes", id) and not SAK.RecentLearning.Contains("pets", id) then return end
   recentMarks[tooltip] = id
   if tooltip.HookScript and not recentHooks[tooltip] then
     recentHooks[tooltip] = true
@@ -125,10 +125,10 @@ local function annotateTooltip(tooltip, state, adviceOnly)
 end
 
 function Book.AddTooltip(tooltip, slot, spellBank)
-  if spellBank ~= Book.PlayerBank() then
+  if spellBank ~= Book.PlayerBank() and (not Book.PetBank or spellBank ~= Book.PetBank()) then
     return
   end
-  local state = Book.StateForSlot(slot)
+  local state = Book.StateForSlot(slot, spellBank)
   addRecent(tooltip, state and state.id)
   annotateTooltip(tooltip, state, false)
 end

@@ -32,7 +32,7 @@ Hover recognized spells for explanations, including on action bars. **ECO saves 
 
 ## Find what you just learned
 
-**RECENT** marks your latest learned spells, talent ranks and recipes in supported views. The complete list is available in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it.
+**RECENT** marks your latest learned spells, pet abilities, talent ranks and recipes in supported views. The complete list is available in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it.
 
 On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection.
 
@@ -44,7 +44,7 @@ Role labels appear in the talent trees and spellbook. **LEVELING** identifies th
 
 ## Recognize books and recipes
 
-Warlock pet grimoires show learned or learnable status and demon icons at merchants and in bags. Merchants also flag books you already own. Summon each demon to record its learned spells.
+Warlock pet grimoires show learned or learnable status and demon icons at merchants and in bags. Merchants also flag books you already own. Summon each demon once to record its learned spells. Book markers then stay available whichever demon is active; a bright gold border highlights books for your summoned demon. Pet spellbooks use BEST, LOW, BUY NEW RANK and RECENT, with upgrade alerts limited to ranks available at your pet’s level.
 
 **ALREADY KNOWN** identifies learned recipes in bags and group or raid loot-roll windows when the game confirms them. The addon never chooses a loot roll for you.
 

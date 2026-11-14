@@ -595,4 +595,8 @@ SAK.Translations["en-EN"] = {
   ["— conseillé pour progresser en solo"] = "— recommended for solo leveling",
   ["Le choix manuel de langue est correctement repris après un rechargement de l’interface."] = "The selected language is correctly restored after reloading the interface.",
   ["La version officielle démarre correctement lorsque la copie DEV est présente mais non chargée."] = "The official addon starts correctly when the DEV copy is present but not loaded.",
+  ["Les compétences de familiers déjà apprises sont reconnues dans la liste de TrainerSpells."] = "Previously learned pet abilities are recognized in the TrainerSpells list.",
+  ["PET_ABILITIES_LABEL"] = "Pet abilities",
+  ["Les livres de familiers gardent leurs marqueurs quel que soit le démon actif. Le grimoire des familiers indique les rangs appris, les rangs accessibles à acheter et les apprentissages récents."] = "Pet books keep their markers regardless of the active demon. Pet spellbooks show learned ranks, available rank upgrades and recent learning.",
+  ["Un contour doré lumineux distingue les livres du familier actuellement invoqué."] = "A bright gold border highlights books for your currently summoned pet.",
 }

@@ -33,7 +33,7 @@ local function rowEntry(row)
   if data.isHeader or data.isWeaponSkill or data.isTrainer or data.isHunterBeast or data.isProfession then return nil end
   local entry = data.entry
   if type(entry) ~= "table" or type(entry.spellID) ~= "number" or entry.spellID <= 0 then return nil end
-  if entry.petKey or entry.petLabel or entry.professionKey then return nil end
+  if entry.professionKey then return nil end
   return entry
 end
 
@@ -54,15 +54,17 @@ local function paint(row, class)
   if not entry or not name or not name.GetWidth or not name.GetStringWidth then hide(row); return end
 
   local advice
-  if not entry.questReward then
+  local petEntry = entry.petKey or entry.petLabel
+  if not entry.questReward and not petEntry then
     advice = SAK.RankPolicy.PurchaseAdvice(class, entry.spellID, entry.rankNum)
   end
   local spec = advice and SAK.SPELLBOOK_BADGES[advice]
-  local usage = SAK.DisplayEnabled("contentTags") and SAK.ContentTags.ForSpell(class, entry.spellID)
+  local usage = not petEntry and SAK.DisplayEnabled("contentTags") and SAK.ContentTags.ForSpell(class, entry.spellID)
   local purchaseWidth = spec and spec.width or 0
   local usageWidth = usage and SAK.ContentTags.BadgeWidth(usage.tag) or 0
+  local recentKind = SAK.RecentLearning and SAK.RecentLearning.Contains("pets", entry.spellID) and "pets" or "spells"
   local recent = SAK.RecentLearning and SAK.DisplayEnabled("recent")
-    and SAK.RecentLearning.Contains("spells", entry.spellID)
+    and SAK.RecentLearning.Contains(recentKind, entry.spellID)
   local recentWidth = recent and 58 or 0
   local gap = spec and usage and 3 or 0
   local previousWidth = purchaseWidth + usageWidth + gap
@@ -112,12 +114,15 @@ local function paint(row, class)
   display:Show()
   if SAK.RecentVisuals then
     -- The RECENT frame sits inside the measured rightmost space.
-    SAK.RecentVisuals.Paint(display, display, recent and entry.spellID, "spells", "iconsTrainerSpells")
+    SAK.RecentVisuals.Paint(display, display, recent and entry.spellID, recentKind, "iconsTrainerSpells")
   end
   stats.shown = stats.shown + 1
 end
 
 function Adapter.Refresh()
+  if SAK.PetGrimoires and SAK.PetGrimoires.SyncTrainerSpellsKnown then
+    SAK.PetGrimoires.SyncTrainerSpellsKnown()
+  end
   stats.rows, stats.shown, stats.narrow = 0, 0, 0
   local root, scroll = TrainerSpellsFrame, TrainerSpellsScrollBox
   local seen = {}

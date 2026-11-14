@@ -11,8 +11,9 @@ local outsideGeneration, visitGeneration = 0, 0
 local function storage()
   local db = SAK.EnsureDB()
   if type(db.recentLearning) ~= "table" then
-    db.recentLearning = { spells = {}, recipes = {}, talents = {} }
+    db.recentLearning = { spells = {}, recipes = {}, talents = {}, pets = {} }
   end
+  db.recentLearning.pets = db.recentLearning.pets or {}
   return db.recentLearning
 end
 
@@ -34,14 +35,14 @@ end
 
 function Recent.Record(kind, id, name, rank)
   if not initialized or not validID(id) then return end
-  if kind ~= "spells" and kind ~= "recipes" and kind ~= "talents" then return end
+  if kind ~= "spells" and kind ~= "recipes" and kind ~= "talents" and kind ~= "pets" then return end
   local current = storage()
   SAK.EnsureDB().recentLearningBootstrapped = true
   if kind == "spells" and current.recipes[id] then return end
   if not batchStarted then
     local previous = current[kind] and current[kind][id]
     if previous and (not rank or previous.rank == rank) then return end
-    current = { spells = {}, recipes = {}, talents = {} }
+    current = { spells = {}, recipes = {}, talents = {}, pets = {} }
     SAK.EnsureDB().recentLearning = current
     batchStarted = true
   end
@@ -191,7 +192,7 @@ function Recent.Summary()
     lines[#lines + 1] = L("Première utilisation : sorts déjà connus du palier de niveau ") .. storage().initialTier .. L(". Il s'agit d'une sélection initiale, pas d'un historique d'achats.")
     lines[#lines + 1] = ""
   end
-  for _, category in ipairs({ { "spells", L("Sorts / compétences") }, { "recipes", L("Recettes") }, { "talents", L("Talents") } }) do
+  for _, category in ipairs({ { "spells", L("Sorts / compétences") }, { "recipes", L("Recettes") }, { "talents", L("Talents") }, { "pets", L("PET_ABILITIES_LABEL") } }) do
     lines[#lines + 1] = category[2]
     local entries = {}
     for id, entry in pairs(storage()[category[1]] or {}) do
@@ -214,13 +215,13 @@ function Recent.HandleEvent(event, detail)
     Recent.InitializeDefaults()
   elseif not initialized then
     return
-  elseif event == "TRAINER_SHOW" then
+  elseif event == "TRAINER_SHOW" or event == "MERCHANT_SHOW" then
     visitGeneration = visitGeneration + 1
     visiting, batchStarted = false, false
     Recent.ScanSpells()
     Recent.InitializeDefaults()
     visiting = true
-  elseif event == "TRAINER_CLOSED" then
+  elseif event == "TRAINER_CLOSED" or event == "MERCHANT_CLOSED" then
     Recent.ScanSpells()
     local generation = visitGeneration
     -- Learning events can arrive just after the trainer closes.
