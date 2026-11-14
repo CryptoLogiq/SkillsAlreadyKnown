@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory() as temporary:
     extra.unlink()
     run("bash", str(fixture / "scripts/package.sh"))
     version = next(line.split(":", 1)[1].strip() for line in (fixture / "SkillsAlreadyKnown.toc").read_text().splitlines() if line.startswith("## Version:"))
-    archive = fixture / f"release/SkillsAlreadyKnown-{version}.zip"
+    archive = fixture / f"release/SkillsAndMore-{version}.zip"
     original = archive.read_bytes()
     latest = fixture / "release/latest"
     latest_archive = latest / archive.name
@@ -59,10 +59,12 @@ with tempfile.TemporaryDirectory() as temporary:
     latest_archive.unlink()
     stale = latest / "SkillsAlreadyKnown-0.0.0.zip"
     stale.write_bytes(b"old latest copy")
+    stale_new = latest / "SkillsAndMore-0.0.0.zip"
+    stale_new.write_bytes(b"older branded copy")
     keep = latest / "keep.txt"
     keep.write_text("preserve unrelated files")
     run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest")
-    assert latest_archive.read_bytes() == original and not stale.exists() and keep.exists()
+    assert latest_archive.read_bytes() == original and not stale.exists() and not stale_new.exists() and keep.exists()
     # A source edit must not silently pair new notes with an old immutable ZIP.
     release_notes = fixture / f"patchnote/{version}.lua"
     saved = release_notes.read_text()
@@ -77,6 +79,13 @@ with tempfile.TemporaryDirectory() as temporary:
         assert b'"Unreleased"' in package.read("SkillsAlreadyKnown/data/Patchnotes.lua")
     run("bash", str(fixture / "scripts/package.sh"), success=False)
     assert archive.read_bytes() == original
+    legacy = fixture / f"release/SkillsAlreadyKnown-{version}.zip"
+    legacy.write_bytes(original)
+    archive.unlink()
+    run("bash", str(fixture / "scripts/package.sh"), success=False)
+    run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest")
+    assert legacy.read_bytes() == original and (latest / legacy.name).read_bytes() == original
+    assert not archive.exists(), "Do not rebuild existing releases under a new filename"
     wow = Path(temporary) / "wow"
     (wow / "Interface/AddOns").mkdir(parents=True)
     env = dict(os.environ, SAK_WOW_ROOT=str(wow))
@@ -87,6 +96,9 @@ with tempfile.TemporaryDirectory() as temporary:
     run("bash", str(fixture / "scripts/install-local.sh"), env=env)
     installed = wow / "Interface/AddOns/SkillsAlreadyKnown_dev"
     assert "SkillsAlreadyKnown_dev" in (installed / "data/Patchnotes.lua").read_text()
+    installed_toc = (installed / "SkillsAlreadyKnown_dev.toc").read_text()
+    assert "SkillsAlreadyKnown_dev_dev" not in installed_toc
+    assert "## OptionalDeps: TrainerSpells\n" in installed_toc
     assert not (installed / "patchnote").exists()
     assert not (installed / "Patchnotes.lua").exists()
     assert output.read_text() == "stale source intentionally retained during dry run"

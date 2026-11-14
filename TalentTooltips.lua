@@ -1,5 +1,6 @@
 -- Presentation des roles, conseils de leveling et resumes des talents.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -18,6 +19,9 @@ function TalentTooltips.TreeNames(class)
   end
   for index, tree in ipairs(data.talentTrees) do
     add(tree.name, tree, index)
+    if SAK.Localization then
+      for _, name in ipairs(SAK.Localization.NameVariants(tree.name)) do add(name, tree, index) end
+    end
     if GetTalentTabInfo then
       local ok, first, second = pcall(GetTalentTabInfo, index)
       if ok then add(type(first) == "string" and first or second, tree, index) end
@@ -47,17 +51,17 @@ local function addLevelingAdvice(tooltip, class, specs)
     return
   end
   tooltip:AddLine(" ")
-  tooltip:AddLine("[LEVELING] — choix conseillé pour progresser en solo", 1, 0.82, 0.05, true)
+  tooltip:AddLine(L("[LEVELING] — choix conseillé pour progresser en solo"), 1, 0.82, 0.05, true)
 end
 
 local function addSummary(tooltip, summary)
   tooltip:AddLine(summary.summary, 1, 1, 1, true)
-  tooltip:AddLine("Avantages", 0.3, 1, 0.3)
+  tooltip:AddLine(L("Avantages"), 0.3, 1, 0.3)
   for _, text in ipairs(summary.advantages) do
     tooltip:AddLine("- " .. text, 0.85, 0.95, 0.85, true)
   end
 
-  tooltip:AddLine("Inconvénients", 1, 0.45, 0.35)
+  tooltip:AddLine(L("Inconvénients"), 1, 0.45, 0.35)
   for _, text in ipairs(summary.drawbacks) do
     tooltip:AddLine("- " .. text, 0.95, 0.85, 0.85, true)
   end
@@ -106,17 +110,17 @@ function TalentTooltips.SpecializationText(class, spec)
 
   local lines = {}
   if TalentTooltips.IsLevelingTree(class, { spec }) then
-    lines[#lines + 1] = "|cffffd100[LEVELING] — choix conseillé pour progresser en solo|r"
+    lines[#lines + 1] = L("|cffffd100[LEVELING] — choix conseillé pour progresser en solo|r")
     lines[#lines + 1] = ""
   end
   lines[#lines + 1] = summary.summary
   lines[#lines + 1] = ""
-  lines[#lines + 1] = "|cff4dff4dAvantages|r"
+  lines[#lines + 1] = L("|cff4dff4dAvantages|r")
   for _, text in ipairs(summary.advantages) do
     lines[#lines + 1] = "- " .. text
   end
   lines[#lines + 1] = ""
-  lines[#lines + 1] = "|cffff7359Inconvénients|r"
+  lines[#lines + 1] = L("|cffff7359Inconvénients|r")
   for _, text in ipairs(summary.drawbacks) do
     lines[#lines + 1] = "- " .. text
   end

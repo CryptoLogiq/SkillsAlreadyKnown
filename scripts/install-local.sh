@@ -61,6 +61,19 @@ rsync -a \
   --exclude '.codex' \
   --exclude '.agents' \
   --exclude '.aws' \
+  --exclude 'WTF' \
+  --exclude 'Cache' \
+  --exclude 'Logs' \
+  --exclude 'Errors' \
+  --exclude '.vscode' \
+  --exclude '.idea' \
+  --exclude '.packager' \
+  --exclude '__pycache__' \
+  --exclude '.env' \
+  --exclude '.env.*' \
+  --exclude '*.pyc' \
+  --exclude '*.pyo' \
+  --exclude '*.pkg' \
   --exclude '*.zip' \
   --exclude '*.7z' \
   --exclude '*.tar' \
@@ -82,7 +95,14 @@ for path in stage.rglob("*.lua"):
         continue
     path.write_text(path.read_text().replace(addon, dev_addon))
 toc = stage / (addon + ".toc")
-text = toc.read_text().replace(addon, dev_addon)
+# DEV must not depend on itself (or a recursively renamed DEV folder).
+lines = []
+for line in toc.read_text().splitlines():
+    if line.startswith("## OptionalDeps:"):
+        dependencies = [name.strip() for name in line.split(":", 1)[1].split(",")]
+        line = "## OptionalDeps: " + ", ".join(name for name in dependencies if name != dev_addon)
+    lines.append(line)
+text = ("\n".join(lines) + "\n").replace(addon, dev_addon)
 text = text.replace("## Title: Skills & More", "## Title: Skills & More [DEV]")
 (stage / (dev_addon + ".toc")).write_text(text)
 toc.unlink()

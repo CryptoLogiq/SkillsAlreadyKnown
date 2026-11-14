@@ -32,7 +32,7 @@ Hover recognized spells for explanations, including on action bars. **ECO saves 
 
 ## Find what you just learned
 
-**RECENT** marks your latest learned spells, talent ranks and recipes in supported views. The complete list is available in **Apprentissages récents** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it.
+**RECENT** marks your latest learned spells, talent ranks and recipes in supported views. The complete list is available in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it.
 
 On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection.
 
@@ -50,7 +50,7 @@ Warlock pet grimoires show learned or learnable status and demon icons at mercha
 
 ## Make it yours
 
-Open the options with **/sam settings** or the minimap button. Choose where icons appear and control outlines, text and backgrounds separately. Settings are saved per character. The launcher is also available through **HidingBar** and **Titan Panel**.
+Open the options with **/sam settings** or the minimap button. Choose where icons appear and control outlines, text and backgrounds separately. Settings are saved per character. Language follows the game client by default: French for French clients, English otherwise. Choose French or English manually in Language and reload to apply. The launcher is also available through **HidingBar** and **Titan Panel**.
 
 The options include role choices, recent learning, patchnotes, reset confirmations and support reports. Use **/sam** for the summary or **/sam conflicts** for a compatibility report.
 

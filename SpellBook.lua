@@ -1,5 +1,6 @@
 -- SkillsAlreadyKnown: learned player spell ranks, independent of trainer rows.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then return end
 local Book = {}
 SAK.SpellBook = Book
@@ -274,10 +275,10 @@ function Book.UpdateLegend(book)
     row.label:SetPoint("TOPLEFT", legend, "TOPLEFT", inset, -((i - 1) * 28))
     row.label:SetWidth(width - inset)
     local text = row.kind == "eco"
-      and "Rang suffisant pour pex (rôle).\nÉconomie d'or, pas de mana garantie."
-      or "Plus haut rang appris, même seul.\nDégâts, soins et effets de ce rang."
+      and L("Rang suffisant pour pex (rôle).\nÉconomie d'or, pas de mana garantie.")
+      or L("Plus haut rang appris, même seul.\nDégâts, soins et effets de ce rang.")
     if row.kind == "best" and optional then
-      text = "BEST : plus haut rang appris.\nOPTIONAL : achat facultatif (rôle)."
+      text = L("BEST : plus haut rang appris.\nOPTIONAL : achat facultatif (rôle).")
     end
     row.label:SetText((icons or (row.kind == "best" and optional)) and text or (row.kind:upper() .. " : " .. text))
   end
