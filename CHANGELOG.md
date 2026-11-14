@@ -2,9 +2,19 @@
 
 ## Unreleased
 
+## 0.4.1
+
 ### Features
 
-- Add French and English translations, automatic client-language detection and a saved language choice in the options. Reload to apply language changes.
+- Choose French or English in the options, with automatic client-language detection.
+- Track pet spell ranks, available upgrades and recent learning in supported views.
+- Keep pet book markers visible for every demon; a bright gold border highlights books for the active pet.
+
+### Bug fixes
+
+- The official addon starts when the DEV copy is installed but not loaded.
+- The selected language is restored correctly after reloading.
+- TrainerSpells recognizes recorded pet abilities as already learned.
 
 ## 0.4.0
 

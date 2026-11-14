@@ -8,7 +8,13 @@ SAK.Patchnotes = {
   {
     version = "Unreleased",
     status = "development",
-    basedOn = "0.4.0",
+    basedOn = "0.4.1",
+    additions = {},
+    fixes = {},
+  },
+  {
+    version = "0.4.1",
+    status = "released",
     additions = {
       "Un contour doré lumineux distingue les livres du familier actuellement invoqué.",
       "Les livres de familiers gardent leurs marqueurs quel que soit le démon actif. Le grimoire des familiers indique les rangs appris, les rangs accessibles à acheter et les apprentissages récents.",

@@ -47,7 +47,13 @@ for _, case in ipairs({
   assert(s.LevelingRecommendations.MAGE.soloReason:find(french and "Givre privilégie" or "Frost favors", 1, true))
   assert(s.SpellBook.Explanations.best:find(french and "Plus haut rang" or "Highest learned rank", 1, true))
   assert(s.RecentLearning.Summary():find(french and "Aucun apprentissage enregistré." or "No learning recorded.", 1, true))
-  local history = options.patchnotes.args.version2.args.additions.args.notes.name
+  local history
+  for index, entry in ipairs(s.Patchnotes) do
+    if entry.version == "0.4.0" then
+      history = options.patchnotes.args["version" .. index].args.additions.args.notes.name
+    end
+  end
+  assert(history, "Keep the translated 0.4.0 history available across releases")
   assert(history:find(french and "Skills Already Known devient" or "Skills Already Known becomes", 1, true))
   local tooltipLines = {}
   s.SpellBook.StateForSpell = function()
