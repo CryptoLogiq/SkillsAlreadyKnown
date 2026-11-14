@@ -43,7 +43,7 @@ local function collectFamilies(spells)
 end
 
 local function classifyLearnedRank(spell, family, class)
-  local policy = SAK.RankPolicy
+  local policy = not spell.pet and SAK.RankPolicy
   local ecoReason = policy and policy.RankOneAdvice(class, family)
 
   if spell.rank == 1 and ecoReason then
@@ -62,6 +62,11 @@ local function addPurchaseAdvice(state, spell, family, class)
     return
   end
 
+  if spell.pet then
+    local upgrade = SAK.PetGrimoires and SAK.PetGrimoires.FindUpgrade(family, spell)
+    if upgrade then state.kind, state.upgrade = "buy", upgrade end
+    return
+  end
   local policy = SAK.RankPolicy
   if policy then
     state.optionalReason, state.optionalScope = policy.OptionalAdvice(class, family, spell.rank)
@@ -92,6 +97,7 @@ function SpellRanks.Classify(spells, class)
       local kind, reason = classifyLearnedRank(spell, family, class)
       local state = {
         kind = kind,
+        pet = spell.pet,
         rank = spell.rank,
         highest = family.max,
         highestID = family.ranks[family.max],

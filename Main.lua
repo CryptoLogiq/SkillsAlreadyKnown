@@ -1,6 +1,7 @@
 -- SkillsAlreadyKnown: addon bootstrap, slash commands, and event routing.
 
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then return end
 
 function SAK.Refresh()
@@ -35,24 +36,24 @@ function SAK.SummaryText()
   local lines = {
     "Skills & More — By CryptoLogiq",
     "",
-    "Maîtres : NEW + = apprenable, coche verte = appris, NEXT = prochain palier, NOT NOW = indisponible.",
-    "Métiers : NEXT indique le prochain palier d'apprentissage.",
-    "Grimoire : BEST = plus haut rang appris ; LOW = ancien rang déjà remplacé ; BUY NEW RANK = rang supérieur accessible à apprendre.",
-    "Conseils : ECO = rang suffisant pour l'usage conseillé ; OPTIONAL = achat reportable selon tes rôles. L'économie concerne l'or d'apprentissage.",
-    "RECENT : derniers sorts, talents et recettes appris, conservés après rechargement. Consulte Apprentissages récents dans les options.",
-    "Rôles et talents : résumés des spécialisations, recommandation LEVELING et repères PVP / PVE PVP sur les entrées renseignées.",
-    "Livres de démons : grimoires appris, apprenables et déjà possédés. Invoque chaque démon pour enregistrer ses sorts.",
-    "ALREADY KNOWN : recettes déjà apprises dans les sacs et les jets de dés reconnus.",
-    "Affichage : icônes par zone, contours, textes et fonds réglables séparément.",
-    "Minicarte : clic gauche pour les options, clic droit pour ce résumé.",
+    L("Maîtres : NEW + = apprenable, coche verte = appris, NEXT = prochain palier, NOT NOW = indisponible."),
+    L("Métiers : NEXT indique le prochain palier d'apprentissage."),
+    L("Grimoire : BEST = plus haut rang appris ; LOW = ancien rang déjà remplacé ; BUY NEW RANK = rang supérieur accessible à apprendre."),
+    L("Conseils : ECO = rang suffisant pour l'usage conseillé ; OPTIONAL = achat reportable selon tes rôles. L'économie concerne l'or d'apprentissage."),
+    L("RECENT : derniers sorts, talents et recettes appris, conservés après rechargement. Consulte Apprentissages récents dans les options."),
+    L("Rôles et talents : résumés des spécialisations, recommandation LEVELING et repères PVP / PVE PVP sur les entrées renseignées."),
+    L("Livres de démons : grimoires appris, apprenables et déjà possédés. Invoque chaque démon pour enregistrer ses sorts."),
+    L("ALREADY KNOWN : recettes déjà apprises dans les sacs et les jets de dés reconnus."),
+    L("Affichage : icônes par zone, contours, textes et fonds réglables séparément."),
+    L("Minicarte : clic gauche pour les options, clic droit pour ce résumé."),
     "",
-    "Commandes :",
-    "/sam settings — options, rôles et spécialisations",
-    "/sam debug — maître de classe",
+    L("Commandes :"),
+    L("/sam settings — options, rôles et spécialisations"),
+    L("/sam debug — maître de classe"),
     "/sam bookdebug — grimoire",
-    "/sam pet — sorts du familier",
-    "/sam petdebug — grimoires du familier",
-    "/sam conflicts — compatibilité",
+    L("/sam pet — sorts du familier"),
+    L("/sam petdebug — grimoires du familier"),
+    L("/sam conflicts — compatibilité"),
   }
   return table.concat(lines, "\n")
 end

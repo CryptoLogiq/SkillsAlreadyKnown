@@ -1,6 +1,7 @@
 -- Repères éditoriaux Forever : PVP principalement joueurs ; mixed utile en PvE et PvP.
 -- Aucun classement implicite : une entrée absente reste sans marqueur.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -19,7 +20,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Improved Entangling Roots",
           tag = "mixed",
-          reason = "Contrôle utile contre les joueurs et pour retenir des ennemis en PvE.",
+          reason = L("Contrôle utile contre les joueurs et pour retenir des ennemis en PvE."),
         },
         {
           spellID = 17116,
@@ -27,7 +28,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Nature's Swiftness",
           tag = "mixed",
-          reason = "Un soin immédiat peut sauver un allié dans les deux activités.",
+          reason = L("Un soin immédiat peut sauver un allié dans les deux activités."),
         },
         {
           spellID = 1238122,
@@ -35,7 +36,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Feral Charge",
           tag = "mixed",
-          reason = "Mobilité et interruption utiles en tank, en solo et contre les joueurs.",
+          reason = L("Mobilité et interruption utiles en tank, en solo et contre les joueurs."),
         },
         {
           spellID = 16940,
@@ -43,7 +44,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Brutal Impact",
           tag = "mixed",
-          reason = "Renforce les contrôles, utiles aussi pour gérer un ennemi en PvE.",
+          reason = L("Renforce les contrôles, utiles aussi pour gérer un ennemi en PvE."),
         },
         {
           spellID = 16880,
@@ -51,7 +52,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Nature's Grace",
           tag = "mixed",
-          reason = "Accélère les incantations après un critique, pour soigner ou attaquer.",
+          reason = L("Accélère les incantations après un critique, pour soigner ou attaquer."),
         },
         {
           spellID = 17074,
@@ -59,7 +60,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Improved Regrowth",
           tag = "mixed",
-          reason = "Renforce les soins de Rétablissement dans les deux activités.",
+          reason = L("Renforce les soins de Rétablissement dans les deux activités."),
         },
         {
           spellID = 5570,
@@ -67,7 +68,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Insect Swarm",
           tag = "mixed",
-          reason = "Affaiblissement et dégâts utiles en PvE comme contre les joueurs.",
+          reason = L("Affaiblissement et dégâts utiles en PvE comme contre les joueurs."),
         },
       },
       spells = {
@@ -75,21 +76,21 @@ SAK.ContentUsage = {
           spellID = 339,
           name = "Entangling Roots",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=339",
         },
         {
           spellID = 2637,
           name = "Hibernate",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=2637",
         },
         {
           spellID = 770,
           name = "Faerie Fire",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=770",
         },
       },
@@ -106,7 +107,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Improved Concussive Shot",
           tag = "pvp",
-          reason = "Le contrôle supplémentaire aide surtout à empêcher un joueur de revenir au contact.",
+          reason = L("Le contrôle supplémentaire aide surtout à empêcher un joueur de revenir au contact."),
         },
         {
           spellID = 19228,
@@ -114,7 +115,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Improved Wing Clip",
           tag = "pvp",
-          reason = "Aide surtout à se dégager des joueurs au corps à corps.",
+          reason = L("Aide surtout à se dégager des joueurs au corps à corps."),
         },
         {
           spellID = 19184,
@@ -122,7 +123,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Entrapment",
           tag = "mixed",
-          reason = "Les pièges peuvent retenir des joueurs ou des ennemis en PvE.",
+          reason = L("Les pièges peuvent retenir des joueurs ou des ennemis en PvE."),
         },
         {
           spellID = 19306,
@@ -130,7 +131,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Counterattack",
           tag = "mixed",
-          reason = "Contrôle défensif utile lorsqu’un ennemi arrive au contact.",
+          reason = L("Contrôle défensif utile lorsqu’un ennemi arrive au contact."),
         },
         {
           spellID = 1293241,
@@ -138,7 +139,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Summon Hawk",
           tag = "mixed",
-          reason = "Renfort offensif utilisable dans les combats PvE et PvP.",
+          reason = L("Renfort offensif utilisable dans les combats PvE et PvP."),
         },
         {
           spellID = 19263,
@@ -146,7 +147,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Deterrence",
           tag = "mixed",
-          reason = "Protection lorsque l’on subit des attaques au corps à corps.",
+          reason = L("Protection lorsque l’on subit des attaques au corps à corps."),
         },
         {
           spellID = 19503,
@@ -154,7 +155,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Scatter Shot",
           tag = "mixed",
-          reason = "Contrôle court pour interrompre une menace ou reprendre de la distance.",
+          reason = L("Contrôle court pour interrompre une menace ou reprendre de la distance."),
         },
         {
           spellID = 19574,
@@ -162,7 +163,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Bestial Wrath",
           tag = "mixed",
-          reason = "Renforce l’offensive du familier dans les deux activités.",
+          reason = L("Renforce l’offensive du familier dans les deux activités."),
         },
         {
           spellID = 19549,
@@ -170,7 +171,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Improved Aspect of the Monkey",
           tag = "mixed",
-          reason = "Survie au contact, utile en solo et contre les joueurs.",
+          reason = L("Survie au contact, utile en solo et contre les joueurs."),
         },
       },
       spells = {
@@ -178,28 +179,28 @@ SAK.ContentUsage = {
           spellID = 5116,
           name = "Concussive Shot",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=5116",
         },
         {
           spellID = 2974,
           name = "Wing Clip",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=2974",
         },
         {
           spellID = 1543,
           name = "Flare",
           tag = "pvp",
-          reason = "Outil surtout utile pour gêner les joueurs adverses.",
+          reason = L("Outil surtout utile pour gêner les joueurs adverses."),
           source = "https://www.wowhead.com/forever/spell=1543",
         },
         {
           spellID = 1499,
           name = "Freezing Trap",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1499",
         },
       },
@@ -216,7 +217,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Frostbite",
           tag = "pvp",
-          reason = "Les immobilisations imprévisibles gênent surtout les déplacements des joueurs.",
+          reason = L("Les immobilisations imprévisibles gênent surtout les déplacements des joueurs."),
         },
         {
           spellID = 11175,
@@ -224,7 +225,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Permafrost",
           tag = "mixed",
-          reason = "Ralentir davantage aide à tenir à distance joueurs et ennemis.",
+          reason = L("Ralentir davantage aide à tenir à distance joueurs et ennemis."),
         },
         {
           spellID = 11165,
@@ -232,7 +233,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Improved Frost Nova",
           tag = "mixed",
-          reason = "Permet de retrouver plus souvent son contrôle de proximité.",
+          reason = L("Permet de retrouver plus souvent son contrôle de proximité."),
         },
         {
           spellID = 11958,
@@ -240,7 +241,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Ice Block",
           tag = "mixed",
-          reason = "Protection d’urgence utile face aux mécaniques PvE et aux joueurs.",
+          reason = L("Protection d’urgence utile face aux mécaniques PvE et aux joueurs."),
         },
         {
           spellID = 11426,
@@ -248,7 +249,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Ice Barrier",
           tag = "mixed",
-          reason = "Absorbe des dégâts et sécurise les incantations dans les deux activités.",
+          reason = L("Absorbe des dégâts et sécurise les incantations dans les deux activités."),
         },
         {
           spellID = 11185,
@@ -256,7 +257,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Improved Blizzard",
           tag = "mixed",
-          reason = "Contrôle de zone utile sur les groupes d’ennemis et en combats PvP.",
+          reason = L("Contrôle de zone utile sur les groupes d’ennemis et en combats PvP."),
         },
         {
           spellID = 12043,
@@ -264,7 +265,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Presence of Mind",
           tag = "mixed",
-          reason = "Une incantation instantanée apporte dégâts ou réactivité.",
+          reason = L("Une incantation instantanée apporte dégâts ou réactivité."),
         },
         {
           spellID = 11366,
@@ -272,7 +273,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Pyroblast",
           tag = "mixed",
-          reason = "Grosse attaque utilisable en PvE et dans certaines combinaisons PvP.",
+          reason = L("Grosse attaque utilisable en PvE et dans certaines combinaisons PvP."),
         },
         {
           spellID = 11103,
@@ -280,7 +281,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Impact",
           tag = "mixed",
-          reason = "Le contrôle supplémentaire peut gêner joueurs et ennemis sensibles.",
+          reason = L("Le contrôle supplémentaire peut gêner joueurs et ennemis sensibles."),
         },
       },
       spells = {
@@ -288,35 +289,35 @@ SAK.ContentUsage = {
           spellID = 118,
           name = "Polymorph",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=118",
         },
         {
           spellID = 122,
           name = "Frost Nova",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=122",
         },
         {
           spellID = 2139,
           name = "Counterspell",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=2139",
         },
         {
           spellID = 1953,
           name = "Blink",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1953",
         },
         {
           spellID = 120,
           name = "Cone of Cold",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=120",
         },
       },
@@ -333,7 +334,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Stoicism",
           tag = "pvp",
-          reason = "Protection principalement intéressante contre les contrôles et dissipations des joueurs.",
+          reason = L("Protection principalement intéressante contre les contrôles et dissipations des joueurs."),
         },
         {
           spellID = 20174,
@@ -341,7 +342,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Guardian's Favor",
           tag = "mixed",
-          reason = "Renforce les outils de protection et de liberté pour aider un allié.",
+          reason = L("Renforce les outils de protection et de liberté pour aider un allié."),
         },
         {
           spellID = 20487,
@@ -349,7 +350,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Improved Hammer of Justice",
           tag = "mixed",
-          reason = "Retrouver son étourdissement plus souvent aide à gérer une menace.",
+          reason = L("Retrouver son étourdissement plus souvent aide à gérer une menace."),
         },
         {
           spellID = 26022,
@@ -357,7 +358,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Pursuit of Justice",
           tag = "mixed",
-          reason = "La mobilité facilite le placement et la poursuite dans les deux activités.",
+          reason = L("La mobilité facilite le placement et la poursuite dans les deux activités."),
         },
         {
           spellID = 9452,
@@ -365,7 +366,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Vindication",
           tag = "mixed",
-          reason = "Affaiblit les ennemis sensibles ; intérêt aussi en soutien PvE.",
+          reason = L("Affaiblit les ennemis sensibles ; intérêt aussi en soutien PvE."),
         },
         {
           spellID = 1311606,
@@ -373,7 +374,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Holy Shock",
           tag = "mixed",
-          reason = "Réponse immédiate pour soigner ou infliger des dégâts.",
+          reason = L("Réponse immédiate pour soigner ou infliger des dégâts."),
         },
         {
           spellID = 20216,
@@ -381,7 +382,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Divine Favor",
           tag = "mixed",
-          reason = "Renforce un moment de soin ou d’offensive selon la spécialisation.",
+          reason = L("Renforce un moment de soin ou d’offensive selon la spécialisation."),
         },
         {
           spellID = 20066,
@@ -389,7 +390,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Repentance",
           tag = "mixed",
-          reason = "Permet d’écarter temporairement une cible sensible en PvE ou PvP.",
+          reason = L("Permet d’écarter temporairement une cible sensible en PvE ou PvP."),
         },
         {
           spellID = 20375,
@@ -397,7 +398,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Seal of Command",
           tag = "mixed",
-          reason = "Option offensive utilisée en Vindicte dans les deux activités.",
+          reason = L("Option offensive utilisée en Vindicte dans les deux activités."),
         },
       },
       spells = {
@@ -405,28 +406,28 @@ SAK.ContentUsage = {
           spellID = 853,
           name = "Hammer of Justice",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=853",
         },
         {
           spellID = 1044,
           name = "Blessing of Freedom",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1044",
         },
         {
           spellID = 1022,
           name = "Blessing of Protection",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1022",
         },
         {
           spellID = 4987,
           name = "Cleanse",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=4987",
         },
       },
@@ -443,7 +444,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Silent Resolve",
           tag = "pvp",
-          reason = "La protection contre les dissipations prend surtout de la valeur face aux joueurs.",
+          reason = L("La protection contre les dissipations prend surtout de la valeur face aux joueurs."),
         },
         {
           spellID = 14531,
@@ -451,7 +452,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Martyrdom",
           tag = "mixed",
-          reason = "Aide à continuer ses incantations lorsque l’on subit des attaques.",
+          reason = L("Aide à continuer ses incantations lorsque l’on subit des attaques."),
         },
         {
           spellID = 27811,
@@ -459,7 +460,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Blessed Recovery",
           tag = "mixed",
-          reason = "Survie personnelle utile sous les attaques, notamment en PvP et en solo.",
+          reason = L("Survie personnelle utile sous les attaques, notamment en PvP et en solo."),
         },
         {
           spellID = 15326,
@@ -467,7 +468,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Blackout",
           tag = "pvp",
-          reason = "Le contrôle aléatoire peut créer une ouverture contre un joueur.",
+          reason = L("Le contrôle aléatoire peut créer une ouverture contre un joueur."),
         },
         {
           spellID = 15392,
@@ -475,7 +476,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Improved Psychic Scream",
           tag = "pvp",
-          reason = "Retrouver sa peur plus souvent aide surtout à se dégager des joueurs.",
+          reason = L("Retrouver sa peur plus souvent aide surtout à se dégager des joueurs."),
         },
         {
           spellID = 14750,
@@ -483,7 +484,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Improved Mana Burn",
           tag = "pvp",
-          reason = "Facilite la pression sur la mana des adversaires joueurs.",
+          reason = L("Facilite la pression sur la mana des adversaires joueurs."),
         },
         {
           spellID = 15487,
@@ -491,7 +492,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Silence",
           tag = "mixed",
-          reason = "Arrêter un lanceur de sorts peut aider en donjon comme en PvP.",
+          reason = L("Arrêter un lanceur de sorts peut aider en donjon comme en PvP."),
         },
         {
           spellID = 10060,
@@ -499,7 +500,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Power Infusion",
           tag = "mixed",
-          reason = "Renfort pour un lanceur de sorts, en groupe PvE ou PvP.",
+          reason = L("Renfort pour un lanceur de sorts, en groupe PvE ou PvP."),
         },
         {
           spellID = 14892,
@@ -507,7 +508,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Inspiration",
           tag = "mixed",
-          reason = "Protection défensive utile sur les alliés exposés aux attaques.",
+          reason = L("Protection défensive utile sur les alliés exposés aux attaques."),
         },
         {
           spellID = 15270,
@@ -515,7 +516,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Spirit Tap",
           tag = "mixed",
-          reason = "Aide à récupérer de la mana entre les ennemis ou les engagements PvP.",
+          reason = L("Aide à récupérer de la mana entre les ennemis ou les engagements PvP."),
         },
       },
       spells = {
@@ -523,28 +524,28 @@ SAK.ContentUsage = {
           spellID = 8129,
           name = "Mana Burn",
           tag = "pvp",
-          reason = "Outil surtout utile pour gêner les joueurs adverses.",
+          reason = L("Outil surtout utile pour gêner les joueurs adverses."),
           source = "https://www.wowhead.com/forever/spell=8129",
         },
         {
           spellID = 527,
           name = "Dispel Magic",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=527",
         },
         {
           spellID = 605,
           name = "Mind Control",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=605",
         },
         {
           spellID = 8122,
           name = "Psychic Scream",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=8122",
         },
       },
@@ -560,7 +561,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Master of Deception",
           tag = "pvp",
-          reason = "La discrétion aide surtout à préparer son ouverture face aux joueurs.",
+          reason = L("La discrétion aide surtout à préparer son ouverture face aux joueurs."),
         },
         {
           spellID = 30894,
@@ -568,7 +569,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Heightened Senses",
           tag = "pvp",
-          reason = "La détection et la protection prennent surtout leur valeur face aux autres joueurs.",
+          reason = L("La détection et la protection prennent surtout leur valeur face aux autres joueurs."),
         },
         {
           spellID = 14082,
@@ -576,7 +577,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Dirty Deeds",
           tag = "mixed",
-          reason = "Facilite les ouvertures ; intérêt en solo et contre les joueurs.",
+          reason = L("Facilite les ouvertures ; intérêt en solo et contre les joueurs."),
         },
         {
           spellID = 13741,
@@ -584,7 +585,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Improved Gouge",
           tag = "mixed",
-          reason = "Prolonge un contrôle pour gagner du temps sur une cible sensible.",
+          reason = L("Prolonge un contrôle pour gagner du temps sur une cible sensible."),
         },
         {
           spellID = 13743,
@@ -592,7 +593,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Improved Sprint",
           tag = "mixed",
-          reason = "Aide à retrouver sa mobilité pour poursuivre ou se dégager.",
+          reason = L("Aide à retrouver sa mobilité pour poursuivre ou se dégager."),
         },
         {
           spellID = 14177,
@@ -600,7 +601,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Cold Blood",
           tag = "mixed",
-          reason = "Renforce une attaque décisive dans les deux activités.",
+          reason = L("Renforce une attaque décisive dans les deux activités."),
         },
         {
           spellID = 14185,
@@ -608,7 +609,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Preparation",
           tag = "mixed",
-          reason = "Retrouver certains outils peut aider à survivre ou relancer une offensive.",
+          reason = L("Retrouver certains outils peut aider à survivre ou relancer une offensive."),
         },
         {
           spellID = 14057,
@@ -616,7 +617,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Opportunity",
           tag = "mixed",
-          reason = "Renforce les attaques concernées en PvE comme en PvP.",
+          reason = L("Renforce les attaques concernées en PvE comme en PvP."),
         },
         {
           spellID = 1224716,
@@ -624,7 +625,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Puncturing Wounds",
           tag = "mixed",
-          reason = "Renforce les attaques concernées, selon le jeu choisi.",
+          reason = L("Renforce les attaques concernées, selon le jeu choisi."),
         },
         {
           spellID = 14171,
@@ -632,7 +633,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Serrated Blades",
           tag = "mixed",
-          reason = "Renfort offensif utilisable dans les deux activités.",
+          reason = L("Renfort offensif utilisable dans les deux activités."),
         },
       },
       spells = {
@@ -640,28 +641,28 @@ SAK.ContentUsage = {
           spellID = 1766,
           name = "Kick",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1766",
         },
         {
           spellID = 1776,
           name = "Gouge",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1776",
         },
         {
           spellID = 408,
           name = "Kidney Shot",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=408",
         },
         {
           spellID = 2094,
           name = "Blind",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=2094",
         },
       },
@@ -678,7 +679,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Earthbound",
           tag = "mixed",
-          reason = "Retenir des ennemis peut protéger le groupe ou empêcher un joueur de poursuivre.",
+          reason = L("Retenir des ennemis peut protéger le groupe ou empêcher un joueur de poursuivre."),
         },
         {
           spellID = 16043,
@@ -686,7 +687,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Earth's Grasp",
           tag = "mixed",
-          reason = "Renforce le contrôle pour garder les ennemis à distance.",
+          reason = L("Renforce le contrôle pour garder les ennemis à distance."),
         },
         {
           spellID = 16258,
@@ -694,7 +695,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Guardian Totems",
           tag = "mixed",
-          reason = "Renforce les totems défensifs, utiles contre les sorts et les attaques.",
+          reason = L("Renforce les totems défensifs, utiles contre les sorts et les attaques."),
         },
         {
           spellID = 16262,
@@ -702,7 +703,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Improved Ghost Wolf",
           tag = "mixed",
-          reason = "Mobilité utile pour le placement en PvE et pour poursuivre ou fuir en PvP.",
+          reason = L("Mobilité utile pour le placement en PvE et pour poursuivre ou fuir en PvP."),
         },
         {
           spellID = 16166,
@@ -710,7 +711,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Lightning Mastery",
           tag = "mixed",
-          reason = "Temps fort offensif de la spécialisation Élémentaire.",
+          reason = L("Temps fort offensif de la spécialisation Élémentaire."),
         },
         {
           spellID = 16188,
@@ -718,7 +719,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Nature's Swiftness",
           tag = "mixed",
-          reason = "Réactivité pour un soin ou un sort urgent dans les deux activités.",
+          reason = L("Réactivité pour un soin ou un sort urgent dans les deux activités."),
         },
         {
           spellID = 17364,
@@ -726,7 +727,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Stormstrike",
           tag = "mixed",
-          reason = "Attaque centrale du jeu Amélioration en PvE comme en PvP.",
+          reason = L("Attaque centrale du jeu Amélioration en PvE comme en PvP."),
         },
         {
           spellID = 16255,
@@ -734,7 +735,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Thundering Strikes",
           tag = "mixed",
-          reason = "Renforce les critiques des attaques concernées dans les deux activités.",
+          reason = L("Renforce les critiques des attaques concernées dans les deux activités."),
         },
       },
       spells = {
@@ -742,35 +743,35 @@ SAK.ContentUsage = {
           spellID = 8042,
           name = "Earth Shock",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=8042",
         },
         {
           spellID = 8056,
           name = "Frost Shock",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=8056",
         },
         {
           spellID = 2484,
           name = "Earthbind Totem",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=2484",
         },
         {
           spellID = 8177,
           name = "Grounding Totem",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=8177",
         },
         {
           spellID = 370,
           name = "Purge",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=370",
         },
       },
@@ -787,7 +788,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Curse of Exhaustion",
           tag = "mixed",
-          reason = "Ralentit une cible pour contrôler la distance, y compris en solo PvE.",
+          reason = L("Ralentit une cible pour contrôler la distance, y compris en solo PvE."),
         },
         {
           spellID = 18218,
@@ -795,7 +796,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Grim Reach",
           tag = "mixed",
-          reason = "La portée aide à se placer et à garder ses distances.",
+          reason = L("La portée aide à se placer et à garder ses distances."),
         },
         {
           spellID = 18697,
@@ -803,7 +804,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Demonic Embrace",
           tag = "mixed",
-          reason = "Davantage de vie aide à survivre dans les deux activités.",
+          reason = L("Davantage de vie aide à survivre dans les deux activités."),
         },
         {
           spellID = 19028,
@@ -811,7 +812,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Soul Link",
           tag = "mixed",
-          reason = "Protection liée au démon, utile sous la pression d’ennemis ou de joueurs.",
+          reason = L("Protection liée au démon, utile sous la pression d’ennemis ou de joueurs."),
         },
         {
           spellID = 17877,
@@ -819,7 +820,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Shadowburn",
           tag = "mixed",
-          reason = "Attaque instantanée utilisée en PvE et pour finir un adversaire en PvP.",
+          reason = L("Attaque instantanée utilisée en PvE et pour finir un adversaire en PvP."),
         },
         {
           spellID = 1293817,
@@ -827,7 +828,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Conflagrate",
           tag = "mixed",
-          reason = "Attaque de Destruction utile dans les deux activités.",
+          reason = L("Attaque de Destruction utile dans les deux activités."),
         },
         {
           spellID = 18708,
@@ -835,7 +836,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Fel Domination",
           tag = "mixed",
-          reason = "Aide à retrouver rapidement un démon après sa perte.",
+          reason = L("Aide à retrouver rapidement un démon après sa perte."),
         },
         {
           spellID = 17959,
@@ -843,7 +844,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Ruin",
           tag = "mixed",
-          reason = "Renforce les critiques offensifs dans les deux activités.",
+          reason = L("Renforce les critiques offensifs dans les deux activités."),
         },
       },
       spells = {
@@ -851,35 +852,35 @@ SAK.ContentUsage = {
           spellID = 6215,
           name = "Fear",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=6215/fear",
         },
         {
           spellID = 5484,
           name = "Howl of Terror",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=5484",
         },
         {
           spellID = 6789,
           name = "Death Coil",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=6789",
         },
         {
           spellID = 5138,
           name = "Drain Mana",
           tag = "pvp",
-          reason = "Outil surtout utile pour gêner les joueurs adverses.",
+          reason = L("Outil surtout utile pour gêner les joueurs adverses."),
           source = "https://www.wowhead.com/forever/spell=5138",
         },
         {
           spellID = 1714,
           name = "Curse of Tongues",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1714",
         },
       },
@@ -896,7 +897,7 @@ SAK.ContentUsage = {
           tree = 3,
           name = "Iron Will",
           tag = "pvp",
-          reason = "Résister aux contrôles est surtout utile face aux joueurs.",
+          reason = L("Résister aux contrôles est surtout utile face aux joueurs."),
         },
         {
           spellID = 12289,
@@ -904,7 +905,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Improved Hamstring",
           tag = "pvp",
-          reason = "Le contrôle supplémentaire aide surtout à rester au contact d’un joueur.",
+          reason = L("Le contrôle supplémentaire aide surtout à rester au contact d’un joueur."),
         },
         {
           spellID = 20504,
@@ -912,7 +913,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Improved Intercept",
           tag = "mixed",
-          reason = "Mobilité et contrôle peuvent aider en PvP comme sur les ennemis accessibles.",
+          reason = L("Mobilité et contrôle peuvent aider en PvP comme sur les ennemis accessibles."),
         },
         {
           spellID = 12294,
@@ -920,7 +921,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Mortal Strike",
           tag = "mixed",
-          reason = "Attaque majeure en Armes ; sa pression sur les soins est précieuse en PvP.",
+          reason = L("Attaque majeure en Armes ; sa pression sur les soins est précieuse en PvP."),
         },
         {
           spellID = 1310222,
@@ -928,7 +929,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Spearing Strike",
           tag = "pvp",
-          reason = "Outil de poursuite particulièrement intéressant contre les joueurs en monde ouvert.",
+          reason = L("Outil de poursuite particulièrement intéressant contre les joueurs en monde ouvert."),
         },
         {
           spellID = 12317,
@@ -936,7 +937,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Enrage",
           tag = "mixed",
-          reason = "Renforce les dégâts lorsque les conditions du talent sont réunies.",
+          reason = L("Renforce les dégâts lorsque les conditions du talent sont réunies."),
         },
         {
           spellID = 16462,
@@ -944,7 +945,7 @@ SAK.ContentUsage = {
           tree = 1,
           name = "Deflection",
           tag = "mixed",
-          reason = "Survie face aux attaques au corps à corps, dans les deux activités.",
+          reason = L("Survie face aux attaques au corps à corps, dans les deux activités."),
         },
         {
           spellID = 12323,
@@ -952,7 +953,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Piercing Howl",
           tag = "mixed",
-          reason = "Ralentissement de proximité pour gérer plusieurs poursuivants.",
+          reason = L("Ralentissement de proximité pour gérer plusieurs poursuivants."),
         },
         {
           spellID = 12328,
@@ -960,7 +961,7 @@ SAK.ContentUsage = {
           tree = 2,
           name = "Death Wish",
           tag = "mixed",
-          reason = "Temps fort offensif à utiliser en tenant compte du risque défensif.",
+          reason = L("Temps fort offensif à utiliser en tenant compte du risque défensif."),
         },
       },
       spells = {
@@ -968,38 +969,42 @@ SAK.ContentUsage = {
           spellID = 1715,
           name = "Hamstring",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=1715",
         },
         {
           spellID = 676,
           name = "Disarm",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=676",
         },
         {
           spellID = 20617,
           name = "Intercept",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=20617/intercept",
         },
         {
           spellID = 6552,
           name = "Pummel",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=6552",
         },
         {
           spellID = 72,
           name = "Shield Bash",
           tag = "mixed",
-          reason = "Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible.",
+          reason = L("Contrôle, soutien ou mobilité utile en PvE comme en PvP, selon la cible."),
           source = "https://www.wowhead.com/forever/spell=72",
         },
       },
     },
   },
 }
+
+if SAK.Localization then
+  SAK.Localization.RegisterTable(SAK.ContentUsage)
+end

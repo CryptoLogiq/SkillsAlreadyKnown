@@ -4,9 +4,10 @@
 ## Notes: Spell ranks, talents, roles, profession learning and training advice for WoW Forever.
 ## IconTexture: Interface\AddOns\SkillsAlreadyKnown\assets\launcher-icon.tga
 ## Author: CryptoLogiq
-## Version: 0.4.0
+## X-Curse-Project-ID: 1725046
+## Version: 0.4.1
 ## SavedVariablesPerCharacter: SkillsAlreadyKnownDB
-## OptionalDeps: TrainerSpells
+## OptionalDeps: TrainerSpells, SkillsAlreadyKnown_dev
 
 libs/LibStub/LibStub.lua [AllowLoadGameType camelot]
 libs/LibButtonGlow-1.0/LibButtonGlow-1.0.lua [AllowLoadGameType camelot]
@@ -18,6 +19,9 @@ libs/LibDataBroker-1.1/LibDataBroker-1.1.lua [AllowLoadGameType camelot]
 libs/LibDBIcon-1.0/LibDBIcon-1.0.lua [AllowLoadGameType camelot]
 
 Core.lua [AllowLoadGameType camelot]
+traductions/fr_FR.lua [AllowLoadGameType camelot]
+traductions/en-EN.lua [AllowLoadGameType camelot]
+Localization.lua [AllowLoadGameType camelot]
 DebugWindows.lua [AllowLoadGameType camelot]
 Diagnostics.lua [AllowLoadGameType camelot]
 Compatibility.lua [AllowLoadGameType camelot]

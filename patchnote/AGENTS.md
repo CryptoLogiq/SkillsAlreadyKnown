@@ -40,3 +40,7 @@ une deuxième copie manuelle et ne pas exporter Unreleased comme notes de livrai
 Conserver le numéro de version, les catégories d’ajouts et de corrections non
 vides et uniquement les informations utiles aux joueurs. Les archives historiques
 restent conservées ; latest ne contient que la copie de la livraison courante.
+
+Les notes Lua restent des textes français simples. Ajouter leurs clés aux deux
+catalogues traductions/fr_FR.lua et traductions/en-EN.lua pour l’historique bilingue
+en jeu ; ne pas insérer d’appels de traduction dans les sources de patchnotes.

@@ -52,6 +52,7 @@ end
 local function paintItemButton(button, itemLink, location)
   if not button then return end
   Visuals.ClearItemButton(button)
+  if SAK.RecentVisuals then SAK.RecentVisuals.Paint(button, button, nil, "pets", "iconsInventory") end
   if not itemLink then return end
 
   local kind, info = classifyItem(itemLink)
@@ -76,6 +77,9 @@ local function paintItemButton(button, itemLink, location)
     Visuals.PaintItemLearnableBadge(button, true)
   end
 
+  if SAK.RecentVisuals then
+    SAK.RecentVisuals.Paint(button, button.Icon or button.icon or button, info.spellID, "pets", "iconsInventory")
+  end
   Visuals.PaintItemPetIcon(button, info)
   Visuals.PaintItemDuplicateBadge(button, itemDuplicateText(info, location))
 end

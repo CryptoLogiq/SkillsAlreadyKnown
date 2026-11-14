@@ -1,5 +1,6 @@
 -- Fenetres de diagnostic, mise en forme et export des rapports.
 local SAK = SkillsAlreadyKnown
+local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then
   return
 end
@@ -239,7 +240,7 @@ function SAK.ShowExportWindow(titleText, report, ownerFrame)
     local selectButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     selectButton:SetSize(110, 24)
     selectButton:SetPoint("BOTTOMLEFT", 24, 18)
-    selectButton:SetText("Select All")
+    selectButton:SetText(L("Select All"))
     selectButton:SetScript("OnClick", function()
       editBox:SetFocus()
       editBox:HighlightText()
@@ -329,7 +330,7 @@ function SAK.ShowDebugTextWindow(key, titleText, text, refreshFunc)
     local copyButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     copyButton:SetSize(120, 24)
     copyButton:SetPoint("BOTTOMLEFT", 24, 18)
-    copyButton:SetText("Copy Export")
+    copyButton:SetText(L("Copy Export"))
     copyButton:SetScript("OnClick", function()
       SAK.ShowExportWindow("Skills & More Export", SAK.DebugTextToReport(frame.titleText, frame.rawText), frame)
     end)
@@ -337,7 +338,7 @@ function SAK.ShowDebugTextWindow(key, titleText, text, refreshFunc)
     local refreshButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     refreshButton:SetSize(110, 24)
     refreshButton:SetPoint("LEFT", copyButton, "RIGHT", 8, 0)
-    refreshButton:SetText("Refresh")
+    refreshButton:SetText(L("Refresh"))
     refreshButton:SetScript("OnClick", function()
       if frame.refreshFunc then
         frame.rawText = frame.refreshFunc() or ""

@@ -175,3 +175,41 @@ in `patchnote/`, the same source used by the in-game history.
 Use `./scripts/package.sh --refresh-latest` to republish an existing archive into
 latest without rebuilding it. This checks that its bundled notes still match the
 sources. Existing versioned archives are never overwritten.
+
+Upcoming ZIP filenames use `SkillsAndMore-<version>.zip`. The internal addon
+folder remains `SkillsAlreadyKnown`. Existing archives retain their original names
+and are protected against rebuilding the same version under the new name.
+
+## Translations
+
+Maintain matching readable catalogs in `traductions/fr_FR.lua` and
+`traductions/en-EN.lua`. Use `SAK.L` with stable source-text keys for addon prose;
+keep game IDs, parser patterns and native spell/item names unchanged. Data
+summaries are finalized after SavedVariables restoration on ADDON_LOADED, so changing language saves a preference
+and offers a reload. Automatic mode selects French for French clients and English
+otherwise. Translate patchnote strings in both catalogs without changing their
+plain Lua source format. Verify with `lua scripts/test-localization.lua` and
+`python3 scripts/test-localization-coverage.py`.
+
+## Automated beta and stable releases
+
+The Test and release workflow runs regression tests before packaging. Every push
+on dev can publish a uniquely numbered beta; stable vX.Y.Z tags must match the
+TOC and point to a commit on main, with all pending player notes promoted into
+that release. Pull requests only run tests. Manual workflow runs are build-only.
+
+Add the repository Actions secret CF_API_TOKEN to enable uploads (legacy
+CF_API_KEY is also accepted). Missing credentials leave the workflow in build-only
+mode with ZIP/Markdown artifacts; no release tag is pushed by a build-only beta.
+Setup: scripts/curseforge/automatic-releases-fr.txt.
+
+The workflow uses a pinned official BigWigs packager with .pkgmeta exclusions,
+unchanged embedded libraries and release/latest/patchnote.md as its manual
+changelog. The artifact is verified before publishing; publish mode reuses that
+exact ZIP. Folder and saved-variable names stay SkillsAlreadyKnown while archive
+names use SkillsAndMore. Do not enable a parallel CurseForge webhook.
+
+Release preparation mutates only the ephemeral CI checkout. Never execute
+prepare-ci-release.py against an uncommitted development tree: its clean-checkout
+checks intentionally reject that. The local installer and local package script
+remain independent and never upload.

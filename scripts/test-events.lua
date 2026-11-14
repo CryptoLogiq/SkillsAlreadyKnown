@@ -59,7 +59,8 @@ reset()
 handler(nil, "PLAYER_LOGIN")
 handler(nil, "PLAYER_LOGIN")
 assert(count("db") == 3 and count("bookDirty") == 2 and count("bags") == 2)
-assert(#timers == 2 and timers[1].callback == SkillsAlreadyKnown.RankPolicy.MaybePrompt)
+assert(#timers == 4 and timers[1].callback == SkillsAlreadyKnown.RankPolicy.MaybePrompt)
+assert(count("petSync") == 2, "Login must scan the active pet")
 print("PASS: watched addons, rank invalidation, trainer timers, pet unit filter, merchant refresh and login initialization")
 
 reset()
@@ -69,3 +70,21 @@ SkillsAlreadyKnown.RankPolicy.pending = true
 handler(nil, "PLAYER_REGEN_ENABLED")
 assert(#timers == 1 and timers[1].callback == SkillsAlreadyKnown.RankPolicy.MaybePrompt)
 print("PASS: combat exit opens options only when an opening was explicitly deferred")
+
+reset()
+local localized = false
+SkillsAlreadyKnown.Localization = { Initialize = function()
+  localized = true
+  record("locale")()
+end }
+SkillsAlreadyKnown.Settings.Register = function()
+  assert(localized, "Read saved language before registering settings")
+end
+handler(nil, "ADDON_LOADED", "UnrelatedAddon")
+assert(not localized)
+handler(nil, "ADDON_LOADED", "SkillsAlreadyKnown")
+assert(localized and count("locale") == 1)
+localized = false
+handler(nil, "PLAYER_LOGIN")
+assert(localized and count("locale") == 2)
+print("PASS: saved language initializes before GUI registration on own addon load and login fallback")

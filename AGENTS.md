@@ -1,5 +1,17 @@
 # SkillsAlreadyKnown Agent Notes
 
+## ABSOLUTE PRIORITY: preserve work and develop on dev
+
+Before any edit, staging or commit, verify the authoritative repository, current
+branch and working-tree/index state. Work on `dev`; `main` is reserved for explicitly
+requested publication. This check takes precedence over convenience or speed.
+Never discard local work to change branches: no hard reset, forced checkout,
+clean, branch overwrite or automatic stash/pop. Preserve staged and unstaged
+changes. Switch/create dev only when that preserves them; if a conflict prevents
+it, stop dependent changes and ask the owner how to proceed. Never continue
+editing main as a workaround. Do not merge, push, tag or publish implicitly.
+
+
 Reconciled against the working code on **2026-11-13**. This is the developer guide;
 player documentation belongs in README.md. Existing local changes are intentional:
 do not revert, stage everything, commit, bump versions or publish without a request.
@@ -25,7 +37,7 @@ do not revert, stage everything, commit, bump versions or publish without a requ
   copy skips initialization when DEV is enabled, regardless of load order, without
   persistently changing addon settings. Old published versions lacking the guard
   may still need manual disabling during tests.
-- Packaging: `./scripts/package.sh` keeps `release/SkillsAlreadyKnown-<version>.zip`
+- Packaging: `./scripts/package.sh` keeps `release/SkillsAndMore-<version>.zip`
   and publishes the upload copy plus `patchnote.md` under `release/latest/`.
   Scripts, research, agent files and other development metadata are excluded from
   installs and archives; vendored libraries and active data are included.
@@ -735,3 +747,137 @@ rebuilding it, only after verifying its bundled patchnotes match the current sou
 No version bump for copying an existing release. Verify ZIP/notes pairing and
 archive preservation using scripts/test-patchnote-generation.py. Point the owner
 to release/latest/ for the upload ZIP and CurseForge Markdown.
+
+## Branch workflow: dev and main
+
+Standing user instruction: develop on `dev`; automatic betas come from `dev`,
+stable releases come from `main`.
+- Check the current branch before starting development or preparing a commit.
+- Use `dev` for feature work, bug fixes, documentation and development commits.
+  If necessary, create/switch to dev while preserving existing uncommitted work;
+  never reset, discard changes or overwrite an existing branch to enforce this.
+- `main` is the publication branch. Bring reviewed, tested changes from dev into
+  main when publication is requested. Do not infer permission to merge, push,
+  tag or publish from an ordinary development task or commit preparation.
+- Release preparation can be done on dev. Publish the tested release from main;
+  ensure version, release notes and artifacts match the published revision.
+- Public README image/document URLs continue targeting main so they reference
+  published files; do not replace them with dev URLs simply because work uses dev.
+
+## Archive naming for upcoming builds
+
+New archives use `SkillsAndMore-<version>.zip`, including the upload copy in
+release/latest/. This filename change does not rename the internal addon folder,
+TOC or saved variables: those remain SkillsAlreadyKnown for update compatibility.
+Do not rename or rebuild existing 0.4.0 archives implicitly. The packager protects
+both historical SkillsAlreadyKnown and new SkillsAndMore names for the same
+version; --refresh-latest can copy either existing archive without rebuilding.
+Latest cleanup recognizes both managed prefixes and preserves unrelated files.
+
+## Localization: French and English
+
+- Translation catalogs live in `traductions/fr_FR.lua` and `traductions/en-EN.lua`,
+  loaded after Core and before Localization.lua and all feature/data modules.
+  Both honor disabledByDev and keep exactly the same keys. Existing entries use
+  French source phrases as legacy keys; new entries use meaningful stable IDs
+  such as LANGUAGE_LABEL. Values belong in the catalogs, never inline in feature
+  code. Keep readable Lua tables and use local
+  `L = SAK.L or function(key) return key end` in consumers.
+- Automatic default: any French client locale uses fr_FR; every other client uses
+  en-EN. db.language stores auto/fr_FR/en-EN per character. A manual change requires
+  reload: save the preference and offer Reload / Later, but keep the active locale
+  stable until reload so data tables and live labels never mix languages.
+- Localize addon UI, summaries, talent/class descriptions, purchase/usage advice,
+  recent-learning explanations and patchnote rendering. Keep native game spell/item
+  names, numeric IDs, role/spec keys, parsing patterns and API arguments untouched.
+  Fixed badge words such as BEST, ECO and RECENT remain international markers.
+- Runtime data descriptions use L; original patchnote Lua sources stay plain
+  strings for Lua/Markdown generation, and Settings applies L when rendering them.
+- Manual UI language can differ from client language: talent/book title matching
+  must include Localization.NameVariants plus native API aliases in either case.
+  Never localize identifiers or sacrifice matching to translate a displayed label.
+- Add both catalog entries for each new user-facing string, including new release
+  notes. Do not edit third-party libraries for translation. Raw technical support
+  logs may stay English, but their action buttons follow the chosen language.
+- Run scripts/test-localization.lua (actual TOC order, both locales, overrides,
+  reload persistence and native title matching) and
+  python3 scripts/test-localization-coverage.py (catalog parity, UI/history keys,
+  placeholders and color escapes). Preserve catalog paths and namespace ownership
+  in installed DEV copies. No release rebuild/version bump unless requested.
+
+## Mandatory: no hardcoded player-facing text
+
+Standing user rule: every new player-facing label, sentence, tooltip, popup,
+button caption, summary or explanation must come from the translation catalogs.
+Feature code calls the shared lookup with a meaningful stable key, for example
+`L("LANGUAGE_LABEL")`; it must not contain the French/English wording itself or
+an inline translated fallback. Define matching keys in both catalogs first.
+Legacy French source-text keys already exist; do not copy that pattern for new
+texts. Move wording into catalog values when revising such strings.
+
+Use complete localized format strings for dynamic messages, for example
+`string.format(L("LEARNED_RANK"), rank)`. Preserve placeholders and color/texture
+escapes in both languages; avoid stitching translated sentence fragments together.
+Native spell/item names remain game-provided, and stable IDs, API names, paths and
+configuration keys are not player prose and must not be translated.
+
+The sole runtime-prose exception is internal debug/support output: it may remain
+hardcoded in English for developers. A normal player-facing explanation is not a
+debug message merely because it is inconvenient to translate. Debug-window action
+buttons and other user controls still use translations. Maintained patchnote data
+is content, not feature logic: keep its source format and translate its GUI rendering.
+
+Before finishing code changes or preparing a commit, audit added visible strings
+and run the localization coverage checks. Extend those checks for new call sites;
+never introduce untranslated player text while fixing another feature.
+
+### Saved-variable loading order is mandatory for localization
+
+WoW restores SavedVariables AFTER executing the addon's Lua files. Never capture
+an active language preference at file scope and assume it is saved data. Call
+Localization.Initialize on this addon's ADDON_LOADED before registering options,
+with PLAYER_LOGIN as an idempotent fallback. Only then read db.language.
+Register localized data/private text tables through RegisterTable and retranslate
+them in place, preserving cached references. Rebuild derived purchase-catalogue
+text after the base tables. Keep the active locale unchanged until a real reload
+when the user selects a new preference. Tests must execute the TOC with no saved
+DB, inject the persisted DB afterward and initialize, in BOTH language directions.
+Testing with the DB preloaded misses the real startup bug.
+
+
+## GitHub and CurseForge publication contract
+
+Follow `scripts/curseforge/AGENTS.md` when editing packaging, workflows or preparing
+any release. A push to dev is now an automatic beta publication trigger when the
+repository secret is configured. Stable publication uses a version tag on main.
+This does not authorize an unsolicited push, merge, tag or publication.
+Check `.gitignore`, `.pkgmeta`, both local rsync exclusion lists and the ZIP
+validator together. Git exclusions do not determine CurseForge package contents.
+Never put tokens in source, logs, archives or chat. Use the repository Actions
+secret `CF_API_TOKEN`; `GITHUB_TOKEN` is supplied by GitHub Actions.
+
+
+TrainerSpells pet knowledge: PetGrimoires.SyncTrainerSpellsKnown bridges confirmed
+saved pet IDs/ranks into the optional provider's learnedSpellsPet table, using its
+own catalogue family keys. Preserve provider positives and unverified entries;
+never mark a future rank learned. Exact IDs connect localized family names; named
+rank fallback is limited to the matched family. Cache by snapshot revision and
+provider table identities; refresh only on new positive knowledge. Empty transient
+pet scans must not erase saved knowledge. Test scripts/test-pet-trainerspells.lua.
+
+
+Pet learning follows the shared spell process: books use player-level eligibility
+and saved per-family knowledge, never an active-demon filter. Scan each summoned
+pet to establish its baseline; switching pets alone is not a learning event.
+Use the shared SpellRanks classifier for separate player/pet spellbook banks;
+pet upgrades come from matched live TrainerSpells pet families or observed books,
+are bounded by pet level and respect the BUY toggle. Do not apply player role
+purchase advice to pet spells. RECENT uses the pets category in the existing
+learning batches (including merchant visits), shared visuals and persisted history.
+Do not erase histories on empty visits or transient pet books. Check
+scripts/test-pet-process.lua and the existing learning, spellbook and item suites.
+
+Active-pet book highlighting uses a separate additive native gold border in
+Visuals.PaintMerchantPetIcon, shared by bags and merchants. Respect icons/category
+and outlines settings; hide on recycled/unknown/inactive-pet books. It must not
+filter learned/learnable markers or reuse the trainer NEW+ proc host.

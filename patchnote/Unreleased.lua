@@ -2,7 +2,7 @@
 return {
   version = "Unreleased",
   status = "development",
-  basedOn = "0.4.0",
+  basedOn = "0.4.1",
   additions = {},
   fixes = {},
 }
