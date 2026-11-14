@@ -23,7 +23,7 @@ local function font(value)
 end
 local function texture()
  local t={shown=false}
- for _,method in ipairs({"SetPoint","SetAllPoints","SetSize","SetHeight","SetWidth","SetDesaturated"}) do t[method]=function() end end
+ for _,method in ipairs({"SetBlendMode","SetPoint","SetAllPoints","SetSize","SetHeight","SetWidth","SetDesaturated"}) do t[method]=function() end end
  function t:SetTexture(path) self.texture=path end
  function t:SetColorTexture(...) self.color={...} end
  function t:SetVertexColor(...) self.tint={...} end
@@ -144,3 +144,25 @@ paintCategories()
 assert(not row.sakTrainerBadge.shown and not merchant.sakPetIcon.shown and not bag.sakPetIcon.shown)
 assert(sak.DisplayEnabled("iconsInventory") and sak.DisplayEnabled("iconsMerchant"))
 print("PASS: merchant/inventory/trainer icon choices are independent and retained beneath the global switch")
+
+local activePet = 'imp'
+sak.PetGrimoires = { ActivePetForInfo = function(info) return info.petKey == activePet end }
+local book = frame()
+local petInfo = {petKey='imp',petIcon=123}
+sak.EnsureDB().displayOptions.icons = true
+sak.EnsureDB().displayOptions.iconsInventory = true
+sak.EnsureDB().displayOptions.outlines = true
+v.PaintItemPetIcon(book,petInfo)
+assert(book.sakActivePetBorder.shown)
+local border = book.sakActivePetBorder
+v.PaintItemPetIcon(book,petInfo)
+assert(book.sakActivePetBorder == border)
+activePet='voidwalker';v.PaintItemPetIcon(book,petInfo)
+assert(not border.shown and book.sakPetIcon.shown)
+activePet='imp';v.PaintItemPetIcon(book,petInfo)
+assert(border.shown)
+sak.EnsureDB().displayOptions.outlines=false;v.PaintItemPetIcon(book,petInfo)
+assert(not border.shown and book.sakPetIcon.shown)
+sak.EnsureDB().displayOptions.outlines=true
+v.PaintItemPetIcon(book,nil);assert(not border.shown)
+print('PASS: active-pet gold border, other-pet markers, settings, reuse and recycled-book cleanup')

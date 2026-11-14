@@ -33,7 +33,7 @@ Trainer markers use green, yellow, red or grey outlines. NEW + can also glow. In
 
 ## Recent learning
 
-**RECENT** appears just below spell and talent icons in supported views. Your latest learned spells, talent ranks and recipes are listed in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it. Learning outside a trainer visit is also tracked.
+**RECENT** appears just below spell and talent icons in supported views. Your latest learned spells, pet abilities, talent ranks and recipes are listed in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it. Learning outside a trainer visit is also tracked.
 
 On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection. Custom profession windows may require consulting the list in the options.
 
@@ -49,7 +49,7 @@ Role labels appear beside talent-tree titles and the active spellbook school. Ho
 
 ## Books and recipes
 
-Warlock pet grimoires show learned or learnable status, a yellow **+** when appropriate, and demon icons at merchants and in your bags. Merchants also flag books you already own. Summon each demon to record its learned spells.
+Warlock pet grimoires show learned or learnable status, a yellow **+** when appropriate, and demon icons at merchants and in your bags. Merchants also flag books you already own. Summon each demon once to record its learned spells. Book markers then stay available whichever demon is active; a bright gold border highlights books for your summoned demon. Pet spellbooks use BEST, LOW, BUY NEW RANK and RECENT, with upgrade alerts limited to ranks available at your pet’s level.
 
 **ALREADY KNOWN** marks learned recipes in bags and group or raid loot-roll windows when the game's tooltip confirms them. It never chooses a loot roll for you.
 

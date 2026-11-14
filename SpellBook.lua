@@ -5,7 +5,7 @@ if SAK.disabledByDev then return end
 local Book = {}
 SAK.SpellBook = Book
 local entries, dirty = {}, true
-local entriesByID = {}
+local entriesByID, petEntries = {}, {}
 local displays = setmetatable({}, { __mode = "k" })
 local hookedRoots = setmetatable({}, { __mode = "k" })
 local queued, driver, elapsed, discovery = false, nil, 0, nil
@@ -55,8 +55,12 @@ local function futureSlot(index, b)
   return ok and type(required) == "number" and type(level) == "number" and level > 0 and required > level
 end
 
-local function read(index)
-  local b = bank()
+local function petBank()
+  return Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Pet or BOOKTYPE_PET or "pet"
+end
+
+local function read(index, b)
+  b = b or bank()
   local info, name, sub, id, passive
   if C_SpellBook and C_SpellBook.GetSpellBookItemInfo then
     local ok, value = pcall(C_SpellBook.GetSpellBookItemInfo, index, b)
@@ -73,7 +77,7 @@ local function read(index)
     id = value
   end
   if type(id) ~= "number" or id <= 0 then return nil end
-  if knownSpell(id) == false or futureSlot(index, b) then return nil end
+  if b == bank() and (knownSpell(id) == false or futureSlot(index, b)) then return nil end
   if (not name or not sub or sub == "") and GetSpellBookItemName then
     local ok, n, r = pcall(GetSpellBookItemName, index, b)
     if ok then name, sub = name or n, (sub and sub ~= "") and sub or r end
@@ -104,7 +108,7 @@ local function read(index)
   end
   rank = rank or 1
   if passive or type(name) ~= "string" or SAK.CleanText(name) == "" or rank < 1 then return nil end
-  return { slot = index, id = id, name = SAK.CleanText(name), rank = rank, ranked = ranked }
+  return { slot = index, id = id, name = SAK.CleanText(name), rank = rank, ranked = ranked, pet = b == petBank() }
 end
 
 -- Interface conservee pour les consommateurs du grimoire.
@@ -147,8 +151,18 @@ function Book.Scan()
   local _, class
   if UnitClass then _, class = UnitClass("player") end
   entries = Book.Classify(list, class)
+  local pets, misses = {}, 0
+  if SAK.PetGrimoires and UnitExists and UnitExists("pet") then
+    for slot = 1, 200 do
+      local spell = read(slot, petBank())
+      if spell then pets[#pets + 1] = spell; misses = 0 else misses = misses + 1 end
+      if misses >= 20 then break end
+    end
+  end
+  petEntries = Book.Classify(pets, class)
   entriesByID = {}
   for _, state in pairs(entries) do entriesByID[state.id] = state end
+  for _, state in pairs(petEntries) do entriesByID[state.id] = state end
   stats.scanned = #list
   dirty = false
   return entries
@@ -178,7 +192,7 @@ local function paint(owner, icon, state)
   if SAK.DisplayEnabled and (not SAK.DisplayEnabled("icons") or not SAK.DisplayEnabled("iconsSpellbook")) then state = nil end
   if not owner or not icon then return end
   if SAK.RecentVisuals then
-    SAK.RecentVisuals.Paint(owner, icon, state and state.id, "spells", "iconsSpellbook")
+    SAK.RecentVisuals.Paint(owner, icon, state and state.id, state and state.pet and "pets" or "spells", "iconsSpellbook")
   end
   local display = displays[owner]
   if not state or not visible(owner) or not visible(icon) then if display then display:Hide() end; return end
@@ -215,7 +229,7 @@ local function renderModern(book, touched)
   book:ForEachDisplayedSpell(function(row)
     local data = row.elementData
     local slot, b = row.slotIndex or (data and data.slotIndex), row.spellBank or (data and data.spellBank)
-    local state = b == bank() and entries[slot] or nil
+    local state = b == bank() and entries[slot] or (b == petBank() and petEntries[slot] or nil)
     if row.isUnlearned or row.isOffSpec then state = nil end
     local icon = row.Button and row.Button.Icon or row.Icon or row.icon
     touched[row] = true; paint(row, icon, state)
@@ -303,7 +317,8 @@ function Book.Refresh()
       local button = _G["SpellButton" .. i]
       if button then
         local slot = SpellBook_GetSpellBookSlot and SpellBook_GetSpellBookSlot(button)
-        local state = SpellBookFrame.bookType == (BOOKTYPE_SPELL or "spell") and entries[slot] or nil
+        local state = SpellBookFrame.bookType == (BOOKTYPE_SPELL or "spell") and entries[slot]
+          or (SpellBookFrame.bookType == (BOOKTYPE_PET or "pet") and petEntries[slot] or nil)
         touched[button] = true
         paint(button, button.icon or button.Icon or _G["SpellButton" .. i .. "IconTexture"], state)
       end
@@ -501,10 +516,12 @@ function Book.Hook()
   driver:SetShown(visible(modern) or visible(SpellBookFrame) or visible(EUI_ClassicSpellbook))
 end
 
-function Book.StateForSlot(slot)
+function Book.StateForSlot(slot, spellBank)
   if dirty then
     Book.Scan()
   end
+  if spellBank == petBank() then return petEntries[slot] end
+  if spellBank ~= nil and spellBank ~= bank() then return nil end
   return entries[slot]
 end
 
@@ -516,3 +533,4 @@ function Book.StateForSpell(spellID)
 end
 
 Book.PlayerBank = bank
+Book.PetBank = petBank

@@ -595,4 +595,8 @@ SAK.Translations["fr_FR"] = {
   ["— conseillé pour progresser en solo"] = "— conseillé pour progresser en solo",
   ["Le choix manuel de langue est correctement repris après un rechargement de l’interface."] = "Le choix manuel de langue est correctement repris après un rechargement de l’interface.",
   ["La version officielle démarre correctement lorsque la copie DEV est présente mais non chargée."] = "La version officielle démarre correctement lorsque la copie DEV est présente mais non chargée.",
+  ["Les compétences de familiers déjà apprises sont reconnues dans la liste de TrainerSpells."] = "Les compétences de familiers déjà apprises sont reconnues dans la liste de TrainerSpells.",
+  ["PET_ABILITIES_LABEL"] = "Compétences des familiers",
+  ["Les livres de familiers gardent leurs marqueurs quel que soit le démon actif. Le grimoire des familiers indique les rangs appris, les rangs accessibles à acheter et les apprentissages récents."] = "Les livres de familiers gardent leurs marqueurs quel que soit le démon actif. Le grimoire des familiers indique les rangs appris, les rangs accessibles à acheter et les apprentissages récents.",
+  ["Un contour doré lumineux distingue les livres du familier actuellement invoqué."] = "Un contour doré lumineux distingue les livres du familier actuellement invoqué.",
 }

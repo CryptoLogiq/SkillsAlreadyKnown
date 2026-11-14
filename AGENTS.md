@@ -855,3 +855,29 @@ Check `.gitignore`, `.pkgmeta`, both local rsync exclusion lists and the ZIP
 validator together. Git exclusions do not determine CurseForge package contents.
 Never put tokens in source, logs, archives or chat. Use the repository Actions
 secret `CF_API_TOKEN`; `GITHUB_TOKEN` is supplied by GitHub Actions.
+
+
+TrainerSpells pet knowledge: PetGrimoires.SyncTrainerSpellsKnown bridges confirmed
+saved pet IDs/ranks into the optional provider's learnedSpellsPet table, using its
+own catalogue family keys. Preserve provider positives and unverified entries;
+never mark a future rank learned. Exact IDs connect localized family names; named
+rank fallback is limited to the matched family. Cache by snapshot revision and
+provider table identities; refresh only on new positive knowledge. Empty transient
+pet scans must not erase saved knowledge. Test scripts/test-pet-trainerspells.lua.
+
+
+Pet learning follows the shared spell process: books use player-level eligibility
+and saved per-family knowledge, never an active-demon filter. Scan each summoned
+pet to establish its baseline; switching pets alone is not a learning event.
+Use the shared SpellRanks classifier for separate player/pet spellbook banks;
+pet upgrades come from matched live TrainerSpells pet families or observed books,
+are bounded by pet level and respect the BUY toggle. Do not apply player role
+purchase advice to pet spells. RECENT uses the pets category in the existing
+learning batches (including merchant visits), shared visuals and persisted history.
+Do not erase histories on empty visits or transient pet books. Check
+scripts/test-pet-process.lua and the existing learning, spellbook and item suites.
+
+Active-pet book highlighting uses a separate additive native gold border in
+Visuals.PaintMerchantPetIcon, shared by bags and merchants. Respect icons/category
+and outlines settings; hide on recycled/unknown/inactive-pet books. It must not
+filter learned/learnable markers or reuse the trainer NEW+ proc host.

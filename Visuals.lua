@@ -375,9 +375,28 @@ local function ensureMerchantPetIcon(itemButton)
   return icon
 end
 
+local function paintActivePetBorder(button, info)
+  local active = info and enabled("outlines") and SAK.PetGrimoires
+    and SAK.PetGrimoires.ActivePetForInfo
+    and SAK.PetGrimoires.ActivePetForInfo(info)
+  local border = button.sakActivePetBorder
+  if active and not border then
+    border = button:CreateTexture(nil, "OVERLAY", nil, 6)
+    border:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+    border:SetBlendMode("ADD")
+    border:SetPoint("TOPLEFT", button, "TOPLEFT", -7, 7)
+    border:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 7, -7)
+    border:SetVertexColor(1, 0.82, 0.15, 1)
+    protectTexture(border, { 1, 0.82, 0.15, 1 })
+    button.sakActivePetBorder = border
+  end
+  if border then border:SetShown(not not active) end
+end
+
 function Visuals.PaintMerchantPetIcon(itemButton, info, category)
   if not (enabled("icons") and enabled(category or "iconsMerchant")) then info = nil end
   if not itemButton then return end
+  paintActivePetBorder(itemButton, info)
   local icon = ensureMerchantPetIcon(itemButton)
   local bg = itemButton.sakPetIconBg
   if info and info.petIcon then
