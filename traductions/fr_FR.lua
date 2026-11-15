@@ -850,4 +850,7 @@ SAK.Translations["fr_FR"] = {
   ["Dans TrainerSpells, les compétences de démons mémorisées affichent leur coche de sort appris, même avec des noms traduits ou des grimoires portant un autre ID."] = "Dans TrainerSpells, les compétences de démons mémorisées affichent leur coche de sort appris, même avec des noms traduits ou des grimoires portant un autre ID.",
   ["Les sorts de zone reconnus ne sont plus conseillés comme des achats OPTIONAL. Drain d’âme porte CLASS et conserve les conseils de rang adaptés sans être présenté comme un sort facultatif."] = "Les sorts de zone reconnus ne sont plus conseillés comme des achats OPTIONAL. Drain d’âme porte CLASS et conserve les conseils de rang adaptés sans être présenté comme un sort facultatif.",
   ["Les catégories d’usage restent reconnues sur les différents rangs d’un sort. Protection divine est notamment reconnue à ses deux rangs."] = "Les catégories d’usage restent reconnues sur les différents rangs d’un sort. Protection divine est notamment reconnue à ses deux rangs.",
+  ["PATCHNOTES_LANGUAGE"] = "Français",
+  ["PATCHNOTES_FEATURES"] = "Ajouts de fonctionnalités",
+  ["PATCHNOTES_FIXES"] = "Corrections de bugs",
 }

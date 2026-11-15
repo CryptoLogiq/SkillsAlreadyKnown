@@ -52,13 +52,23 @@ def markdown(root, version=None):
         raise ValueError("Markdown requires a released major.minor.patch version")
     source = (root / "patchnote" / (version + ".lua")).read_text()
     title = re.search(r"^## Title:\s*(.+)", toc, re.M)[1]
-    return render_markdown(title, version, source)
+    return render_markdown(title, version, source, read_catalogs(root))
 
 
-def render_markdown(title, version, source):
-    lines = [f"# {title} — {version}"]
+def read_catalogs(root):
+    literal = r'"(?:\\.|[^"\\])*"'
+    pattern = r'^\s*\[(' + literal + r')\]\s*=\s*(' + literal + r'),\s*$'
+    return {
+        language: {json.loads(key): json.loads(value) for key, value in re.findall(
+            pattern, (root / "traductions" / (language + ".lua")).read_text(), re.M)}
+        for language in ("en-EN", "fr_FR")
+    }
+
+
+def note_groups(source):
     decoder = json.JSONDecoder()
-    for key, heading in (("additions", "Ajouts de fonctionnalités"), ("fixes", "Corrections de bugs")):
+    groups = {}
+    for key in ("additions", "fixes"):
         match = re.search(r"^\s*" + key + r"\s*=\s*\{", source, re.M)
         offset, notes = match.end(), []
         while True:
@@ -77,9 +87,29 @@ def render_markdown(title, version, source):
                 offset += 1
             elif source[offset:offset + 1] != "}":
                 raise ValueError(f"{key}: expected a comma or closing brace")
-        if notes:
-            lines.extend(["", "## " + heading, ""])
-            lines.extend("- " + note.replace("\n", "\n  ") for note in notes)
+        groups[key] = notes
+    return groups
+
+
+def render_markdown(title, version, source, catalogs=None):
+    lines = [f"# {title} — {version}"]
+    groups = note_groups(source)
+    if not any(groups.values()):
+        return "\n".join(lines) + "\n"
+    catalogs = catalogs or read_catalogs(Path(__file__).resolve().parent.parent)
+    headings = {"additions": "PATCHNOTES_FEATURES", "fixes": "PATCHNOTES_FIXES"}
+    # Public release notes always lead with English, regardless of the game locale.
+    for language in ("en-EN", "fr_FR"):
+        catalog = catalogs[language]
+        lines.extend(["", "## " + catalog["PATCHNOTES_LANGUAGE"]])
+        for category, notes in groups.items():
+            if not notes:
+                continue
+            lines.extend(["", "### " + catalog[headings[category]], ""])
+            for note in notes:
+                if note not in catalog:
+                    raise ValueError(f"Missing {language} patchnote translation: {note}")
+                lines.append("- " + catalog[note].replace("\n", "\n  "))
     return "\n".join(lines) + "\n"
 
 

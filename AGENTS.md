@@ -1290,3 +1290,13 @@ and unavailable APIs clear/fail closed. A form being available or an active flag
 alone does not mark another rank used; keep confirmed player cast tracking.
 Tests: test-unused-spells.lua covers modern/legacy return layouts, aura-rank
 resolution, stance tooltips, first-use cleanup and removal of native form buttons.
+
+Public changelog language rule: CurseForge/GitHub release Markdown must put the
+complete ENGLISH section FIRST, followed by the complete FRENCH section. Apply to
+stable and beta exports. Keep maintained patchnote/*.lua in French and reuse paired
+traductions/en-EN.lua + fr_FR.lua for translated bullets and semantic export headings.
+No manual duplicate lists or French fallback under English headings. Missing
+translations block export/publication. The in-game history still follows the
+player's chosen language. Generate release/latest/patchnote.md; do not overwrite
+published ZIPs or tags for a documentation/export-only change. Tests cover both
+channels, ordering, missing translation failure and immutable archives.

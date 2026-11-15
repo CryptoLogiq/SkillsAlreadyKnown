@@ -2,6 +2,7 @@
 """Validate generation and packaging without touching delivered archives or WoW."""
 from pathlib import Path
 import os
+import importlib.util
 import shutil
 import subprocess
 import sys
@@ -15,11 +16,25 @@ def run(*args, success=True, env=None):
     assert (result.returncode == 0) == success, result.stdout + result.stderr
     return result
 
+# Public exports must not silently fall back to French in the English section.
+spec = importlib.util.spec_from_file_location("patchnotes_export", root / "scripts/generate-patchnotes.py")
+export = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(export)
+source = 'return {\n additions = {"Conseil sans traduction"},\n fixes = {},\n}\n'
+try:
+    export.render_markdown("Test", "1.0.0", source, export.read_catalogs(root))
+except ValueError as error:
+    assert "Missing en-EN patchnote translation" in str(error)
+else:
+    raise AssertionError("Missing English translations must stop public exports")
+assert export.render_markdown("Test", "1.0.0", 'return {\n additions = {},\n fixes = {},\n}') == "# Test — 1.0.0\n"
+
 with tempfile.TemporaryDirectory() as temporary:
     fixture = Path(temporary) / "addon"
     (fixture / "scripts").mkdir(parents=True)
     (fixture / "data").mkdir()
     shutil.copytree(root / "patchnote", fixture / "patchnote")
+    shutil.copytree(root / "traductions", fixture / "traductions")
     for script in ("generate-patchnotes.py", "package.sh", "install-local.sh"):
         shutil.copy(root / "scripts" / script, fixture / "scripts" / script)
     shutil.copy(root / "SkillsAlreadyKnown.toc", fixture)
@@ -47,7 +62,12 @@ with tempfile.TemporaryDirectory() as temporary:
     assert latest_archive.read_bytes() == original
     markdown_before = notes.read_text()
     assert markdown_before.startswith(f"# Skills & More — {version}\n")
-    assert "## Ajouts de fonctionnalités" in markdown_before and "## Corrections de bugs" in markdown_before
+    assert markdown_before.index("## English") < markdown_before.index("## Français")
+    assert "### New features" in markdown_before and "### Bug fixes" in markdown_before
+    assert "### Ajouts de fonctionnalités" in markdown_before and "### Corrections de bugs" in markdown_before
+    english, french = markdown_before.split("## Français", 1)
+    assert "De nouveaux repères" not in english and "De nouveaux repères" in french
+    assert "New markers distinguish" in english
     assert "Unreleased" not in markdown_before and "local SAK" not in markdown_before
     generated_before = output.read_bytes()
     run(sys.executable, str(generator), "--format", "markdown", "--check")
@@ -68,6 +88,10 @@ with tempfile.TemporaryDirectory() as temporary:
     # A source edit must not silently pair new notes with an old immutable ZIP.
     release_notes = fixture / f"patchnote/{version}.lua"
     saved = release_notes.read_text()
+    for language in ("en-EN", "fr_FR"):
+        catalog = fixture / "traductions" / (language + ".lua")
+        source = catalog.read_text(); end = source.rfind("}")
+        catalog.write_text(source[:end] + '  ["Unpackaged change"] = "Unpackaged change",\n' + source[end:])
     release_notes.write_text(saved.replace("additions = {", 'additions = {\n    "Unpackaged change",', 1))
     run("bash", str(fixture / "scripts/package.sh"), "--refresh-latest", success=False)
     assert archive.read_bytes() == original and notes.read_text() == markdown_before

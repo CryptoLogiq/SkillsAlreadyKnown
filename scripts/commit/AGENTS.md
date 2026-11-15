@@ -113,3 +113,8 @@ Lire `scripts/curseforge/AGENTS.md`. Un push sur dev peut publier automatiquemen
 une bêta ; main et son tag de version servent aux versions stables. Préparer un
 commit n'autorise pas le push. Contrôler les exclusions Git ET celles du paquet,
 les fichiers réellement suivis et le contenu du ZIP. Aucun token dans le dépôt.
+
+Les changelogs publics générés pour CurseForge/GitHub présentent toujours l'anglais
+intégral avant le français. Vérifier les exports stables et bêta depuis les mêmes
+notes Lua et les catalogues, sans duplication manuelle ni repli en français dans
+la section anglaise. L'historique en jeu conserve le choix de langue du joueur.
