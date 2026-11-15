@@ -2,16 +2,18 @@
 
 By **CryptoLogiq** — spell ranks, talents, roles and smarter training for **WoW Forever**.
 
-Helper, for guidance for your spells (perfect for new players) tooltip and grimory talents tagued with category for taunt, kick, aoe, eco, optionnal for stay tuned for what you really need and talents have resume utility for how is used.
+Beginner-friendly guidance for spells and talents, with helpful tooltips and spellbook badges for taunts, interrupts, area damage and more. ECO and OPTIONAL help you decide which training purchases can wait, while short explanations help you understand how to use your abilities.
 
-i need you, for feedback me in github or here, please send me your bugs or errors, i havent alls class in forever for testing...
+Your feedback helps improve the addon! Please report bugs or errors on [GitHub](https://github.com/CryptoLogiq/SkillsAlreadyKnown/issues) or CurseForge. I don’t have characters of every class in Forever, so I can’t test everything myself.
 
-# Preview
+## Preview
 
-## Class trainer
+### Class trainer
+
 ![Class trainer](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/trainer-preview.jpg)
 
-## Warlock pet grimoires
+### Warlock pet grimoires
+
 ![Warlock pet grimoires](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/spellsbookmarks_trainer.png)
 
 ## Learn at a glance
@@ -84,9 +86,9 @@ DarkMode and TrainerSpells have dedicated handling. TrainerSpells keeps control 
 
 For a bug report, include the affected window, a screenshot and steps to reproduce.
 
-## Locales
+## Languages
 
-addon support english and french, if you need more, you can contact me. i see if i can help =)
+The addon supports English and French. If you’d like support for another language, feel free to contact me. I’ll see what I can do =)
 
 ## Installation
 
