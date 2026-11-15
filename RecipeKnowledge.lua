@@ -6,7 +6,7 @@ end
 
 local Recipes = {}
 SAK.RecipeKnowledge = Recipes
-local known, requested = {}, {}
+local known, requested, unlearned = {}, {}, {}
 local displays = setmetatable({}, { __mode = "k" })
 local scanTooltip, driver, queued
 local elapsed = 0
@@ -101,7 +101,45 @@ function Recipes.IsKnown(link)
   return nil
 end
 
-function Recipes.Clear(owner)
+-- An absent "known" line alone is insufficient: require a cached recipe title
+-- and its complete localized Use line before treating the plan as unlearned.
+function Recipes.IsUnlearned(link)
+  local id = recipeID(link)
+  if not id or known[id] then return false end
+  if unlearned[id] then return true end
+  if Recipes.IsKnown(link) then return false end
+  local info = C_Item and C_Item.GetItemInfo or GetItemInfo
+  if not info or type(ITEM_SPELL_TRIGGER_ONUSE) ~= "string" then return false end
+  local ok, name = pcall(info, link)
+  if not ok or type(name) ~= "string" or name == "" then return false end
+  local lines
+  if C_TooltipInfo and C_TooltipInfo.GetHyperlink then
+    local success, data = pcall(C_TooltipInfo.GetHyperlink, link)
+    if success and data then lines = data.lines end
+  elseif scanTooltip and scanTooltip.NumLines and scanTooltip:GetName() then
+    lines = {}
+    for index = 1, scanTooltip:NumLines() do
+      local left = _G[scanTooltip:GetName() .. "TextLeft" .. index]
+      lines[index] = { leftText = left and left:GetText() }
+    end
+  end
+  if type(lines) ~= "table" or not lines[1] or normalized(lines[1].leftText) ~= normalized(name) then return false end
+  local prefix = normalized(ITEM_SPELL_TRIGGER_ONUSE)
+  if prefix == "" then return false end
+  for _, line in ipairs(lines) do
+    for _, text in pairs({ line.leftText, line.rightText }) do
+      local value = type(text) == "string" and normalized(text)
+      if value and value:sub(1, #prefix) == prefix and #value > #prefix then
+        unlearned[id] = true
+        return true
+      end
+    end
+  end
+  return false
+end
+
+function Recipes.Clear(owner, keepSparkles)
+  if not keepSparkles and SAK.RecentSparkles then SAK.RecentSparkles.PaintIcon(owner, nil, false, "iconsLoot") end
   local display = displays[owner]
   if display then
     display:Hide()
@@ -113,12 +151,21 @@ local function itemIcon(owner)
   local host = owner.IconFrame or owner.Item or owner
   local icon = host.Icon or host.icon or owner.Icon or owner.icon
   if type(icon) == "table" or type(icon) == "userdata" then return icon end
-  return host
+  local name = owner.GetName and owner:GetName()
+  local named = name and _G[name .. "IconTexture"]
+  if named then return named end
+  -- A missing icon must not turn an entire merchant/loot row into a particle field.
+  if host.GetWidth and host:GetWidth() <= 64 then return host end
 end
 
 function Recipes.Paint(owner, link, zone, lootRoll)
-  if not owner or not visible(owner) or not enabled(zone) or not Recipes.IsKnown(link) then
-    if owner then Recipes.Clear(owner) end
+  local isKnown = owner and visible(owner) and enabled(zone) and Recipes.IsKnown(link)
+  if owner and SAK.RecentSparkles and (zone == "iconsMerchant" or zone == "iconsLoot") then
+    local show = visible(owner) and enabled(zone) and not isKnown and Recipes.IsUnlearned(link)
+    SAK.RecentSparkles.PaintIcon(owner, itemIcon(owner), show, zone)
+  end
+  if not isKnown then
+    if owner then Recipes.Clear(owner, true) end
     return
   end
   local display = displays[owner]
@@ -132,6 +179,7 @@ function Recipes.Paint(owner, link, zone, lootRoll)
     displays[owner] = display
   end
   local icon = itemIcon(owner)
+  if not icon then Recipes.Clear(owner); return end
   display.link, display.zone = link, zone
   SAK.SpellBook.PrepareOverlay(display, owner)
   display:ClearAllPoints()
@@ -145,6 +193,27 @@ function Recipes.Paint(owner, link, zone, lootRoll)
     display:SetPoint("BOTTOM", icon, "BOTTOM", 0, 0)
   end
   display:Show()
+end
+
+function Recipes.RefreshMerchant()
+  if not visible(MerchantFrame) or not GetMerchantItemLink then return end
+  local perPage = MERCHANT_ITEMS_PER_PAGE or 10
+  local page = MerchantFrame.page or 1
+  local selling = MerchantFrame.selectedTab ~= 2
+  for index = 1, perPage do
+    local row = _G["MerchantItem" .. index]
+    local button = _G["MerchantItem" .. index .. "ItemButton"] or (row and row.ItemButton)
+    if button then
+      local slot = (page - 1) * perPage + index
+      local ok, link = pcall(GetMerchantItemLink, slot)
+      local available = true
+      if GetMerchantItemInfo then
+        local success, _, _, _, _, stock = pcall(GetMerchantItemInfo, slot)
+        if success and stock == 0 then available = false end
+      end
+      Recipes.Paint(button, selling and available and visible(row or button) and ok and link or nil, "iconsMerchant", false)
+    end
+  end
 end
 
 function Recipes.RefreshRolls()
@@ -164,6 +233,18 @@ function Recipes.RefreshRolls()
   if GroupLootContainer and type(GroupLootContainer.rollFrames) == "table" then
     for _, frame in pairs(GroupLootContainer.rollFrames) do paint(frame) end
   end
+  if visible(LootFrame) and GetLootSlotLink then
+    for index = 1, (LOOTFRAME_NUMBUTTONS or 8) do
+      local button = _G["LootButton" .. index]
+      if button then
+        seen[button] = true
+        local slot = button.slot or (button.GetID and button:GetID()) or index
+        local ok, link = pcall(GetLootSlotLink, slot)
+        Recipes.Paint(button, visible(button) and ok and link or nil, "iconsLoot", false)
+      end
+    end
+  end
+  Recipes.RefreshMerchant()
   for owner, display in pairs(displays) do
     if not visible(owner) or not enabled(display.zone) then display:Hide() end
     if display.zone == "iconsLoot" and not seen[owner] then Recipes.Clear(owner) end
@@ -181,7 +262,7 @@ function Recipes.QueueRollRefresh()
 end
 
 function Recipes.Invalidate()
-  known, requested = {}, {}
+  known, requested, unlearned = {}, {}, {}
 end
 
 function Recipes.Initialize()

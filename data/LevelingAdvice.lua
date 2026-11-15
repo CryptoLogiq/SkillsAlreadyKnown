@@ -144,13 +144,6 @@ SAK.LevelingAdvice = {
           category = "optionnel_selon_usage",
           reason = L("Farouche tank; usages hors forme et soutien de groupe peuvent justifier l'achat."),
         },
-        {
-          baseID = 16914, -- Hurricane
-          name = "Hurricane",
-          minRank = 1,
-          category = "optionnel_selon_usage",
-          reason = L("Farouche tank; usages hors forme et soutien de groupe peuvent justifier l'achat."),
-        },
       },
     },
     ["restoration"] = {
@@ -181,13 +174,6 @@ SAK.LevelingAdvice = {
         {
           baseID = 2637, -- Hibernate
           name = "Hibernate",
-          minRank = 2,
-          category = "rangs_reportables",
-          reason = L("Restauration soin; acheter les degats si leveling solo. Le guide cite des rangs tardifs, pas une preuve que le rang 1 suffit."),
-        },
-        {
-          baseID = 16914, -- Hurricane
-          name = "Hurricane",
           minRank = 2,
           category = "rangs_reportables",
           reason = L("Restauration soin; acheter les degats si leveling solo. Le guide cite des rangs tardifs, pas une preuve que le rang 1 suffit."),
@@ -609,13 +595,6 @@ SAK.LevelingAdvice = {
           reason = L("Leveling solo Vindicte; utilitaire ou contenu morts-vivants/PvP a prendre en compte."),
         },
         {
-          baseID = 2812, -- Holy Wrath
-          name = "Holy Wrath",
-          minRank = 1,
-          category = "optionnel_selon_usage",
-          reason = L("Leveling solo Vindicte; utilitaire ou contenu morts-vivants/PvP a prendre en compte."),
-        },
-        {
           baseID = 879, -- Exorcism
           name = "Exorcism",
           minRank = 2,
@@ -1015,13 +994,6 @@ SAK.LevelingAdvice = {
           reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
         },
         {
-          baseID = 5740, -- Rain of Fire
-          name = "Rain of Fire",
-          minRank = 1,
-          category = "optionnel_leveling",
-          reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
-        },
-        {
           baseID = 6353, -- Soul Fire
           name = "Soul Fire",
           minRank = 1,
@@ -1147,13 +1119,6 @@ SAK.LevelingAdvice = {
           reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
         },
         {
-          baseID = 5740, -- Rain of Fire
-          name = "Rain of Fire",
-          minRank = 1,
-          category = "optionnel_leveling",
-          reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
-        },
-        {
           baseID = 6353, -- Soul Fire
           name = "Soul Fire",
           minRank = 1,
@@ -1272,13 +1237,6 @@ SAK.LevelingAdvice = {
           reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
         },
         {
-          baseID = 5740, -- Rain of Fire
-          name = "Rain of Fire",
-          minRank = 1,
-          category = "optionnel_leveling",
-          reason = L("Report propose par le guide de leveling; Rain of Fire/Hellfire exige validation securite et AoE avant recommandation automatique."),
-        },
-        {
           baseID = 6353, -- Soul Fire
           name = "Soul Fire",
           minRank = 1,
@@ -1317,14 +1275,6 @@ SAK.LevelingAdvice = {
           reason = L("Le guide donne explicitement cette plage; conserver le premier rang si utile."),
         },
         {
-          baseID = 6343, -- Thunder Clap
-          name = "Thunder Clap",
-          minRank = 3,
-          maxRank = 6,
-          category = "rangs_reportables",
-          reason = L("Conserver les rangs inferieurs; ne signifie pas rang 1 suffisant."),
-        },
-        {
           baseID = 1464, -- Slam
           name = "Slam",
           minRank = 1,
@@ -1348,13 +1298,6 @@ SAK.LevelingAdvice = {
         {
           baseID = 1464, -- Slam
           name = "Slam",
-          minRank = 1,
-          category = "optionnel_selon_usage",
-          reason = L("Parcours Protection bouclier; pas regle DPS."),
-        },
-        {
-          baseID = 1680, -- Whirlwind
-          name = "Whirlwind",
           minRank = 1,
           category = "optionnel_selon_usage",
           reason = L("Parcours Protection bouclier; pas regle DPS."),

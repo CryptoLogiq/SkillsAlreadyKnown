@@ -69,7 +69,13 @@ SkillsAlreadyKnown={disabledByDev=false,EnsureDB=function() return {} end,
 UnitClass=function() return "Warlock","WARLOCK" end
 assert(loadfile(root.."/Settings.lua"))("SkillsAlreadyKnown")
 assert(loadfile(root .. "/data/Patchnotes.lua"))()
+dofile(root.."/BadgeRules.lua")
+dofile(root.."/BadgeEditor.lua")
+dofile(root.."/DevTools.lua")
 local options=SkillsAlreadyKnown.Settings.Options()
 registry:ValidateOptionsTable(options,"SAK options schema")
+assert(options.args.custom.childGroups == "tab")
+assert(options.args.custom.args.spellBadges.type == "group")
+assert(not options.args.spellBadges, "Badge editor lives inside Custom")
 assert(options.args.spellbook.args.roles.args.dps.args.specialization.values().affliction=="Affliction")
 print("PASS: actual AceConfigRegistry accepts the settings table and class-scoped choices")

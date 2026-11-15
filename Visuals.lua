@@ -266,6 +266,9 @@ function Visuals.PaintTrainerBadge(frame, kind)
   if not (enabled("icons") and enabled("iconsTrainer")) then kind = nil end
   if not frame then return end
   local spec = kind and SAK.TRAINER_BADGES[kind]
+  if SAK.RecentSparkles then
+    SAK.RecentSparkles.PaintIcon(frame, iconTexture(frame), kind == "new", "iconsTrainer")
+  end
   local badge = frame.sakTrainerBadge
   if not spec then
     if SAK.Glow then SAK.Glow.Hide(frame) end

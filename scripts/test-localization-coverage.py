@@ -22,7 +22,11 @@ for file in (root / "patchnote").glob("*.lua"):
     for key in re.findall(r'^\s*(' + literal + r'),\s*$', file.read_text(), re.M):
         assert json.loads(key) in english, f"{file.name}: untranslated patchnote {key}"
 for key, value in english.items():
-    assert re.findall(r'%[dsf]', key) == re.findall(r'%[dsf]', value), key
-    for token in re.findall(r'\|c[0-9a-fA-F]{8}|\|r', key):
-        assert key.count(token) == value.count(token), key
+    source = french[key]
+    assert re.findall(r'%[dsf]', source) == re.findall(r'%[dsf]', value), key
+    # Semantic keys carry no formatting. Legacy source-text keys still must match.
+    if not re.fullmatch(r'[A-Z][A-Z0-9_]*', key):
+        assert re.findall(r'%[dsf]', key) == re.findall(r'%[dsf]', value), key
+    for token in set(re.findall(r'\|c[0-9a-fA-F]{8}|\|r', source + value)):
+        assert source.count(token) == value.count(token), key
 print(f"PASS: {len(english)} paired catalog entries, UI/patchnote coverage, formatting placeholders and color codes")

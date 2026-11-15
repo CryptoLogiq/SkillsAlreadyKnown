@@ -92,3 +92,20 @@ TrainerSpellsFrame = nil
 tick(nil, 0.001)
 assert(adapter.GetDiagnostics().shown == 0)
 print('TrainerSpells catalogue badges: OK')
+
+-- Pet catalogue rows carry no petKey/petLabel in the real provider.
+TrainerSpellsFrame=frame()
+SkillsAlreadyKnown.TRAINER_BADGES={known={texture='check',width=20,height=20}}
+SkillsAlreadyKnown.PetGrimoires={SyncTrainerSpellsKnown=function() end,
+ TrainerSpellInfo=function(id) if id==20382 then return {family='Voidwalker'},true end
+   if id==20383 then return {family='Voidwalker'},false end end}
+data={entry={spellID=20382,rankNum=2}}
+check(1)
+local found=false
+for _,display in ipairs(frames) do
+ if display.purchase and display.shown and display.purchase.shown then found=true end
+end
+assert(found,'Render the learned check even without player advice or RECENT')
+data={entry={spellID=20383,rankNum=3}};check(0)
+data={isHeader=true};check(0)
+print('PASS: pet rows without family fields show learned checks and clear them on future ranks/recycling')

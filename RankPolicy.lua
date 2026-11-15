@@ -172,7 +172,13 @@ local function adviceScope(rankOneOnly, extraRanksOnly)
   return "spell"
 end
 
+local function rankIdentity(family, rank)
+  local id = family.ranks and family.ranks[rank]
+  return id and { ids = { [id] = true } } or family
+end
+
 local function catalogueAdvice(class, family, rank)
+  if SAK.SpellUsage and SAK.SpellUsage.ProtectPurchase(class, rankIdentity(family,rank), rank) then return nil end
   if not matchingRoleSelection(class) then
     return nil
   end
@@ -226,6 +232,7 @@ local function expandRankOneAnchors(class, family)
 end
 
 function Policy.OptionalAdvice(class, family, rank)
+  if SAK.SpellUsage and SAK.SpellUsage.EssentialSkill(class, rankIdentity(family,rank)) then return nil end
   if not Policy.OptionalEnabled() then
     return nil
   end
@@ -280,6 +287,12 @@ local function resolveSpellRank(spellID, rank)
 end
 
 function Policy.PurchaseAdvice(class, spellID, rank)
+  local override = SAK.BadgeRules and SAK.BadgeRules.Resolve(class,spellID,"advice")
+  if override ~= nil then
+    if override == "eco" and Policy.EcoEnabled() then return "eco", SAK.BadgeRules.Reason() end
+    if override == "optional" and Policy.OptionalEnabled() then return "optional", SAK.BadgeRules.Reason(), "custom" end
+    return nil
+  end
   if type(spellID) ~= "number" or spellID <= 0 then
     return nil
   end

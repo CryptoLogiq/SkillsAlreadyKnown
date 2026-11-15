@@ -38,3 +38,31 @@ TrainerSpells_Character = {}
 pets.SyncTrainerSpellsKnown()
 assert(TrainerSpells_Character.learnedSpellsPet.Imp[7799])
 print('PASS: optional/late TrainerSpells, localized pets, exact IDs, rank bounds, retained knowledge, refresh deduplication and learning updates')
+
+-- Real Forever failure: localized family + pet spell IDs != grimoire training IDs.
+SkillsAlreadyKnown.GetPetNames = function() return {
+ {key='marcheur du vide',summonID=697}, {key='diablotin',summonID=688},
+} end
+saved.petSpells['marcheur du vide']={byID={['7809']=2,['19438']=2},
+ byName={Tourment=2,Sacrifice=2,['Consumer les ombres']=1}}
+local localizedNames={[20376]='Tourment',[20317]='Tourment',[20377]='Tourment',
+ [20381]='Sacrifice',[20382]='Sacrifice',[20387]='Consumer les ombres',[20388]='Consumer les ombres'}
+GetSpellInfo=function(id) return localizedNames[id] end
+TrainerSpells_PetData={Voidwalker={
+ [10]={[20376]={rank=1}},[20]={[20317]={rank=2}},[30]={[20377]={rank=3}},
+ [16]={[20381]={rank=1}},[24]={[20382]={rank=2}},
+ [18]={[20387]={rank=1}},[26]={[20388]={rank=2}},
+}}
+TrainerSpells_Character={learnedSpellsPet={}}
+pets.SyncTrainerSpellsKnown()
+local known=TrainerSpells_Character.learnedSpellsPet.Voidwalker
+assert(known[20317] and known[20382] and known[20387])
+assert(not known[20377] and not known[20388],'Never infer a future unlearned rank')
+local info,isKnown=pets.TrainerSpellInfo(20382)
+assert(info.family=='Voidwalker' and isKnown)
+assert(select(2,pets.TrainerSpellInfo(20377))==false)
+TrainerSpells_Character.learnedSpellsPet.Voidwalker={}
+pets.SyncTrainerSpellsKnown()
+assert(TrainerSpells_Character.learnedSpellsPet.Voidwalker[20382],'Recover a replaced provider cache')
+assert(not pets.TrainerSpellInfo(999999))
+print('PASS: French demon families, distinct grimoire/ability IDs, exact known ranks and native cache replacement')

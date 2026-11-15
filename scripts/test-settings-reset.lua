@@ -5,10 +5,11 @@ UnitClass = function() return "Mage", "MAGE" end
 UnitLevel = function() return 5 end
 InCombatLockdown = function() return combat end
 for _, file in ipairs({"Core.lua", "data/ClassRoles.lua", "data/LevelingRecommendations.lua",
-  "data/RankOneAdvice.lua", "PlayerRoles.lua", "RankPolicy.lua", "Settings.lua"}) do
+  "data/RankOneAdvice.lua", "PlayerRoles.lua", "RankPolicy.lua", "DevTools.lua", "Settings.lua"}) do
   assert(loadfile(root .. "/" .. file))()
 end
 local s = SkillsAlreadyKnown
+s.DevTools.SetEnabled(true)
 local refreshes, notifications, launches, opens = 0, 0, 0, 0
 s.Refresh = function() refreshes = refreshes + 1 end
 s.Settings.Notify = function() notifications = notifications + 1 end

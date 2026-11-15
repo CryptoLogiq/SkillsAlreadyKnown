@@ -38,7 +38,7 @@ local function petSpellBookBanks()
 end
 
 local function readPetSpellBookEntry(index, bank)
-  local spellID
+  local spellID, modernName, modernRank
 
   if GetSpellBookItemInfo then
     local ok, kind, id = pcall(GetSpellBookItemInfo, index, bank)
@@ -58,20 +58,31 @@ local function readPetSpellBookEntry(index, bank)
   if C_SpellBook and C_SpellBook.GetSpellBookItemInfo then
     local ok, info = pcall(C_SpellBook.GetSpellBookItemInfo, index, bank)
     if ok and type(info) == "table" then
+      local spellType = Enum and Enum.SpellBookItemType and Enum.SpellBookItemType.Spell
+      if info.isUnlearned or (spellType and info.itemType and info.itemType ~= spellType) then return end
       local id = info.spellID or info.actionID
       if type(id) == "number" and id > 0 then spellID = id end
-      if info.name then return info.name, info.subName, spellID end
+      modernName, modernRank = info.name, info.subName
+      if modernName and modernRank and modernRank ~= "" then return modernName, modernRank, spellID end
     end
   end
 
   if GetSpellBookItemName then
     local ok, name, rank = pcall(GetSpellBookItemName, index, bank)
-    if ok and name then return name, rank, spellID end
+    if ok and name and (not modernName or name == modernName) then return name, rank, spellID end
   end
 
   if C_SpellBook and C_SpellBook.GetSpellBookItemName then
     local ok, name, rank = pcall(C_SpellBook.GetSpellBookItemName, index, bank)
-    if ok and name then return name, rank, spellID end
+    if ok and name and (not modernName or name == modernName) then return name, rank, spellID end
+  end
+  if modernName then
+    local subtext = C_Spell and C_Spell.GetSpellSubtext or GetSpellSubtext
+    if subtext and spellID then
+      local ok, rank = pcall(subtext, spellID)
+      if ok then modernRank = rank end
+    end
+    return modernName, modernRank, spellID
   end
 end
 
@@ -111,63 +122,99 @@ local function scanPetSpellBook()
   return learned, count
 end
 
--- Share confirmed knowledge with TrainerSpells using its catalogue's pet keys.
--- Unknown entries remain under TrainerSpells' control; never copy negative guesses.
-function PetGrimoires.SyncTrainerSpellsKnown()
-  local catalogue, character = TrainerSpells_PetData, TrainerSpells_Character
-  if type(catalogue) ~= "table" or type(character) ~= "table" then return end
-  local saved = SAK.EnsureDB().petSpells
-  local learned = character.learnedSpellsPet
-  if trainerSync.catalogue == catalogue and trainerSync.character == character
-    and trainerSync.saved == saved and trainerSync.learned == learned
-    and trainerSync.revision == petRevision then return end
+local familySummons = { Imp = 688, Voidwalker = 697, Succubus = 712,
+  Incubus = 101822, Felhunter = 691, Felguard = 30146 }
+local catalogueIndex, catalogueSource, catalogueTime = {}, nil, nil
 
-  local changed = false
-  for family, levels in pairs(catalogue) do
-    local linkedPets = {}
-    for _, spells in pairs(type(levels) == "table" and levels or {}) do
-      for spellID in pairs(type(spells) == "table" and spells or {}) do
-        for _, pet in pairs(saved) do
-          if type(pet) == "table" and pet.byID
-            and (pet.byID[tostring(spellID)] or pet.byID[tonumber(spellID)]) then
-            linkedPets[pet] = true
-          end
-        end
-      end
-    end
-    for _, spells in pairs(type(levels) == "table" and levels or {}) do
-      for spellID, entry in pairs(type(spells) == "table" and spells or {}) do
-        local id = tonumber(spellID)
-        if id and id > 0 and type(entry) == "table" then
-          local known
-          for key, pet in pairs(saved) do
-            if type(pet) == "table" then
-              known = pet.byID and (pet.byID[tostring(id)] or pet.byID[id])
-              if not known and (linkedPets[pet] or SAK.PetKey(key) == SAK.PetKey(family))
-                and tonumber(entry.rank) then
-                local getName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
-                local name = getName and getName(id)
-                local rank = name and ((pet.byName and pet.byName[name]) or pet[name])
-                known = tonumber(rank) and tonumber(rank) >= tonumber(entry.rank)
-              end
-              if known then break end
-            end
-          end
-          if known then
-            character.learnedSpellsPet = character.learnedSpellsPet or {}
-            local records = character.learnedSpellsPet
-            records[family] = records[family] or {}
-            if records[family][id] ~= true then
-              records[family][id] = true
-              changed = true
-            end
+local function providerIndex()
+  local source = TrainerSpells_PetData
+  local now = GetTime and GetTime()
+  if source ~= catalogueSource or (now and (not catalogueTime or now - catalogueTime >= 1)) then
+    catalogueIndex, catalogueSource, catalogueTime = {}, source, now
+    for family, levels in pairs(type(source) == "table" and source or {}) do
+      for _, spells in pairs(type(levels) == "table" and levels or {}) do
+        for id, entry in pairs(type(spells) == "table" and spells or {}) do
+          if tonumber(id) and type(entry) == "table" then
+            catalogueIndex[tonumber(id)] = { family = family, rank = tonumber(entry.rank) or 1 }
           end
         end
       end
     end
   end
-  trainerSync = { catalogue = catalogue, character = character, saved = saved,
-    learned = character.learnedSpellsPet, revision = petRevision }
+  return catalogueIndex
+end
+
+local function matchesFamily(key, family)
+  if SAK.PetKey(key) == SAK.PetKey(family) then return true end
+  local summonID = familySummons[family]
+  if summonID and SAK.GetPetNames then
+    for _, pet in ipairs(SAK.GetPetNames()) do
+      if pet.summonID == summonID and pet.key == key then return true end
+    end
+  end
+  return false
+end
+
+local function providerKnowledge(id, entry)
+  local saved = SAK.EnsureDB().petSpells
+  local api = C_Spell and C_Spell.GetSpellName or GetSpellInfo
+  local name = api and api(id)
+  for key, pet in pairs(saved) do
+    if type(pet) == "table" then
+      if pet.byID and (pet.byID[tostring(id)] or pet.byID[id]) then return true end
+      local linked = matchesFamily(key, entry.family)
+      -- A real spell-ID match can identify a localized family too.
+      if not linked and pet.byID then
+        for otherID, other in pairs(providerIndex()) do
+          if other.family == entry.family and (pet.byID[tostring(otherID)] or pet.byID[otherID]) then linked = true; break end
+        end
+      end
+      if linked and name then
+        local rank = (pet.byName and pet.byName[name]) or pet[name]
+        if tonumber(rank) and tonumber(rank) >= entry.rank then return true end
+      end
+    end
+  end
+  local learned = TrainerSpells_Character and TrainerSpells_Character.learnedSpellsPet
+  return learned and learned[entry.family] and learned[entry.family][id] == true or false
+end
+
+function PetGrimoires.TrainerSpellInfo(id)
+  local entry = providerIndex()[id]
+  if entry then return entry, providerKnowledge(id, entry) end
+end
+
+-- Grimoire training IDs and pet ability IDs differ: localized names + exact ranks
+-- are only compared within the identified demon family.
+function PetGrimoires.SyncTrainerSpellsKnown()
+  local index = providerIndex()
+  local character = TrainerSpells_Character
+  if type(TrainerSpells_PetData) ~= "table" or type(character) ~= "table" then return end
+  local saved, learned = SAK.EnsureDB().petSpells, character.learnedSpellsPet
+  local now = GetTime and GetTime()
+  local intact = true
+  for _, applied in ipairs(trainerSync.applied or {}) do
+    if applied.records[applied.id] ~= true or not learned or learned[applied.family] ~= applied.records then intact = false; break end
+  end
+  if intact and trainerSync.index == index and trainerSync.character == character
+    and trainerSync.saved == saved and trainerSync.learned == learned
+    and trainerSync.revision == petRevision and (not now or now - (trainerSync.time or 0) < 1) then return end
+
+  -- Set the snapshot before refreshing the foreign UI to prevent re-entry.
+  trainerSync = { index = index, character = character, saved = saved,
+    revision = petRevision, time = now, applied = {} }
+  local changed = false
+  for id, entry in pairs(index) do
+    if providerKnowledge(id, entry) then
+      character.learnedSpellsPet = character.learnedSpellsPet or {}
+      local records = character.learnedSpellsPet
+      records[entry.family] = records[entry.family] or {}
+      local family = records[entry.family]
+      if family[id] ~= true then family[id] = true; changed = true end
+      trainerSync.applied[#trainerSync.applied + 1] = { records = family, id = id, family = entry.family }
+    end
+  end
+  trainerSync.learned = character.learnedSpellsPet
   if changed and type(TrainerSpells_Refresh) == "function" then TrainerSpells_Refresh() end
 end
 

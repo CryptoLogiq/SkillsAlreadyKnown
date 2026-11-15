@@ -45,6 +45,8 @@ local function createDisplay()
   if SAK.Compatibility then SAK.Compatibility.ProtectTexture(display.purchase) end
   display.usage = SAK.ContentTags.CreateBadge()
   display.usage:SetParent(display)
+  display.spellUse = SAK.ContentTags.CreateBadge()
+  display.spellUse:SetParent(display)
   return display
 end
 
@@ -54,12 +56,19 @@ local function paint(row, class)
   if not entry or not name or not name.GetWidth or not name.GetStringWidth then hide(row); return end
 
   local advice
-  local petEntry = entry.petKey or entry.petLabel
+  local petInfo, petKnown
+  if SAK.PetGrimoires and SAK.PetGrimoires.TrainerSpellInfo then
+    petInfo, petKnown = SAK.PetGrimoires.TrainerSpellInfo(entry.spellID)
+  end
+  local petEntry = petInfo or entry.petKey or entry.petLabel
   if not entry.questReward and not petEntry then
     advice = SAK.RankPolicy.PurchaseAdvice(class, entry.spellID, entry.rankNum)
   end
-  local spec = advice and SAK.SPELLBOOK_BADGES[advice]
+  local spec = petKnown and SAK.TRAINER_BADGES.known or (advice and SAK.SPELLBOOK_BADGES[advice])
   local usage = not petEntry and SAK.DisplayEnabled("contentTags") and SAK.ContentTags.ForSpell(class, entry.spellID)
+  local spellUse = SAK.SpellUsage and (SAK.SpellUsage.ForDisplay or SAK.SpellUsage.ForSpell)(class, entry.spellID)
+  if spellUse and not SAK.DisplayEnabled(spellUse.tag) then spellUse = nil end
+  local spellUseWidth = spellUse and (spellUse.width or SAK.ContentTags.BadgeWidth(spellUse.tag)) or 0
   local purchaseWidth = spec and spec.width or 0
   local usageWidth = usage and SAK.ContentTags.BadgeWidth(usage.tag) or 0
   local recentKind = SAK.RecentLearning and SAK.RecentLearning.Contains("pets", entry.spellID) and "pets" or "spells"
@@ -67,7 +76,8 @@ local function paint(row, class)
     and SAK.RecentLearning.Contains(recentKind, entry.spellID)
   local recentWidth = recent and 58 or 0
   local gap = spec and usage and 3 or 0
-  local previousWidth = purchaseWidth + usageWidth + gap
+  local spellUseGap = spellUse and (spec or usage) and 3 or 0
+  local previousWidth = purchaseWidth + usageWidth + gap + spellUseWidth + spellUseGap
   local recentGap = recent and previousWidth > 0 and 3 or 0
   local total = previousWidth + recentWidth + recentGap
   if total == 0 then hide(row); return end
@@ -110,6 +120,16 @@ local function paint(row, class)
   else
     display.usage.entry = nil
     display.usage:Hide()
+  end
+  if spellUse then
+    SAK.ContentTags.PrepareBadge(display.spellUse, row, spellUse)
+    display.spellUse:SetScale(1)
+    display.spellUse:SetFrameLevel(display:GetFrameLevel() + 1)
+    display.spellUse:ClearAllPoints()
+    display.spellUse:SetPoint("LEFT", display, "LEFT", purchaseWidth + usageWidth + gap + spellUseGap, 0)
+    display.spellUse:Show()
+  else
+    display.spellUse:Hide()
   end
   display:Show()
   if SAK.RecentVisuals then

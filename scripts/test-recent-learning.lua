@@ -88,3 +88,12 @@ spells = saved
 recent.HandleEvent('SPELLS_CHANGED')
 assert(not recent.Contains('spells', 10))
 print('PASS: learning batches, empty visits, late events, reload persistence, talent ranks and group changes')
+
+recent.Record('spells', 777, 'New spell', 1)
+assert(recent.IsUnused(777))
+assert(recent.MarkUsed(777) and not recent.IsUnused(777))
+recent.Record('spells', 777, 'New spell', 1)
+assert(not recent.IsUnused(777), 'Duplicate learning events do not forget successful use')
+recent.Record('spells', 778, 'New spell rank 2', 2)
+assert(recent.IsUnused(778) and recent.Contains('spells',777))
+print('PASS: first-use persistence survives repeated learning events without confusing ranks')

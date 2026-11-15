@@ -33,6 +33,25 @@ function Recent.Contains(kind, id)
   return kind == "recipes" and storage().spells[id] ~= nil or false
 end
 
+function Recent.IsUnused(id)
+  local entry = storage().spells[id]
+  return type(entry) == "table" and entry.used ~= true
+end
+
+function Recent.HasUnused()
+  for _, entry in pairs(storage().spells) do
+    if type(entry) == "table" and entry.used ~= true then return true end
+  end
+  return false
+end
+
+function Recent.MarkUsed(id)
+  local entry = storage().spells[id]
+  if type(entry) ~= "table" or entry.used == true then return false end
+  entry.used = true
+  return true
+end
+
 function Recent.Record(kind, id, name, rank)
   if not initialized or not validID(id) then return end
   if kind ~= "spells" and kind ~= "recipes" and kind ~= "talents" and kind ~= "pets" then return end
@@ -53,7 +72,8 @@ function Recent.Record(kind, id, name, rank)
   elseif kind == "spells" and current.recipes[id] then
     return
   end
-  current[kind][id] = { name = name or spellName(id), rank = rank }
+  local previous = current[kind][id]
+  current[kind][id] = { name = name or spellName(id), rank = rank, used = previous and previous.used or nil }
   if not visiting then
     outsideGeneration = outsideGeneration + 1
     local generation = outsideGeneration

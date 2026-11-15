@@ -33,7 +33,7 @@ for _,rule in ipairs(policy.PurchaseCatalogue) do
  classes[class]=true;count=count+1
 end
 local classCount=0;for _ in pairs(classes) do classCount=classCount+1 end
-assert(classCount==9 and count>=165)
+assert(classCount==9 and count==157)
 class="MAGE";SkillsAlreadyKnownDB.levelingProfile=nil
 policy.SetRole("dps");policy.SetSpecialization("dps","fire")
 assert(policy.PurchaseAdvice(class,6143,1)=="optional","Frost Ward in Fire's situational purchase list")

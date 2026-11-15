@@ -338,8 +338,12 @@ local function paintPurchaseAdvice(row, service)
     kind = SAK.RankPolicy.PurchaseAdvice(class, service.spellID, SAK.RankNumber(service.subText))
   end
   Visuals.PaintTrainerAdvice(row, kind)
-  if SAK.ContentTags then
-    SAK.ContentTags.PaintTrainer(row, service)
+  local usage
+  if SAK.ContentTags then usage = SAK.ContentTags.PaintTrainer(row, service) end
+  if SAK.SpellUsage then
+    local anchor = usage or row.sakTrainerAdvice
+    if not anchor or (anchor.IsVisible and not anchor:IsVisible()) then anchor = row.sakTrainerBadge end
+    SAK.SpellUsage.Paint(row, anchor, service and service.spellID, "iconsTrainer")
   end
 end
 

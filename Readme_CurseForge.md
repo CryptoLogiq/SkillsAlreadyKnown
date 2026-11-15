@@ -2,11 +2,9 @@
 
 By **CryptoLogiq** — spell ranks, talents, roles and smarter training for **WoW Forever**.
 
-Previously known as Skills Already Known.
-
 ## Screenshots
 
-These screenshots show an older version and will be updated to reflect Skills & More.
+These screenshots show an older version and will be updated.
 
 ![Class trainer](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/trainer-preview.png)
 
@@ -16,50 +14,72 @@ These screenshots show an older version and will be updated to reflect Skills & 
 
 ## Learn at a glance
 
-Trainer markers show **NEW +** for learnable spells, a **green check** for learned spells, **NEXT** for the next milestone and **NOT NOW** for unavailable spells. Colored outlines make each state easy to spot; NEW + can also glow. Profession trainers highlight the next training step with NEXT.
-
-## Understand your spell ranks
+**NEW +** means learnable now, **✓** already learned, **NEXT** the next milestone and **NOT NOW** unavailable. Colored outlines help distinguish them at class and profession trainers.
 
 | Marker | Meaning |
 | --- | --- |
-| **BEST** | Highest rank you have learned, even if it is the only one. |
-| **LOW** | An older rank you have already replaced. |
+| **BEST** | Highest rank you have learned, even alone. |
+| **LOW** | An older rank: you already know a higher one. |
 | **BUY NEW RANK** | An accessible higher rank remains to learn. |
-| **ECO** | Rank 1 can suffice for the recommended use while leveling. |
-| **OPTIONAL** | A spell or extra rank whose purchase can wait for your selected roles. |
+| **ECO** | Rank 1 can suffice for the recommended leveling use. |
+| **OPTIONAL** | A spell or extra rank whose purchase can wait for your roles. |
+| **CLASS** | Essential to a class mechanic, such as Drain Soul for Soul Shards. |
+| **AOE** | Area damage, multiple targets or a related talent improvement. |
+| **SURVIVAL** | Defensive tools, escapes, shields or emergency sustain; hover for limits. |
+| **KICK / TAUNT / AGGRO** | Interrupts, forced attacks and explicit additional threat. |
+| **TANK / HEAL / DPS** | Role orientation of selected forms, stances, auras and effects. |
+| **RECENT** | Part of your latest recorded learning. |
 
-Hover recognized spells for explanations, including on action bars. **ECO saves training gold, not guaranteed mana.** OPTIONAL does not mean useless. Advice covers selected spells, must suit every role you choose and is suspended when you select PvP. Upgrade markers use TrainerSpells or information from a trainer you have opened; they do not check your gold.
+Usage markers can combine. In the spellbook they sit above rank badges; OPTIONAL stays beside BEST and RECENT below the icon. Badges can also appear above spell tooltips.
 
-## Find what you just learned
+**ECO saves training gold, not guaranteed mana.** OPTIONAL does not mean useless. Advice must suit every selected role; choosing PvP suspends ECO and OPTIONAL. Upgrade alerts use TrainerSpells or the trainer you have opened and do not check your gold.
 
-**RECENT** marks your latest learned spells, pet abilities, talent ranks and recipes in supported views. The complete list is available in **Recent learning** and saved between sessions. A trainer visit without learning anything keeps the previous list; new learning replaces it.
+## Recent learning and sparkles
 
-On first use, already-known spells from your latest accessible level tier are selected when their required levels are available. Your next learning replaces this initial selection.
+Review your latest spells, pet abilities, talents and recipes in **Recent learning**. The list survives reload; an empty trainer visit keeps it, while new learning replaces it. On first use, already-known spells from your latest accessible level tier can form the initial list.
 
-## Get to know your specialization
+- **Gold:** a RECENT player spell is missing from action bars.
+- **Blue:** it is placed but has no successful use recorded yet. The tooltip explains it; the first successful use removes blue, while RECENT stays.
+- **Learning sparkles:** NEW + trainer icons and recognized unlearned recipe icons at merchants and in loot.
 
-Choose roles available to your class and read specialization summaries with advantages and drawbacks. The first-use window suggests a specialization from your talents or the solo leveling recommendation. Advice becomes active only after you confirm your choices.
+Blizzard and EllesmereUI action, stance, form and aura bars are supported. Inactive pages and recognized macros count as placement. Complex macros may not be detected. Usage tracking starts with this feature and survives reload.
 
-Role labels appear in the talent trees and spellbook. **LEVELING** identifies the main solo recommendation. **PVP** and **PVE PVP** explain the suggested use of selected talents and learnable spells. Before level 10, spellbook school tabs also show specialization summaries.
+Particles stay around icons. Sold-out merchant recipes and incomplete recipe data do not sparkle. Each effect can be toggled in **Display**.
 
-## Recognize books and recipes
+## Roles and talent guidance
 
-Warlock pet grimoires show learned or learnable status and demon icons at merchants and in bags. Merchants also flag books you already own. Summon each demon once to record its learned spells. Book markers then stay available whichever demon is active; a bright gold border highlights books for your summoned demon. Pet spellbooks use BEST, LOW, BUY NEW RANK and RECENT, with upgrade alerts limited to ranks available at your pet’s level.
+Choose roles and specializations in **Talent Spec and Role**. The first-use window proposes a choice from your talents or the solo leveling recommendation; nothing is activated until you confirm it.
 
-**ALREADY KNOWN** identifies learned recipes in bags and group or raid loot-roll windows when the game confirms them. The addon never chooses a loot roll for you.
+Role labels and specialization summaries appear in the talent trees and spellbook. **LEVELING** marks the main solo recommendation. **PVP** and **PVE PVP** explain selected talents and spells. Before level 10, spellbook tabs also show specialization summaries.
+
+Selected Paladin talents show **Recommended for**, with specialization icons and the exact guide build context. Situational variants are identified. This is not a complete build list, and popularity alone does not produce recommendations.
+
+A short selection of tooltip hints explains combinations such as Judgement with a Seal, Ice Lance against a frozen target and Fire Nova with a Fire totem.
+
+## Books and recipes
+
+Warlock pet grimoires show learned or learnable status and demon icons at merchants and in bags. Merchants also flag books already owned. Summon each demon once to record its spells; markers then remain available whichever demon is active. A gold border highlights books for your active demon.
+
+Pet spellbooks use BEST, LOW, BUY NEW RANK and RECENT. Upgrade alerts respect your pet’s level. **ALREADY KNOWN** marks confirmed learned recipes in bags and native loot windows. Loot choices always remain yours.
 
 ## Make it yours
 
-Open the options with **/sam settings** or the minimap button. Choose where icons appear and control outlines, text and backgrounds separately. Settings are saved per character. Language follows the game client by default: French for French clients, English otherwise. Choose French or English manually in Language and reload to apply. The launcher is also available through **HidingBar** and **Titan Panel**.
+Open **Options → AddOns → Skills & More** with **/sam settings** or the minimap button. Sections appear in the left-hand list.
 
-The options include role choices, recent learning, patchnotes, reset confirmations and support reports. Use **/sam** for the summary or **/sam conflicts** for a compatibility report.
+- **Display:** icons, outlines, text, backgrounds and separate display zones.
+- **Custom → Spell badges:** change usage, PvP and purchase markers, or add a spell ID. Apply to this character or the class across your account; **All ranks** defaults on. Character choices take priority.
+- **Language:** automatic detection, French or English; reload after changing it.
+- **Reset:** restore defaults or reopen the first-use window, with confirmation.
+- **Patchnotes:** read features and fixes by version.
+
+Settings are saved per character. The minimap launcher also works with HidingBar and Titan Panel. **/sam** opens the summary and refreshes markers.
 
 ## Compatibility and support
 
-Bag markers are confirmed with **Blizzard bags** and **EllesmereUI Bags**. Other bag addons and custom profession windows are not confirmed; the recent-learning list remains available in the options.
+Bag markers are confirmed with **Blizzard bags** and **EllesmereUI Bags**. Other bag addons and custom profession windows are not confirmed.
 
-DarkMode and TrainerSpells have dedicated compatibility handling. TrainerSpells keeps control of its trainer text; its class list can show purchase advice, usage markers and RECENT where space allows.
+DarkMode and TrainerSpells have dedicated handling. TrainerSpells keeps control of its trainer text; supported lists can show purchase and usage markers, RECENT and learned pet checks.
 
-For a bug report, open the affected window, reproduce the issue and share its **Copy Export** report from Diagnostics.
+For a bug report, include the affected window, a screenshot and steps to reproduce.
 
 [Source code](https://github.com/CryptoLogiq/SkillsAlreadyKnown) · [MIT License](https://github.com/CryptoLogiq/SkillsAlreadyKnown/blob/main/LICENSE)

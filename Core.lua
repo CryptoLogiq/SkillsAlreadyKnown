@@ -15,6 +15,7 @@ local function devCopyEnabled()
   return ok and active == true
 end
 
+SAK.isDev = addonName:sub(-4) == "_dev"
 SAK.disabledByDev = devCopyEnabled() or false
 if SAK.disabledByDev then
   print("|cffffcc00Skills & More:|r inactive while " .. addonName .. "_dev is loaded.")
@@ -93,15 +94,30 @@ local displayKeys = {
   text = true,
   backgrounds = true,
   iconsSpellbook = true,
+  iconsTooltips = true,
   iconsTrainer = true,
   iconsMerchant = true,
   iconsInventory = true,
   iconsTalents = true,
   contentTags = true,
+  survival = true,
+  kick = true,
+  taunt = true,
+  aggro = true,
+  combinations = true,
+  tank = true,
+  heal = true,
+  dps = true,
+  aoe = true,
+  class = true,
   recipes = true,
   iconsLoot = true,
   iconsTrainerSpells = true,
   recent = true,
+  recentSparkles = true,
+  learningSparkles = true,
+  unusedSparkles = true,
+  iconsActionBars = true,
   iconsProfessions = true,
 }
 
@@ -337,15 +353,15 @@ local function stripCommonAffixes(names)
 end
 
 local function buildPetNames()
-  local raw = {}
+  local raw, rawIDs = {}, {}
   local seen = {}
   local out = {}
-  local function add(name, icon, unlockLevel)
+  local function add(name, icon, unlockLevel, summonID)
     name = SAK.CleanupPetName(name)
     local key = SAK.PetKey(name)
     if name ~= "" and key ~= "" and not seen[key] then
       seen[key] = true
-      out[#out + 1] = { name = name, key = key, icon = icon, unlockLevel = unlockLevel }
+      out[#out + 1] = { name = name, key = key, icon = icon, unlockLevel = unlockLevel, summonID = summonID }
     end
   end
 
@@ -355,14 +371,15 @@ local function buildPetNames()
       local icon = SAK.SpellTexture(spellID)
       local unlockLevel = SAK.SpellLevelLearned(spellID)
       raw[#raw + 1] = name
-      add(name, icon, unlockLevel)
-      add(name:match("[dD][’']un%s+(.+)"), icon, unlockLevel)
-      add(name:match("[dD][’']une%s+(.+)"), icon, unlockLevel)
+      rawIDs[#rawIDs + 1] = spellID
+      add(name, icon, unlockLevel, spellID)
+      add(name:match("[dD][’']un%s+(.+)"), icon, unlockLevel, spellID)
+      add(name:match("[dD][’']une%s+(.+)"), icon, unlockLevel, spellID)
     end
   end
 
-  for _, name in ipairs(stripCommonAffixes(raw)) do
-    add(name)
+  for index, name in ipairs(stripCommonAffixes(raw)) do
+    add(name, nil, nil, rawIDs[index])
   end
 
   table.sort(out, function(a, b) return #a.name > #b.name end)

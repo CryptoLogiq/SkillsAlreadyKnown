@@ -58,6 +58,7 @@ local inventoryEvents = {
 }
 
 local function initializeHooks()
+  if SAK.UnusedSpells then SAK.UnusedSpells.Initialize() end
   if SAK.RecentVisuals then SAK.RecentVisuals.Initialize() end
   if SAK.TrainerSpellsBadges then
     SAK.TrainerSpellsBadges.Initialize()

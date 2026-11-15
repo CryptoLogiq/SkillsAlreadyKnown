@@ -9,9 +9,14 @@ local automatic = client:sub(1, 2):lower() == "fr" and "fr_FR" or "en-EN"
 local active = automatic
 local initialized = false
 local tables, initializers = {}, {}
-local sourceByEnglish = {}
+local sourceByText = {}
 for source, english in pairs(catalogs["en-EN"]) do
-  sourceByEnglish[english] = source
+  sourceByText[english] = source
+end
+-- Semantic keys can already have become French text before SavedVariables load.
+-- Resolve both catalogue values back to their key when refreshing cached tables.
+for source, french in pairs(catalogs.fr_FR) do
+  sourceByText[french] = sourceByText[french] or source
 end
 
 function Localization.GetPreference()
@@ -30,7 +35,7 @@ function Localization.SetLanguage(value)
 end
 
 function SAK.L(text)
-  local source = catalogs[active][text] and text or sourceByEnglish[text] or text
+  local source = catalogs[active][text] and text or sourceByText[text] or text
   return catalogs[active][source] or text
 end
 

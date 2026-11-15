@@ -147,3 +147,44 @@ assert(table.concat(lines," "):find("Principalement",1,true))
 assert(table.concat(lines," "):find("pas une obligation",1,true))
 local count=#made;tags.Initialize();tags.Initialize();assert(#made==count+1)
 print("PASS: 9-class data, 79 talents/39 spells, exact/localized rank identities, modern node APIs/cache, native node hints, unknown IDs, alpha/visibility, learned-service exclusion, recycled rows, tooltip and category switches")
+
+-- The same icon can carry PvP advice and an independent area-use marker.
+dofile(root..'/data/SurvivalAdvice.lua')
+dofile(root..'/data/AreaSpells.lua')
+dofile(root..'/data/AreaTalents.lua')
+dofile(root..'/SpellUsage.lua')
+C_Traits=nil
+button.GetNodeID=function() return 105771 end
+function native:GetChildren() return button end
+s.SetDisplayOption('aoe',true);s.SetDisplayOption('iconsTalents',true)
+tags.RefreshTalents()
+local area
+for _,display in ipairs(made) do
+ if display.entry and display.entry.tag=='aoe' then area=display end
+end
+assert(area and area.shown and area.entry.spellID==11185)
+assert(area.width==button.Icon:GetWidth())
+assert(area.points[1][1]=='TOP' and area.points[1][2]==badge and area.points[1][3]=='BOTTOM')
+local frameCount=#made
+tags.RefreshTalents();assert(#made==frameCount)
+s.SetDisplayOption('contentTags',false);tags.RefreshTalents()
+assert(not badge.shown and area.shown,'AoE is independent of PvP markers')
+assert(area.points[1][2]==button.Icon)
+s.SetDisplayOption('aoe',false);tags.RefreshTalents();assert(not area.shown)
+s.SetDisplayOption('aoe',true);tags.RefreshTalents();assert(area.shown)
+button.GetNodeID=function() return 999999 end
+tags.RefreshTalents();assert(not area.shown,'Clear a recycled unknown talent')
+button.GetNodeID=function() return 105771 end
+s.SetDisplayOption('iconsTalents',false);tags.RefreshTalents();assert(not area.shown)
+local classes,talents=0,0
+for class,entries in pairs(s.AreaTalents) do
+ classes=classes+1
+ for id,entry in pairs(entries) do
+  talents=talents+1
+  assert(s.SpellUsage.ForTalent(class,id,nil)==entry)
+  assert(s.SpellUsage.ForTalent(class,nil,entry.nodeID)==entry)
+ end
+end
+assert(classes==9 and talents==21)
+assert(s.AreaSpells.SHAMAN[408341] and not s.AreaSpells.SHAMAN[1535],'Use the Forever Fire Nova, not removed Classic totem')
+print('PASS: nine-class talent review, passive/active AoE, exact/node IDs, stacked PvP markers, independent switches and recycling')

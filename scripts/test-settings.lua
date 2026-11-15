@@ -42,6 +42,8 @@ LibStub=function(name) return libraries[name] end
 sak.SpellBook={MarkDirty=function() end,Refresh=function() refreshes=refreshes+1 end}
 Settings={RegisterCanvasLayoutCategory=function() end,RegisterAddOnCategory=function() end,
  OpenToCategory=function(id) openedCategory=id end}
+assert(loadfile(root.."/DevTools.lua"))()
+sak.DevTools.SetEnabled(true)
 assert(loadfile(root.."/Settings.lua"))("SkillsAlreadyKnown")
 local settings=sak.Settings
 assert(settings.Register() and settings.Register() and registered==1 and panels==1)
@@ -85,11 +87,11 @@ combat=true;sak.RankPolicy.ShowSettings();assert(sak.RankPolicy.pending and open
 combat=false;sak.RankPolicy.MaybePrompt();assert(not sak.RankPolicy.pending and openedCategory==321)
 print("PASS: single native category, shared startup model, live saved settings, role preservation, refresh and combat deferral")
 
--- The three tabs expose the actual command actions without slash re-routing.
-assert(savedOptions.childGroups=="tab")
+-- Section models expose actual command actions without slash re-routing.
+assert(savedOptions.childGroups=="tree")
 assert(savedOptions.args.display.name=="Affichage" and savedOptions.args.display.order==1)
 assert(savedOptions.args.spellbook.name=="Talent Spec and Role" and savedOptions.args.spellbook.order==2)
-assert(savedOptions.args.diagnostics.name=="Diagnostics" and savedOptions.args.diagnostics.order==3)
+assert(savedOptions.args.display.args.development.name=="DEV_TOOLS_TITLE" and savedOptions.args.display.args.development.order==11)
 assert(savedOptions.args.spellbook.args.legend.args.eco.image==sak.SPELLBOOK_BADGES.eco.texture)
 local actions={}
 local function record(key) actions[#actions+1]=key end
@@ -104,7 +106,7 @@ local hidden=0
 SettingsPanel={IsShown=function() return true end}
 HideUIPanel=function(p) assert(p==SettingsPanel);hidden=hidden+1 end
 savedOptions.args.display.args.summary.func()
-local reports=savedOptions.args.diagnostics.args.reports.args
+local reports=savedOptions.args.display.args.development.args.reports.args
 for _,key in ipairs({"trainer","pet","grimoires","conflicts"}) do
  assert(reports[key].desc:find("/sam",1,true))
  reports[key].func()
@@ -117,7 +119,7 @@ savedOptions.args.display.args.refresh.func()
 assert(actions[7]=="trainer dirty" and actions[8]=="spellbook dirty" and actions[9]=="refresh")
 SettingsPanel=nil;HideUIPanel=nil
 count=opens
-print("PASS: ordered tabs, marker previews, every report command, visible report routing, refresh and startup profile selection")
+print("PASS: ordered sections, marker previews, every report command, visible report routing, refresh and startup profile selection")
 
 -- Appearance controls are profile-independent, persistent and update previews.
 local controls=savedOptions.args.display.args.controls.args
@@ -152,7 +154,7 @@ InterfaceOptions_AddCategory=function(p) legacyPanel=p end
 InterfaceOptionsFrame_OpenToCategory=function(p) legacyOpened=p end
 assert(loadfile(root.."/Settings.lua"))("SkillsAlreadyKnown")
 settings=sak.Settings;settings.Register();settings.Open()
-assert(legacyOpened==legacyPanel and legacyPanel.name=="Skills & More — By CryptoLogiq")
+assert(legacyOpened.name=="Affichage" and legacyOpened.parent=="Skills & More — By CryptoLogiq")
 group.callbacks.OnShow();assert(dialog.lastContainer==group)
 group.callbacks.OnHide();assert(group.released)
 print("PASS: legacy AddOns category feeds the same model without patching Ace3")

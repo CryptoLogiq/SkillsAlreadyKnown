@@ -281,7 +281,13 @@ function Availability.FindUpgrade(class, family, spell)
 
   for _, candidate in ipairs(getCandidates(class)) do
     if isMissingUpgrade(candidate, family, expectedName, playerLevel) then
-      local reason, scope = policy.UpgradeCanWait(class, family, candidate.rank)
+      local override = SAK.BadgeRules and SAK.BadgeRules.Resolve(class,candidate.id,"advice")
+      local reason, scope
+      if override == "eco" or override == "optional" then
+        reason, scope = SAK.BadgeRules.Reason(), "custom"
+      elseif override == nil then
+        reason, scope = policy.UpgradeCanWait(class, family, candidate.rank)
+      end
       if reason then
         if not waitReason then
           waitReason = reason

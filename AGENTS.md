@@ -881,3 +881,412 @@ Active-pet book highlighting uses a separate additive native gold border in
 Visuals.PaintMerchantPetIcon, shared by bags and merchants. Respect icons/category
 and outlines settings; hide on recycled/unknown/inactive-pet books. It must not
 filter learned/learnable markers or reuse the trainer NEW+ proc host.
+
+
+SURVIVAL: data/SurvivalAdvice.lua now contains 56 reviewed spell families across
+nine classes, expanded from the initial 12-entry trial. Per-entry Forever sources
+and review dates are maintained beside the data; the old optional-spell audit
+is historical research, not the coverage limit. No exhaustive guarantee is implied. Keep spell-ID
+anchors and localized name resolution for later ranks; no item-name substring match.
+SpellUsage.lua shares ContentTags' native frame renderer and cleans detached badges
+when owners/anchors hide. Display.survival is independent of PvP usage tags, and
+respects per-zone/global icon switches. Spellbook markers sit after rank/OPTIONAL;
+TrainerSpells reserves measured space; trainer markers follow usage badges.
+The first purchase of these spells is protected from OPTIONAL regardless of badge
+visibility; extra-rank ECO/OPTIONAL advice stays independent. Descriptions must not
+claim rank 1 suffices just because the spell is defensive. Keep FR/EN semantic keys,
+update the GUI legend and test scripts/test-survival.lua plus existing UI suites.
+
+
+AOE shares SpellUsage.lua with SURVIVAL. data/AreaSpells.lua is the readable
+spell-family catalogue (21 reviewed area/cleave families across nine classes).
+Match exact IDs first, then game-resolved localized names for other ranks. Its
+AOE display toggle is independent of SURVIVAL and PvP hints. Tag area spells and
+cleave/multitarget attacks by actual usage; tooltip text distinguishes their scope.
+Keep recognized area families out of LevelingAdvice OPTIONAL rules at every rank;
+SpellUsage.ProtectPurchase also guards against future accidental reintroduction.
+Hiding badges must not change purchase policy. Maintain the same spellbook,
+trainer, TrainerSpells, external-tooltip, localization and recycling paths.
+The old Survival.lua module was generalized to SpellUsage.lua; do not duplicate
+its renderer. Tests cover both categories in scripts/test-survival.lua.
+
+
+Talent AoE coverage: data/AreaTalents.lua holds 21 reviewed active/improvement
+entries across nine classes, with spell and native node anchors. Structure was
+checked against locally installed TalentsForeverBook build 1.60.1.70755; do not
+redistribute that addon's dataset or assume every custom talent's mechanics from
+its name. SpellUsage.ForTalent shares runtime usage data. ContentTags resolves
+native identities once and draws independent usage badges below icons, stacking
+below PvP advice when both apply. IconsTalents/global icons gate both; disabling
+PvP hints alone must leave AoE visible. Clear markers on hidden/recycled nodes.
+Passive improvements have explicit wording and must not imply a new AoE attack.
+Forever Fire Nova uses 408341, replacing removed Classic Fire Nova Totem 1535.
+Sources: https://www.wowhead.com/forever/guide/classes/shaman/elemental/overview-pve-dps
+and https://www.wowhead.com/forever/talent-calc/mage . Generic throughput talents
+are not automatically AoE; unknown/custom effects remain unmarked pending their
+current in-game tooltip. Tests: scripts/test-content-tags.lua and test-survival.lua.
+
+
+CLASS is a shared SpellUsage category backed by data/ClassSkills.lua, initially
+Drain Soul (1120) and its name-resolved higher ranks. It marks an essential class
+mechanic, not mandatory rank upgrades. EssentialSkill suppresses OPTIONAL at all
+ranks independently of display toggles. rankOneUtility entries retain ECO on rank
+1 and BEST on the highest learned rank; SpellRanks must not restore OPTIONAL via
+FindUpgrade's waitReason or demand BUY for that utility. Keep original rank-one
+advice data as an economy explanation, not a claim that the spell is dispensable.
+Check scripts/test-class-skills.lua; use existing renderer, tooltips and category
+settings for all views. Do not classify every class spell as essential by default.
+
+
+Tooltip badge strips: TooltipBadges.lua repeats rank/OPTIONAL, usage, PvP and RECENT
+markers on addon-owned frames parented to each spell tooltip. Reuse existing rank
+textures and ContentTags' renderer; preserve texture aspect ratio. Collect respects
+global icons, iconsTooltips and category preferences independently of tooltip prose.
+Native tooltip layout is untouched. Wrap to tooltip width, clamp the strip and
+place below the tooltip only when scaled screen-top space is insufficient. Clear
+on OnTooltipCleared/OnHide so recycled spell/item tooltips cannot retain badges;
+reuse frames and hooks and never add mouse-intercepting overlays. Hook through
+shared SpellTooltips entry points for native book/trainer and external spells.
+Test scripts/test-tooltip-badges.lua, existing spellbook/UI/localization suites.
+
+
+User badge editor: BadgeRules.lua stores sparse per-class entries in account-wide
+SkillsAlreadyKnownAccountDB.badgeRules and per-character SkillsAlreadyKnownDB.badgeRules.
+The former is explicitly declared in SavedVariables, the latter stays in the
+existing SavedVariablesPerCharacter. DEV namespace rewriting isolates both stores.
+Only current-class entries apply. Resolve per field: character exact ID, character
+all-ranks family, class exact ID, class family, then shipped data. Match other ranks
+through game-resolved names; never numeric ordering or truncated UI names. Nil
+inherits, "none" explicitly removes a category. Usage (AOE/SURVIVAL/CLASS), combat
+(PVP/mixed) and advice (ECO/OPTIONAL) are independent categories. Unknown IDs are
+validated/retried; never save a silently invalid ID. All ranks defaults true for new
+rules. One broad family rule per scope avoids ambiguous matches; precise exceptions
+remain. BadgeEditor.lua edits drafts until Save and offers confirmed scoped removal.
+The current class, selected scope, effective values and inherited source are visible.
+Rules invalidate shared views; tooltips, trainers, spellbook, talent nodes and
+TrainerSpells use the same overrides. Custom advice is labelled as a personal choice
+and can override the supplied defaults. BEST/LOW/BUY/RECENT/learned status remain
+computed. ResetDefaults clears only character overrides, preserving shared class
+rules; the editor removes shared rules explicitly. No automatic push or release.
+Tests: test-badge-editor.lua, test-custom-badge-policy.lua, real AceConfig schema,
+localization, packaging and DEV isolation. Semantic translation keys compare format
+placeholders between FR/EN values, while legacy source-text keys retain their checks.
+
+
+TrainerSpells demon checks: its native pet rows have no petKey/petLabel, and
+training IDs (e.g. 20382) differ from learned ability IDs (e.g. 19438). Detect rows
+through TrainerSpells_PetData, then paint TRAINER_BADGES.known independently of
+player advice, usage tags or RECENT. Core.GetPetNames retains summonID, enabling
+canonical provider families to match saved localized names. Compare native spell
+names and required ranks only within that identified family; never infer another
+pet's rank. Some Forever action IDs are packed; name/rank evidence must not depend
+on an exact-ID match. Read missing modern subtext from compatible APIs; exclude
+unlearned/non-spell modern rows. PetGrimoires' provider sync retries boundedly for
+late data and repairs replaced native knowledge caches while preserving positives.
+Tests reproduce French Voidwalker with distinct training/ability IDs, future ranks,
+foreign-cache replacement and native rows without family flags. Changing these
+paths must retain the player-list behavior and icon category switches.
+
+
+DEV tooltip identity: Core.isDev comes only from the actual loaded addon name's
+_dev suffix, never branch/version text or the presence of a DEV folder. The DEV
+copy puts an orange DEV badge first in spell-tooltip strips, including when other
+appearance badges are disabled. Official builds must never display it. Keep this
+maintainer aid out of public README/CurseForge patchnotes. Reuse TooltipBadges and
+ContentTags; cover source and staged namespace behavior with dev-isolation and
+tooltip-badge tests. The DEV installer must remain isolated from the official copy.
+
+
+Optional developer UI lives in DevTools.lua. A single Display checkbox controls
+per-character devToolsEnabled (default false). Factories own the hidden development
+section in Display and replay-first-use button; Settings retains ordinary reset/default
+controls and the player summary. Debug slash handlers and summary command listings
+route through the same gate; disabled commands explain how to enable tools instead
+of opening reports. Previously built callbacks must also respect the current gate.
+Turning tools off closes diagnostic/export windows while retaining the player
+summary. This is a UI/command module, not the DEV addon identity: Core.isDev and the
+orange tooltip DEV label are independent and must stay visible for a real DEV copy.
+Passive bounded compatibility observations remain available for support. No second
+addon folder/TOC, dependency or reload is needed. New debug buttons belong in this
+module; do not scatter hidden conditions through player features. Test with
+scripts/test-devtools.lua, existing reset/diagnostic routing tests and real AceConfig.
+
+
+Standing navigation preference: use native Options > AddOns parent/subcategories,
+like Questie's left-hand list, instead of internal horizontal tabs. Settings registers
+an overview parent plus one panel per top-level player section, feeding each exact
+AceConfig path through AddToBlizOptions. Register once; keep native category IDs
+and open Display directly for /sam settings. The modern capability check requires
+RegisterCanvasLayoutSubcategory. The legacy fallback creates parented BlizOptionsGroup
+frames and feeds the same per-section paths without modifying Ace3. Standalone
+fallback uses tree navigation; first-use still opens the spellbook/role path alone.
+Developer tools live inline in Display, gated by the existing checkbox, so disabling
+them never leaves a blank native subcategory. Keep all content, confirmation flows,
+DEV identity and settings persistence unchanged. See test-settings-navigation.lua,
+legacy settings tests and real AceConfig validation. Relevant upstream behavior:
+libs/AceConfig-3.0/AceConfigDialog-3.0/AceConfigDialog-3.0.lua AddToBlizOptions;
+https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_Settings_Shared/Blizzard_Category.lua .
+
+Cached localization tables must support semantic keys after file-scope lookup has
+already turned them into French OR English values. Localization's reverse lookup
+resolves both catalogues before retranslation at ADDON_LOADED. Do not restrict it
+to English values: French-client + English override otherwise leaves custom
+OPTIONAL and usage explanations in French. Test actual external tooltip hooks,
+all OPTIONAL scopes, both override directions and cached usage advice; native
+game tooltip text stays in the game's language.
+
+Indirect AoE talent explanations must identify WHY the badge applies and list
+the affected area spells. AreaTalents.relatedSpells contains reviewed spell IDs,
+with source/review date beside the relationship; never guess links from names
+or IDs. All 17 current indirect/spread entries are linked; active area talents
+keep their own native description without redundant self-links. SpellUsage shares
+the related-spell renderer between spell tooltips and ContentTags badge tooltips.
+Use native names/icons/descriptions with reference-rank subtext when available;
+these remain in the client language while our explanation follows the addon
+language. Do not substitute maximum-rank damage or promise owned ranks. Missing
+data gets a localized pending description and bounded load request, reread on
+next hover. Never paste Wowhead descriptions into runtime tables. A custom AOE
+override must not invent related spells or revive removed classifications.
+Tests: scripts/test-area-relations.lua, localization, content-tags and tooltip suites.
+
+## Selective spell-combination hints
+
+Standing user preference: hints explain a few specific, useful interactions, not
+generic rotations or advice on every tooltip. Research catalogue:
+`scripts/research/spell-combinations-forever.lua` (23 records across nine classes,
+reviewed 2026-11-15). It is developer research, excluded from runtime/packages.
+Each record separates documented mechanics, editorial/mechanical inference and
+conflicting/removed cases; shortlist/reserve is not automatic activation.
+Before promoting into data/SpellHints.lua, verify current Forever spell IDs/ranks,
+required talents and the exact tooltip(s) that should receive the short hint.
+Omitted IDs and reference-rank IDs are intentional; never infer a base rank from
+numeric order. Localize only the promoted player wording with semantic keys.
+Prefer one main tooltip, merge related conditions into that hint and avoid
+duplicating existing CLASS/AOE explanations. Do not replicate a hint on every
+spell in a combination. If a talent is required, say so and verify it before
+presenting its effect as available. Frozen is not merely slowed; Improved Blizzard
+slowing alone is not proof of a frozen target. Generic cooldown stacking is not
+a reason to add a beginner hint. No automatic casts/macros or false live aura state.
+Classic/SoD/Retail and historical user comments are not evidence for Forever.
+Current research excludes Flame Shock/Lava Burst from proposed hints because
+more recent development notes announce removal despite older spell/guide pages.
+Swiftmend no longer consumes its HoT in Forever; do not import the Classic advice.
+Research-only work is not a player feature: do not add it to public patchnotes.
+
+Player customization navigation: the native sidebar category is Custom, with
+childGroups=tab and Spell badges as its first child (custom.args.spellBadges).
+Future editable player rules belong as sibling tabs there, not additional native
+sidebar categories. Keep the native top-level navigation for other sections.
+This changes only settings grouping, never saved rule keys/scope or behavior.
+
+## Utility badges and selective combination hints
+
+Runtime UtilitySpells.lua is a readable nine-class catalogue with 24 reviewed
+spell families (some classes intentionally have no entry). KICK requires a real
+interrupt, not just a stun/silence; TAUNT covers taunts and temporary forced
+attacks with an explicit distinction from threat matching; AGGRO requires explicit
+additional-threat wording/effects, not all damage/healing or a tank recommendation.
+Sources/review dates live beside entries. Pet Growl/Torment are threat, not forced
+taunts. Seal of Fury's TAUNT description is conditional on Judgement; activating
+the seal alone does not taunt. Exclude unverified SoD leftovers such as Way of Earth
+and do not invent a taunt for generic Earth Shock. Bear Feral Charge is exact-only:
+its Cat variant does not interrupt. No AGGRO inferred from Maul/Demoralizing Shout.
+
+Usage.ForSpell keeps classification/overrides independent of display. ForDisplay
+filters the active tags and produces a compact cumulative label/width; all tooltip,
+book, trainer and TrainerSpells renderers use it. Category switches are independent;
+KICK/TAUNT/AGGRO never alter purchase policy. ProtectPurchase's first-rank rule is
+limited to SURVIVAL; AOE/CLASS retain their existing guards. Custom supports the
+three new usage values and filters; saving an override replaces the shipped usage
+classification in the selected scope. Do not mutate catalogue tags while filtering.
+
+SpellHints.lua now holds 12 primary-spell tips, including the existing Judgement
+reminder; the rest of the 23-case research catalogue is not automatically imported.
+Resolve exact IDs first, then native names within current class for other ranks;
+unknown names fail closed. All hints have semantic translation keys, sources and
+related spell IDs; text is looked up at hover time after saved locale restoration.
+Display.combinations and global text gate hints independently of badges. No claims
+of actual aura/proc/learned-talent availability: conditional talents are explicitly
+worded as conditions. No every-spell rotation hints, automatic actions or spam.
+Check tests/test scope in scripts/test-utility-hints.lua plus localization, native
+UI, custom rules, tooltip and existing pet suites before finishing changes.
+
+RoleStances.lua records 14 reviewed form/stance/effect orientations using existing
+ClassRoles role keys tank/heal/dps. Never assign a combat role or alter the saved
+selection from a stance badge. Unreviewed shared armor, auras and travel forms do not receive
+an invented combat role. Spirit of Redemption is an automatic post-death healing
+form, not an activated posture. Do not invent Tree of Life or SoD tank forms for
+Forever. Battle Stance's DPS explanation explicitly allows a tank to use it.
+ForSpell merges role orientation with the original usage through a copy, retaining
+AGGRO/TANK or TAUNT/TANK and both explanations. Display toggles are independent;
+Custom usage overrides intentionally replace both shipped parts. No purchase policy
+changes. Explicit aliases (Spirit of Redemption 27827) are recorded in RoleStances.
+Maintain sources/review dates and validate roles against ClassRoles. Check
+scripts/test-role-stances.lua, tooltip, customization and localization suites.
+
+SURVIVAL completeness audit 2026-11-15: Divine Protection is keyed at 498 with
+explicit alias 5573; Divine Shield at 642 aliases 1020. Keep these links even when
+native spell names are not cached. Core defensive additions include immunities,
+absorption, mitigation, escapes, defensive control and selected emergency sustain.
+Do not automatically tag every heal/buff, risky offensive cooldown or self-sacrifice.
+Source the actual Forever edition: Ice Block uses 11958 here, not another expansion's
+45438. Four survival talents include reviewed native node anchors (Ice Block,
+Ice Barrier, Deterrence, Last Stand), checked against local 1.60.1.70755 structure.
+All sources/review dates live in data/SurvivalAdvice.lua; native API remains the
+source of names, icons and actual rank values. No fabricated fixed percentages.
+Usage.ForSpell combines independent catalogue tags through copies, preserving
+SURVIVAL/AGGRO on Stoneclaw Totem and prior role/utility combinations. Identical
+single-category matches retain the original authoritative first entry. Overrides
+still win. Hiding a badge does not change policy, and SURVIVAL never establishes
+rank-one sufficiency or disables higher-rank checks. Tests: survival-coverage,
+survival, localization, native talents, custom policy and tooltip suites.
+
+Usage categories (SURVIVAL/AOE/CLASS/KICK/TAUNT/AGGRO/role orientations) apply to every rank of a classified spell family. SpellUsage resolves native base IDs, explicit aliases, then localized native names without rank subtext. Never gate usage on BEST/LOW, purchased rank or rank-one advice. Keep exactOnly for mechanically different form variants, and preserve explicit custom per-rank exceptions. No guessed numeric chains.
+
+Paladin aura orientations: Devotion TANK, Retribution DPS (also useful to tanks), Concentration HEAL/DPS (cast pushback support, not interrupt immunity). These describe use, never exclusive specialization requirements. Resistance auras have no invented exclusive role. All ranks inherit the classification.
+
+## Local talent build backups
+Run scripts/research/backup-talent-builds.py for a new timestamped snapshot under
+scripts/research/talent-builds-local/ (ignored, excluded from installation/releases).
+Talents Forever publishes data.json under CC BY 4.0: preserve Chris Baldwin attribution,
+source export dates, hotfix/beta caveats, raw files and hashes. Derived per-class Lua
+tables contain all 27 trees, per-specialization selection matrices and available top
+build links; class builds/leveling HTML retains the full published context. A missing
+top-list build is not a missing/invalid specialization. Popularity is not expert advice.
+Wowhead direct requests currently return 403: record failure, do not claim a full
+Wowhead archive or bypass access controls. Consult accessible Forever guides for
+mechanics/context and add reviewed original interpretations separately.
+Consecrated Ground 1310905 improves Holy damage against enemies entering Consecration,
+not healing. It is an offensive/hybrid/PvP option, also present in a PvE hybrid build:
+https://www.wowhead.com/forever/guide/classes/paladin/protection/talent-builds-pve-tank .
+AOE describes mechanics, not a recommendation for every Holy healer or proof of PvP-only use.
+
+## Talent specialization suggestions: theorycrafter evidence only
+Standing preference: ALWAYS show specialization and game icon. Multi-role classes also
+show role logo/name; omit redundant DPS for single-role classes. Keep exact variant and
+activity context, never infer intended role from a talent's physical tree.
+The previous 100 mechanics-based editorial suggestions were rejected by the user.
+They are quarantined in scripts/research/talent-builds-local/editorial-candidates.lua, NOT
+loaded. Never reactivate them based on plausible utility, tree position, pick rates,
+Talents Forever popularity, or aggregate player builds. Talents Forever's backup is
+mechanical research, not evidence of an expert recommendation.
+Active data/TalentRecommendations.lua now contains ONLY seven paladin anchors whose
+inclusion is explicitly discussed in named Wowhead Forever theorycrafter guides.
+Each choice needs basis=theorycraft-build at entry level, source URL, author, guide
+update/review dates, exact build section, activity/variant label and supported spec/role.
+TalentAdvice rejects entries without that provenance. Other classes remain without
+recommendations until their actual builds are checked. No exhaustive-coverage claim.
+Consecrated Ground is explicitly in Riyani's Shockprot (situational offensive tank)
+and Surveillant's Holy-based Shockadin DPS guides; it is NOT a generic Protection or
+Holy-healing recommendation. Active UI currently exposes only the verified supported
+Protection/Shockprot mapping. Do not label Holy-based Shockadin as ordinary Retribution
+just because its source page is filed under Retribution. Extend build/spec modeling
+explicitly before activating that mapping; never silently change player role options.
+Sources checked 2026-11-15:
+- https://www.wowhead.com/forever/guide/classes/paladin/protection/talent-builds-pve-tank — Riyani, updated 2026/11/04.
+- https://www.wowhead.com/forever/guide/classes/paladin/holy/talent-builds-pve-healer — Harreks, updated 2026/11/04.
+- https://www.wowhead.com/forever/guide/classes/paladin/retribution/talent-builds-pve-dps — Surveillant, updated 2026/11/13.
+AOE/SURVIVAL/etc describe mechanics and remain separate from recommended builds.
+A build that omits a talent is not proof of no niche use; a niche guide is not proof
+that every player of a role should take it. Preserve sources and exact scope.
+SpellTooltips and ContentTags share TalentAdvice, which resolves IDs/node anchors and
+native names for ranks, validates ClassRoles links, deduplicates per tooltip clear,
+and respects text/icons/talent preferences and saved FR/EN overrides. Never alter
+selected roles, purchase policy or custom usage badges from a recommendation.
+Tree icon names are attributed to Talents Forever/Chris Baldwin (CC BY 4.0), using
+native game textures. Downloaded descriptions/build snapshots are not shipped.
+Test: scripts/test-talent-advice.lua, localization and native tooltip suites.
+
+Spellbook placement preference: usage category labels sit on their own line ABOVE
+BEST/LOW/ECO/BUY NEW RANK, left-aligned to the primary rank badge. Use a -6px
+BOTTOMLEFT-to-TOPLEFT offset to compensate for transparent texture padding and
+visually attach the category to its own rank badge (the former +2px floated too high).
+Never append them horizontally after rank/OPTIONAL badges over the spell name.
+Keep OPTIONAL beside BEST and RECENT below the icon. Trainer, talent-tree and
+tooltip-strip positions are independent; do not move them with this book change.
+
+## Recent spellbook sparkles
+RecentSparkles.lua highlights only RECENT active PLAYER spellbook entries whose exact
+rank ID is absent from action bars. Parent its own non-interactive host to the owned
+rank overlay; never attach state/scripts to protected buttons. Native AutoCastShine
+is capability-checked, with four animated native star4 textures as fallback. Hook
+native scripts, do not replace the native effect's animation driver. This is a 2D
+UI effect, not Naowh/Lueur's world-object CVar sparkle; do not copy their code/assets
+or alter world CVars. No dependency/library addition is needed.
+Read all player action pages, recognized GetMacroSpell results and guarded native
+FindSpellActionButtons. Cache scans and invalidate on action/macro/spell/world events;
+subscribe even when the first spell is already assigned, so removing it is noticed.
+Missing APIs fail closed. Complex conditional macros are explicitly not guaranteed.
+Do not equate a lower-rank placement to the newly learned rank. Do not glow passive
+talents, recipes or pet entries; their RECENT badges retain existing behavior.
+recentSparkles defaults true, independent from RECENT text but gated by recent,
+icons and iconsSpellbook; its settings checkbox is disabled when those are off.
+Stop on assignment, recycled rows, non-RECENT state, hidden/transparent foreign tabs
+and disabled preferences. Preserve RECENT history and all action bars unchanged.
+Tests: scripts/test-recent-sparkles.lua and the spellbook/preferences/localization suites.
+References: native ActionButtonUtil / FindSpellActionButtons APIs in Gethe/wow-ui-source;
+AutoCastShine capability usage in https://github.com/p3lim-wow/Molinari/blob/master/addon.lua ;
+native star4 texture in https://github.com/SFX-WoW/Masque/blob/main/Core/Regions/Cooldown.lua .
+
+## Learning sparkle extension
+Standing user requirement: particles surround ONLY the icon, never the full merchant
+row, item tooltip, or loot panel. Reuse RecentSparkles.PaintIcon with its own detached
+UIParent host, native/fallback renderer and visibility cleanup. The existing spellbook
+RECENT/missing-bar rule is unchanged. learningSparkles is a separate default-on switch,
+gated by global icons and the respective trainer/merchant/loot category. It does not
+depend on RECENT; stopping particles never removes the RECENT history/badge.
+Visuals.PaintTrainerBadge connects ONLY kind=new (NEW +), covering both class and
+profession trainer services. Preserve the existing NEW +-only proc border. Missing
+icon means no effect; do not substitute a whole protected row as the anchor.
+RecipeKnowledge.IsUnlearned requires a recipe item class/subclass, cached exact
+item title, full localized ITEM_SPELL_TRIGGER_ONUSE line and no native known marker.
+Absence of ITEM_SPELL_KNOWN on incomplete data is not proof. This reports unknown,
+not affordability, skill eligibility or guaranteed learnability. Keep the native
+positive IsKnown contract unchanged; invalidate unlearned cache with skill learning.
+Supported views: merchant item buttons (correct page, no buyback or zero stock),
+native group-roll icons and native LootFrame item icons. Scan without user hover,
+using modern tooltip data or the separate hidden legacy scanner; never GameTooltip.
+Do not modify roll/buy decisions. Known badges and glitter cleanup are independent,
+so clearing a known badge must not immediately clear a valid unknown-recipe effect.
+Test scripts/test-learning-sparkles.lua, test-recent-sparkles.lua, recipe, trainer,
+profession, preference and localization suites. No added library or copied addon code.
+
+## RECENT first-use tracking and blue particles
+UnusedSpells.lua tracks confirmed player UNIT_SPELLCAST_SUCCEEDED events; no failed
+cast, keypress, click or pet event is proof. RecentLearning stores used=true on the
+exact RECENT player spell entry, preserving it across reload and duplicate learning
+events. Learning another rank uses its own ID; do not mark an entire family used.
+No long-term all-spells history: replacing RECENT naturally replaces its use flags.
+Historical use before this feature existed cannot be inferred; tooltip wording says
+no successful use recorded, not proof that the player has never used the spell.
+Gold in book = RECENT rank absent from bars (recentSparkles); blue = assigned RECENT
+rank with no successful use recorded (unusedSparkles), in book AND supported action
+buttons. First use removes blue, not RECENT. Removing a spell from a bar can restore
+the separate gold missing-bar hint. Effects and text have independent usual gates.
+Reuse RecentSparkles renderer with style.option/color instead of a second particle
+engine. Initialize action/macro invalidation before book opening; preserve the native
+effect's scripts. Unused.Refresh skips slot scans if no unused records or disabled.
+Read public action/.GetAttribute('action') and icon fields only. Support Blizzard
+ActionButton/MultiBar prefixes and verified EABButton1..180 (EllesmereUIActionBars
+EUI_ActionBars_Secure.lua); no addon code/assets copied. Never write attributes,
+replace scripts, move buttons or cast for the user. Unrecognized bars/macros fail
+closed. Owned hosts stay non-interactive and confined to icon bounds.
+Settings: unusedSparkles and iconsActionBars; global icons/recent still gate them.
+SpellTooltips adds the localized blue explanation through spell/book hooks and a
+secure SetAction post-hook resolving the actual slot/macro, with normal dedup/clear.
+Tests: test-unused-spells.lua, recent-learning, recent-sparkles, tooltip and settings
+suites. Verify installed DEV namespace/TOC; no publication without explicit request.
+
+Dedicated stance/form/aura bars count as placement, not ordinary GetActionInfo slots.
+UnusedSpells.StanceSpell reads GetShapeshiftFormInfo (modern fourth ID / legacy fifth
+ID), bounds GetNumShapeshiftForms and uses the spellbook's verified highest learned
+family member for automatically upgrading dedicated aura bars. Do not extend that
+rank substitution to manually placed action slots. RecentSparkles includes these
+IDs even if normal action APIs are absent and invalidates on UPDATE_SHAPESHIFT_FORM
+and UPDATE_SHAPESHIFT_FORMS. Paint only native StanceButton/ShapeshiftButton icon
+regions; EllesmereUIActionBars_Bars.lua confirms it reuses StanceButton1-N.
+Post-hook GameTooltip.SetShapeshift for the same unused explanation. Removed forms
+and unavailable APIs clear/fail closed. A form being available or an active flag
+alone does not mark another rank used; keep confirmed player cast tracking.
+Tests: test-unused-spells.lua covers modern/legacy return layouts, aura-rank
+resolution, stance tooltips, first-use cleanup and removal of native form buttons.

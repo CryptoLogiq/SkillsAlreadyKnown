@@ -14,6 +14,33 @@ local tooltipClears = setmetatable({}, { __mode = "k" })
 local recentMarks = setmetatable({}, { __mode = "k" })
 local recentHooks = setmetatable({}, { __mode = "k" })
 
+local hintMarks = setmetatable({}, { __mode = "k" })
+local hintHooks = setmetatable({}, { __mode = "k" })
+
+local function addSpellHint(tooltip, id)
+  if not tooltip or not tooltip.AddLine or not id
+    or (SAK.DisplayEnabled and (not SAK.DisplayEnabled("text") or not SAK.DisplayEnabled("combinations"))) then return end
+  local _, class = UnitClass("player")
+  local hints = SAK.SpellHints and SAK.SpellHints[class]
+  local hint = hints and hints[id]
+  if not hint and hints then
+    local api = C_Spell and C_Spell.GetSpellName or GetSpellInfo
+    local name = api and api(id)
+    if name then
+      for baseID, candidate in pairs(hints) do
+        if api(baseID) == name then hint = candidate; break end
+      end
+    end
+  end
+  if not hint or hintMarks[tooltip] == id then return end
+  if tooltip.HookScript and not hintHooks[tooltip] then
+    tooltip:HookScript("OnTooltipCleared", function(tip) hintMarks[tip] = nil end)
+    hintHooks[tooltip] = true
+  end
+  hintMarks[tooltip] = id
+  tooltip:AddLine(L(hint.textKey), 1, 0.82, 0.1, true)
+end
+
 local function addRecent(tooltip, id)
   if not tooltip or not id or not SAK.RecentLearning or not SAK.DisplayEnabled("recent")
     or not SAK.DisplayEnabled("text") or recentMarks[tooltip] == id then return end
@@ -25,6 +52,9 @@ local function addRecent(tooltip, id)
     recentMarks[tooltip] = id
   end
   tooltip:AddLine("RECENT — " .. SAK.RecentLearning.Description(), 1, 0.82, 0.1, true)
+  if SAK.UnusedSpells and SAK.UnusedSpells.ShouldExplain(id) then
+    tooltip:AddLine(L("UNUSED_SPELL_TOOLTIP"), 0.25, 0.7, 1, true)
+  end
 end
 
 Book.Explanations = {
@@ -36,6 +66,7 @@ Book.Explanations = {
 }
 
 local optionalMessages = {
+  custom = { title = L("BADGE_CUSTOM_OPTIONAL"), detail = L("BADGE_CUSTOM_REASON") },
   ["rank-one"] = {
     title = L("OPTIONAL — seuls les rangs supplémentaires sont facultatifs."),
     detail = L("Le rang 1 suffit pour l'usage conseillé pendant le leveling selon ton rôle. Le sort lui-même reste utile ; les rangs supérieurs peuvent améliorer ses effets."),
@@ -129,7 +160,10 @@ function Book.AddTooltip(tooltip, slot, spellBank)
     return
   end
   local state = Book.StateForSlot(slot, spellBank)
+  if SAK.TooltipBadges then SAK.TooltipBadges.Paint(tooltip, state and state.id, state) end
+  addSpellHint(tooltip, state and state.id)
   addRecent(tooltip, state and state.id)
+  if SAK.SpellUsage then SAK.SpellUsage.AddTooltip(tooltip, state and state.id) end
   annotateTooltip(tooltip, state, false)
 end
 
@@ -159,8 +193,12 @@ function Book.AddSpellTooltip(tooltip, spellID)
     return
   end
 
+  if SAK.TalentAdvice then SAK.TalentAdvice.AddTooltip(tooltip, spellID) end
+  addSpellHint(tooltip, spellID)
   addRecent(tooltip, spellID)
+  if SAK.SpellUsage then SAK.SpellUsage.AddTooltip(tooltip, spellID) end
   local state = Book.StateForSpell(spellID) or purchaseState(spellID)
+  if SAK.TooltipBadges then SAK.TooltipBadges.Paint(tooltip, spellID, state) end
   annotateTooltip(tooltip, state, true)
 end
 
@@ -221,7 +259,27 @@ local function hookTrainerTooltips()
   Book.trainerTooltipHooked = true
 end
 
+local function hookActionTooltips()
+  if Book.actionTooltipHooked or not GameTooltip or not GameTooltip.SetAction or not hooksecurefunc then return end
+  hooksecurefunc(GameTooltip, "SetAction", function(tooltip, slot)
+    local id = SAK.UnusedSpells and SAK.UnusedSpells.SpellForSlot(slot)
+    if id then Book.AddSpellTooltip(tooltip, id) end
+  end)
+  Book.actionTooltipHooked = true
+end
+
+local function hookStanceTooltips()
+  if Book.stanceTooltipHooked or not GameTooltip or not GameTooltip.SetShapeshift or not hooksecurefunc then return end
+  hooksecurefunc(GameTooltip, "SetShapeshift", function(tooltip, index)
+    local id = SAK.UnusedSpells and SAK.UnusedSpells.StanceSpell(index)
+    if id then Book.AddSpellTooltip(tooltip, id) end
+  end)
+  Book.stanceTooltipHooked = true
+end
+
 function Tooltips.Hook()
+  hookStanceTooltips()
+  hookActionTooltips()
   hookSpellTooltips()
   hookBookTooltips()
   hookTrainerTooltips()

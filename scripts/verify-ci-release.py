@@ -29,6 +29,8 @@ def verify(root):
             raise ValueError("ZIP version does not match its release metadata")
         if "## SavedVariablesPerCharacter: SkillsAlreadyKnownDB" not in toc:
             raise ValueError("Saved-variable identity changed")
+        if "## SavedVariables: SkillsAlreadyKnownAccountDB" not in toc:
+            raise ValueError("Account-wide badge settings are not declared")
         for line in toc.splitlines():
             if not line or line.startswith("#"):
                 continue

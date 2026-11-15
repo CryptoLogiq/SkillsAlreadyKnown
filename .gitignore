@@ -46,3 +46,6 @@ __pycache__/
 .aws/
 *.pyc
 *.pyo
+
+# Local source snapshots and derived talent research
+scripts/research/talent-builds-local/

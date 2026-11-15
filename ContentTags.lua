@@ -12,12 +12,26 @@ local spellNames = {}
 local nodeSpells = {}
 local trainerDisplays = setmetatable({}, { __mode = "k" })
 local talentDisplays = setmetatable({}, { __mode = "k" })
+local usageTalentDisplays = setmetatable({}, { __mode = "k" })
 local driver, elapsed
 local talentStats = { visited = 0, matched = 0 }
 local labels = {
+  dev = { text = "DEV", width = 30, color = { 1, 0.55, 0.1 }, description = L("DEV_TOOLTIP_HINT") },
+  recent = { text = "RECENT", width = 58, color = { 1, 0.82, 0.1 }, description = L("RECENT — récemment appris") },
+  class = { text = "CLASS", width = 44, color = { 0.8, 0.65, 1 }, description = L("CLASS_HINT") },
+  aoe = { text = "AOE", width = 32, color = { 0.4, 0.85, 1 }, description = L("AOE_HINT") },
+  tank = { text = "TANK", width = 40, color = { 0.45, 0.7, 1 }, description = L("ROLE_USAGE_DESCRIPTION") },
+  heal = { text = "HEAL", width = 40, color = { 0.4, 1, 0.6 }, description = L("ROLE_USAGE_DESCRIPTION") },
+  dps = { text = "DPS", width = 30, color = { 1, 0.5, 0.4 }, description = L("ROLE_USAGE_DESCRIPTION") },
+  kick = { text = "KICK", width = 38, color = { 1, 0.65, 0.25 }, description = L("KICK_DESCRIPTION") },
+  taunt = { text = "TAUNT", width = 46, color = { 1, 0.45, 0.4 }, description = L("TAUNT_DESCRIPTION") },
+  aggro = { text = "AGGRO", width = 48, color = { 1, 0.8, 0.2 }, description = L("AGGRO_DESCRIPTION") },
+  survival = { text = "SURVIVAL", width = 66, color = { 0.4, 1, 0.65 }, description = L("SURVIVAL_HINT") },
   pvp = { text = "PVP", width = 30, color = { 1, 0.35, 0.4 }, description = L("Principalement intéressant contre les joueurs. Cela n’exclut pas un usage PvE.") },
   mixed = { text = "PVE PVP", width = 60, color = { 0.35, 0.85, 1 }, description = L("Utile en PvE et contre les joueurs, selon ta spécialisation et le combat.") },
 }
+
+if SAK.Localization then SAK.Localization.RegisterTable(labels) end
 
 local function visible(frame)
   return frame and (not frame.IsVisible or frame:IsVisible())
@@ -63,6 +77,11 @@ local function indexClass(class)
 end
 
 function Tags.ForSpell(class, id)
+  local override = SAK.BadgeRules and SAK.BadgeRules.Resolve(class,id,"combat")
+  if override == "none" then return end
+  if override then
+    return { spellID = id, name = SAK.BadgeRules.SpellName(id), tag = override, reason = SAK.BadgeRules.Reason() }
+  end
   local index = indexClass(class)
   if not index or type(id) ~= "number" then return nil end
   if index.spells[id] then return index.spells[id] end
@@ -89,7 +108,11 @@ end
 
 function Tags.ForNode(class, nodeID)
   local index = indexClass(class)
-  return index and index.nodes[nodeID]
+  local entry = index and index.nodes[nodeID]
+  if entry and SAK.BadgeRules and SAK.BadgeRules.Resolve(class,entry.spellID,"combat") ~= nil then
+    return Tags.ForSpell(class,entry.spellID)
+  end
+  return entry
 end
 
 local function tooltip(display)
@@ -98,8 +121,10 @@ local function tooltip(display)
   local spec = labels[entry.tag]
   GameTooltip:SetOwner(display, "ANCHOR_RIGHT")
   GameTooltip:AddLine(spellName(entry.spellID) or entry.name, 1, 0.82, 0.05)
-  GameTooltip:AddLine(spec.text .. " — " .. spec.description, spec.color[1], spec.color[2], spec.color[3], true)
+  GameTooltip:AddLine((entry.badgeText or spec.text) .. " — " .. spec.description, spec.color[1], spec.color[2], spec.color[3], true)
   GameTooltip:AddLine(entry.reason, 1, 1, 1, true)
+  if SAK.SpellUsage then SAK.SpellUsage.AddRelatedSpells(GameTooltip, entry) end
+  if SAK.TalentAdvice then SAK.TalentAdvice.AddTooltip(GameTooltip, entry.spellID, entry.nodeID) end
   GameTooltip:AddLine(L("Repère d’usage, pas une obligation de talent ou d’achat."), 0.8, 0.8, 0.8, true)
   GameTooltip:Show()
 end
@@ -144,8 +169,8 @@ local function prepare(display, owner, entry)
     display:SetScale(owner:GetEffectiveScale() / UIParent:GetEffectiveScale())
   end
   display.entry = entry
-  display:SetSize(spec.width, 15)
-  display.text:SetText(spec.text)
+  display:SetSize(entry.width or spec.width, 15)
+  display.text:SetText(entry.badgeText or spec.text)
   display.text:SetTextColor(spec.color[1], spec.color[2], spec.color[3])
 end
 
@@ -185,6 +210,7 @@ function Tags.PaintTrainer(row, service)
     display:SetPoint("TOPRIGHT", row, "TOPRIGHT", -4, -2)
   end
   display:Show()
+  return display
 end
 
 local function nodeSpell(nodeID)
@@ -204,24 +230,23 @@ local function nodeSpell(nodeID)
   return id
 end
 
-local function talentEntry(button, class)
+local function talentIdentity(button)
   local nodeID = button.GetNodeID and button:GetNodeID() or button.nodeID
-  if type(nodeID) == "number" and nodeID > 0 then
-    local ok, id = pcall(nodeSpell, nodeID)
-    if ok and id then return Tags.ForSpell(class, id) end
-    return Tags.ForNode(class, nodeID)
-  end
   local data = button.GetElementData and button:GetElementData() or button.talentInfo
+  nodeID = nodeID or (type(data) == "table" and data.nodeID)
   local id = button.spellID or (button.GetSpellID and button:GetSpellID())
-  if not id and type(data) == "table" then
-    id = data.spellID
-    if not id and type(data.nodeID) == "number" then
-      local ok, resolved = pcall(nodeSpell, data.nodeID)
-      if ok and resolved then return Tags.ForSpell(class, resolved) end
-      return Tags.ForNode(class, data.nodeID)
-    end
+    or (type(data) == "table" and data.spellID)
+  if not id and type(nodeID) == "number" and nodeID > 0 then
+    local ok, resolved = pcall(nodeSpell, nodeID)
+    if ok then id = resolved end
   end
+  return id, nodeID
+end
+
+local function talentEntry(button, class)
+  local id, nodeID = talentIdentity(button)
   if type(id) == "number" then return Tags.ForSpell(class, id) end
+  if type(nodeID) == "number" then return Tags.ForNode(class, nodeID) end
 end
 
 local function iconFor(button)
@@ -264,11 +289,13 @@ end
 function Tags.RefreshTalents()
   talentStats.visited, talentStats.matched = 0, 0
   local root = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
-  if not visible(root) or not enabled("iconsTalents") then
+  local icons = not SAK.DisplayEnabled or (SAK.DisplayEnabled("icons") and SAK.DisplayEnabled("iconsTalents"))
+  if not visible(root) or not icons then
     for _, display in pairs(talentDisplays) do display:Hide() end
+    for _, display in pairs(usageTalentDisplays) do display:Hide() end
     return
   end
-  local seen = {}
+  local seen, usageSeen = {}, {}
   local seenSpells = {}
   local _, class = UnitClass("player")
   local visited = 0
@@ -277,7 +304,7 @@ function Tags.RefreshTalents()
     visited = visited + 1
     talentStats.visited = visited
     local ok, entry = pcall(talentEntry, button, class)
-    if not ok then entry = nil end
+    if not ok or not enabled("iconsTalents") then entry = nil end
     if entry and not seenSpells[entry.spellID] then
       seenSpells[entry.spellID] = true
       seen[button] = true
@@ -291,6 +318,23 @@ function Tags.RefreshTalents()
       positionTalentBadge(display, button)
       display:Show()
     end
+    if SAK.SpellUsage then
+      local good, id, nodeID = pcall(talentIdentity, button)
+      local usage = good and SAK.SpellUsage.ForTalent(class, id, nodeID)
+      if usage and usage.tags and SAK.SpellUsage.ForDisplay then usage = SAK.SpellUsage.ForDisplay(class, usage.spellID) end
+      if usage and SAK.DisplayEnabled(usage.tag) then
+        local display = usageTalentDisplays[button]
+        if not display then display = createBadge(); usageTalentDisplays[button] = display end
+        prepare(display, button, usage)
+        positionTalentBadge(display, button)
+        if seen[button] then
+          display:ClearAllPoints()
+          display:SetPoint("TOP", talentDisplays[button], "BOTTOM", 0, 0)
+        end
+        display:Show()
+        usageSeen[button] = true
+      end
+    end
     if button.GetChildren then
       for _, child in ipairs({button:GetChildren()}) do visit(child, depth + 1) end
     end
@@ -298,6 +342,9 @@ function Tags.RefreshTalents()
   visit(root, 0)
   for button, display in pairs(talentDisplays) do
     if not seen[button] then display:Hide() end
+  end
+  for button, display in pairs(usageTalentDisplays) do
+    if not usageSeen[button] then display:Hide() end
   end
 end
 

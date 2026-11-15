@@ -1,4 +1,5 @@
 -- Roles and specializations currently supported by Skills & More.
+-- Tree icon names: talentsforever.com/data.json, Chris Baldwin, CC BY 4.0.
 -- Edit this table to maintain the class choices and beginner explanations.
 local SAK = SkillsAlreadyKnown
 local L = SAK.L or function(text) return text end
@@ -20,9 +21,9 @@ SAK.ClassRoles = {
   classes = {
     DRUID = {
       talentTrees = {
-        { name = L("Équilibre"), specs = { "balance" } },
-        { name = L("Farouche"), specs = { "feral", "guardian" } },
-        { name = L("Restauration"), specs = { "restoration" } },
+        { name = L("Équilibre"), specs = { "balance" }, icon = "Interface\\Icons\\spell_nature_starfall" },
+        { name = L("Farouche"), specs = { "feral", "guardian" }, icon = "Interface\\Icons\\ability_racial_bearform" },
+        { name = L("Restauration"), specs = { "restoration" }, icon = "Interface\\Icons\\spell_nature_healingtouch" },
       },
       name = L("Druide"),
       specializations = {
@@ -39,9 +40,9 @@ SAK.ClassRoles = {
     },
     HUNTER = {
       talentTrees = {
-        { name = L("Maîtrise des bêtes"), specs = { "beast-mastery" } },
-        { name = L("Précision"), specs = { "marksmanship" } },
-        { name = L("Survie"), specs = { "survival" } },
+        { name = L("Maîtrise des bêtes"), specs = { "beast-mastery" }, icon = "Interface\\Icons\\ability_hunter_beasttaming" },
+        { name = L("Précision"), specs = { "marksmanship" }, icon = "Interface\\Icons\\ability_marksmanship" },
+        { name = L("Survie"), specs = { "survival" }, icon = "Interface\\Icons\\ability_hunter_swiftstrike" },
       },
       name = L("Chasseur"),
       specializations = {
@@ -53,9 +54,9 @@ SAK.ClassRoles = {
     },
     MAGE = {
       talentTrees = {
-        { name = L("Arcanes"), specs = { "arcane" } },
-        { name = L("Feu"), specs = { "fire" } },
-        { name = L("Givre"), specs = { "frost" } },
+        { name = L("Arcanes"), specs = { "arcane" }, icon = "Interface\\Icons\\spell_holy_magicalsentry" },
+        { name = L("Feu"), specs = { "fire" }, icon = "Interface\\Icons\\spell_fire_firebolt02" },
+        { name = L("Givre"), specs = { "frost" }, icon = "Interface\\Icons\\spell_frost_frostbolt02" },
       },
       name = "Mage",
       specializations = { arcane = L("Arcanes"), fire = L("Feu"), frost = L("Givre") },
@@ -63,9 +64,9 @@ SAK.ClassRoles = {
     },
     PALADIN = {
       talentTrees = {
-        { name = L("Sacré"), specs = { "holy" } },
-        { name = "Protection", specs = { "protection" } },
-        { name = L("Vindicte"), specs = { "retribution" } },
+        { name = L("Sacré"), specs = { "holy" }, icon = "Interface\\Icons\\spell_holy_holybolt" },
+        { name = "Protection", specs = { "protection" }, icon = "Interface\\Icons\\spell_holy_devotionaura" },
+        { name = L("Vindicte"), specs = { "retribution" }, icon = "Interface\\Icons\\spell_holy_auraoflight" },
       },
       name = "Paladin",
       specializations = { holy = L("Sacré"), protection = "Protection", retribution = L("Vindicte") },
@@ -73,9 +74,9 @@ SAK.ClassRoles = {
     },
     PRIEST = {
       talentTrees = {
-        { name = "Discipline", specs = { "discipline" } },
-        { name = L("Sacré"), specs = { "holy" } },
-        { name = L("Ombre"), specs = { "shadow" } },
+        { name = "Discipline", specs = { "discipline" }, icon = "Interface\\Icons\\spell_holy_wordfortitude" },
+        { name = L("Sacré"), specs = { "holy" }, icon = "Interface\\Icons\\spell_holy_guardianspirit" },
+        { name = L("Ombre"), specs = { "shadow" }, icon = "Interface\\Icons\\spell_shadow_shadowwordpain" },
       },
       name = L("Prêtre"),
       specializations = { discipline = "Discipline", holy = L("Sacré"), shadow = L("Ombre") },
@@ -83,9 +84,9 @@ SAK.ClassRoles = {
     },
     ROGUE = {
       talentTrees = {
-        { name = L("Assassinat"), specs = { "assassination" } },
-        { name = "Combat", specs = { "combat" } },
-        { name = L("Finesse"), specs = { "subtlety" } },
+        { name = L("Assassinat"), specs = { "assassination" }, icon = "Interface\\Icons\\ability_rogue_eviscerate" },
+        { name = "Combat", specs = { "combat" }, icon = "Interface\\Icons\\ability_backstab" },
+        { name = L("Finesse"), specs = { "subtlety" }, icon = "Interface\\Icons\\ability_stealth" },
       },
       name = L("Voleur"),
       specializations = { assassination = L("Assassinat"), combat = "Combat", subtlety = L("Finesse") },
@@ -93,9 +94,9 @@ SAK.ClassRoles = {
     },
     SHAMAN = {
       talentTrees = {
-        { name = L("Élémentaire"), specs = { "elemental" } },
-        { name = L("Amélioration"), specs = { "enhancement" } },
-        { name = L("Restauration"), specs = { "restoration" } },
+        { name = L("Élémentaire"), specs = { "elemental" }, icon = "Interface\\Icons\\spell_nature_lightning" },
+        { name = L("Amélioration"), specs = { "enhancement" }, icon = "Interface\\Icons\\spell_nature_lightningshield" },
+        { name = L("Restauration"), specs = { "restoration" }, icon = "Interface\\Icons\\spell_nature_magicimmunity" },
       },
       name = L("Chaman"),
       specializations = { elemental = L("Élémentaire"), enhancement = L("Amélioration"), restoration = L("Restauration") },
@@ -103,9 +104,9 @@ SAK.ClassRoles = {
     },
     WARLOCK = {
       talentTrees = {
-        { name = "Affliction", specs = { "affliction" } },
-        { name = L("Démonologie"), specs = { "demonology" } },
-        { name = "Destruction", specs = { "destruction" } },
+        { name = "Affliction", specs = { "affliction" }, icon = "Interface\\Icons\\spell_shadow_deathcoil" },
+        { name = L("Démonologie"), specs = { "demonology" }, icon = "Interface\\Icons\\spell_shadow_metamorphosis" },
+        { name = "Destruction", specs = { "destruction" }, icon = "Interface\\Icons\\spell_shadow_rainoffire" },
       },
       name = L("Démoniste"),
       specializations = { affliction = "Affliction", demonology = L("Démonologie"), destruction = "Destruction" },
@@ -113,9 +114,9 @@ SAK.ClassRoles = {
     },
     WARRIOR = {
       talentTrees = {
-        { name = L("Armes"), specs = { "arms" } },
-        { name = L("Fureur"), specs = { "fury" } },
-        { name = "Protection", specs = { "protection" } },
+        { name = L("Armes"), specs = { "arms" }, icon = "Interface\\Icons\\ability_rogue_eviscerate" },
+        { name = L("Fureur"), specs = { "fury" }, icon = "Interface\\Icons\\ability_warrior_innerrage" },
+        { name = "Protection", specs = { "protection" }, icon = "Interface\\Icons\\inv_shield_06" },
       },
       name = L("Guerrier"),
       specializations = { arms = L("Armes"), fury = L("Fureur"), protection = "Protection" },

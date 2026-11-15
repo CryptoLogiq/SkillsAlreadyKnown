@@ -9,6 +9,7 @@ local addonName = ...
 local title = "Skills & More — By CryptoLogiq"
 if type(addonName) == "string" and addonName:sub(-4) == "_dev" then title = title .. " [DEV]" end
 local registered, panel, category, legacyGroup
+local sectionPanels = {}
 
 local function lib(name)
   return LibStub and LibStub(name, true)
@@ -204,7 +205,10 @@ function Config.Options()
       end,
       set = function(_, value) update(key, value) end }
   end
-  return { type = "group", name = title, childGroups = "tab", args = {
+  local options = { type = "group", name = title, childGroups = "tree", args = {
+    home = { type = "group", name = L("OPTIONS_HOME"), order = 0, args = {
+      intro = { type = "description", name = L("OPTIONS_NAV_HELP"), fontSize = "medium", order = 1 },
+    } },
     language = {
       type = "group", name = L("Langue"), order = 0.5, args = {
         choice = { type = "select", name = L("Langue de l’interface"), order = 1, width = "full",
@@ -221,6 +225,7 @@ function Config.Options()
       },
     },
     display = { type = "group", name = L("Affichage"), order = 1, args = {
+      devTools = SAK.DevTools and SAK.DevTools.ToggleOption() or nil,
       intro = { type = "description", order = 1, fontSize = "medium",
         name = L("Active séparément les ajouts visuels de l'addon. Ces choix sont enregistrés pour ce personnage et s'appliquent immédiatement aux fenêtres ouvertes ; les icônes et textes du jeu restent disponibles.") },
       minimap = {
@@ -233,6 +238,83 @@ function Config.Options()
         set = function(_, value)
           if SAK.Launcher then SAK.Launcher.SetVisible(value) end
         end,
+      },
+      tooltipBadges = {
+        type = "toggle", name = L("TOOLTIP_BADGES_LABEL"), desc = L("TOOLTIP_BADGES_DESCRIPTION"),
+        order = 1.38, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("iconsTooltips") end,
+        set = function(_, value) SAK.SetDisplayOption("iconsTooltips", value) end,
+      },
+      class = {
+        type = "toggle", name = L("CLASS_LABEL"), desc = L("CLASS_DESCRIPTION"),
+        order = 1.37, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("class") end,
+        set = function(_, value) SAK.SetDisplayOption("class", value) end,
+      },
+      aoe = {
+        type = "toggle", name = L("AOE_LABEL"), desc = L("AOE_DESCRIPTION"),
+        order = 1.36, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("aoe") end,
+        set = function(_, value) SAK.SetDisplayOption("aoe", value) end,
+      },
+      kick = {
+        type = "toggle", name = L("KICK_LABEL"), desc = L("KICK_DESCRIPTION"),
+        order = 1.39, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("kick") end,
+        set = function(_, value) SAK.SetDisplayOption("kick", value) end,
+      },
+      taunt = {
+        type = "toggle", name = L("TAUNT_LABEL"), desc = L("TAUNT_DESCRIPTION"),
+        order = 1.4, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("taunt") end,
+        set = function(_, value) SAK.SetDisplayOption("taunt", value) end,
+      },
+      aggro = {
+        type = "toggle", name = L("AGGRO_LABEL"), desc = L("AGGRO_DESCRIPTION"),
+        order = 1.41, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("aggro") end,
+        set = function(_, value) SAK.SetDisplayOption("aggro", value) end,
+      },
+      combinations = {
+        type = "toggle", name = L("COMBINATION_LABEL"), desc = L("COMBINATION_DESCRIPTION"),
+        order = 1.42, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("text") end,
+        get = function() return SAK.DisplayEnabled("combinations") end,
+        set = function(_, value) SAK.SetDisplayOption("combinations", value) end,
+      },
+      tank = {
+        type = "toggle", name = L("TANK_USAGE_LABEL"), desc = L("ROLE_USAGE_DESCRIPTION"),
+        order = 1.44, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("tank") end,
+        set = function(_, value) SAK.SetDisplayOption("tank", value) end,
+      },
+      heal = {
+        type = "toggle", name = L("HEAL_USAGE_LABEL"), desc = L("ROLE_USAGE_DESCRIPTION"),
+        order = 1.45, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("heal") end,
+        set = function(_, value) SAK.SetDisplayOption("heal", value) end,
+      },
+      dps = {
+        type = "toggle", name = L("DPS_USAGE_LABEL"), desc = L("ROLE_USAGE_DESCRIPTION"),
+        order = 1.46, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("dps") end,
+        set = function(_, value) SAK.SetDisplayOption("dps", value) end,
+      },
+      survival = {
+        type = "toggle", name = L("SURVIVAL_LABEL"), desc = L("SURVIVAL_DESCRIPTION"),
+        order = 1.35, width = "full",
+        disabled = function() return not SAK.DisplayEnabled("icons") end,
+        get = function() return SAK.DisplayEnabled("survival") end,
+        set = function(_, value) SAK.SetDisplayOption("survival", value) end,
       },
       contentTags = {
         type = "toggle",
@@ -265,6 +347,7 @@ function Config.Options()
             type = "description", order = 0,
             name = L("Choisis où afficher les marqueurs de l'addon. Le réglage général Icônes et surimpressions reste prioritaire. Ces cases ne changent pas les contours ni la coloration des textes."),
           },
+          actionBars = appearanceToggle("iconsActionBars", L("ACTION_BAR_CATEGORY"), L("ACTION_BAR_CATEGORY_DESCRIPTION"), 9),
           spellbook = appearanceToggle("iconsSpellbook", L("Grimoire"), L("Afficher les badges des sorts, les icônes de la légende et l’indication de rôle à gauche du titre de spécialisation du grimoire."), 1),
           trainer = appearanceToggle("iconsTrainer", L("Maître de classe"), L("Afficher les badges des sorts, les repères PVP / PVE PVP, les surimpressions et le halo NEW + chez le maître de classe."), 2),
           merchant = appearanceToggle("iconsMerchant", L("Marchand"), L("Afficher les marqueurs de livres et de démons chez le marchand."), 3),
@@ -276,6 +359,27 @@ function Config.Options()
         },
       },
       controls = { type = "group", name = L("Éléments affichés"), inline = true, order = 2, args = {
+        unusedSparkles = {
+          type = "toggle", width = "full", order = 0.15,
+          name = L("UNUSED_SPARKLES_LABEL"), desc = L("UNUSED_SPARKLES_DESCRIPTION"),
+          disabled = function() return not SAK.DisplayEnabled("icons") or not SAK.DisplayEnabled("recent") or (not SAK.DisplayEnabled("iconsSpellbook") and not SAK.DisplayEnabled("iconsActionBars")) end,
+          get = function() return SAK.DisplayEnabled("unusedSparkles") end,
+          set = function(_, value) SAK.SetDisplayOption("unusedSparkles", value) end,
+        },
+        learningSparkles = {
+          type = "toggle", width = "full", order = 0.2,
+          name = L("LEARNING_SPARKLES_LABEL"), desc = L("LEARNING_SPARKLES_DESCRIPTION"),
+          disabled = function() return not SAK.DisplayEnabled("icons") end,
+          get = function() return SAK.DisplayEnabled("learningSparkles") end,
+          set = function(_, value) SAK.SetDisplayOption("learningSparkles", value) end,
+        },
+        recentSparkles = {
+          type = "toggle", width = "full", order = 0.1,
+          name = L("RECENT_SPARKLES_LABEL"), desc = L("RECENT_SPARKLES_DESCRIPTION"),
+          disabled = function() return not SAK.DisplayEnabled("icons") or not SAK.DisplayEnabled("recent") or not SAK.DisplayEnabled("iconsSpellbook") end,
+          get = function() return SAK.DisplayEnabled("recentSparkles") end,
+          set = function(_, value) SAK.SetDisplayOption("recentSparkles", value) end,
+        },
         recent = appearanceToggle("recent", L("Derniers apprentissages : RECENT"), L("Signaler les sorts, talents et recettes récemment appris. La liste est conservée après rechargement et remplacée lorsqu’un nouvel apprentissage est enregistré. Une visite sans achat conserve la liste précédente. À la première utilisation, les sorts déjà connus du dernier palier accessible sont présélectionnés si leurs niveaux sont connus."), 0),
         icons = appearanceToggle("icons", L("Icônes et surimpressions"), L("Afficher NEW +, la coche, NEXT, NOT NOW, ECO, BEST, OPTIONAL, BUY NEW RANK et LOW, ainsi que les marqueurs de livres et de démons. Désactiver retire aussi le halo de NEW + et les surimpressions assombries ; les icônes d'origine restent visibles."), 1),
         iconsPreview = { type = "description", order = 2,
@@ -342,6 +446,9 @@ function Config.Options()
         note = { type = "description", order = 4, name = L("ECO et OPTIONAL doivent convenir à tous les rôles cochés. Si PvP est coché, ces conseils sont suspendus ; BEST et LOW continuent de comparer les rangs appris. Seuls les sorts vérifiés sont concernés.") },
       } },
       legend = { type = "group", name = L("Comprendre les marqueurs"), inline = true, order = 4, args = {
+        class = { type = "description", order = 5.7, name = L("CLASS_LEGEND") },
+        aoe = { type = "description", order = 5.6, name = L("AOE_LEGEND") },
+        survival = { type = "description", order = 5.5, name = L("SURVIVAL_LEGEND") },
         eco = marker(L("|cff00ccffECO|r : rang suffisant pour le leveling selon ton rôle ; économie d'or en reportant des achats, pas d'économie de mana garantie."), "eco", SAK.SPELLBOOK_BADGES, 1),
         best = marker(L("|cff33ff33BEST|r : plus haut rang appris, même s'il est seul ; puissance et effets de ce rang."), "best", SAK.SPELLBOOK_BADGES, 2),
         low = marker(L("|cffaaaaaaLOW|r : rang inférieur appris, aux dégâts, soins ou effets potentiellement réduits. Certains contrôles ont une limite de niveau."), "low", SAK.SPELLBOOK_BADGES, 3),
@@ -372,6 +479,11 @@ function Config.Options()
         desc = L("Fermer la fenêtre de premier lancement. Tu pourras choisir avec /sam settings."),
         func = function() Config.CloseStartup() end },
     } },
+    custom = SAK.BadgeEditor and {
+      type = "group", name = L("CUSTOM_SETTINGS_TITLE"), order = 2.2,
+      childGroups = "tab",
+      args = { spellBadges = SAK.BadgeEditor.Options() },
+    } or nil,
     recentLearning = {
       type = "group", name = L("Apprentissages récents"), order = 2.5,
       args = { summary = { type = "description", order = 1, width = "full",
@@ -392,7 +504,7 @@ function Config.Options()
           type = "description",
           order = 1,
           fontSize = "medium",
-          name = L("Rétablis les réglages ou teste à nouveau le premier lancement. Les sorts du familier et les livres enregistrés sont conservés."),
+          name = L("RESET_PLAYER_HELP"),
         },
         defaults = {
           type = "execute",
@@ -409,47 +521,19 @@ function Config.Options()
             end
           end,
         },
-        startup = {
-          type = "execute",
-          name = L("Relancer le premier lancement"),
-          order = 3,
-          width = "full",
-          desc = L("Effacer les choix de rôle et rouvrir la fenêtre de lancement avec une nouvelle présélection. La fenêtre sera aussi réaffichée au prochain /reload. Les réglages d'affichage restent conservés."),
-          confirm = true,
-          confirmText = L("Effacer les choix de rôle et relancer la fenêtre de premier lancement ?"),
-          disabled = function() return InCombatLockdown and InCombatLockdown() end,
-          func = function()
-            if Config.RestartFirstUse() then
-              Config.OfferReload()
-            end
-          end,
-        },
+        startup = SAK.DevTools and SAK.DevTools.StartupOption() or nil,
       },
     },
-    diagnostics = { type = "group", name = "Diagnostics", order = 3, args = {
-      intro = { type = "description", order = 1, fontSize = "medium",
-        name = L("Ces boutons ouvrent les mêmes rapports copiables que les commandes du chat. Le panneau d'options se ferme pour laisser le rapport visible.") },
-      reports = { type = "group", name = L("Rapports"), inline = true, order = 2, args = {
-        spellbook = command(L("Grimoire du joueur (/sam bookdebug)"), "/sam bookdebug", L("Ouvre le grimoire du joueur avant ce rapport pour relever les sorts visibles et les marqueurs."), 0,
-          function() if SAK.SpellBook then SAK.SpellBook.ShowDebugWindow() end end),
-        trainer = command(L("Maître de classe (/sam debug)"), "/sam debug", L("Exporter les sorts du joueur, les services du maître et la correspondance des lignes."), 1,
-          function() SAK.ClassTrainer.ShowDebugWindow() end),
-        pet = command(L("Sorts du familier (/sam pet)"), "/sam pet", L("Consulter les sorts enregistrés pour le familier actif."), 2,
-          function() SAK.PetGrimoires.ShowSummaryWindow() end),
-        grimoires = command(L("Livres du familier (/sam petdebug)"), "/sam petdebug", L("Exporter les données des grimoires et du familier."), 3,
-          function() SAK.PetGrimoires.ShowDebugWindow() end),
-        conflicts = command(L("Compatibilité (/sam conflicts)"), L("/sam conflicts (ou /samconflicts)"), L("Consulter les observations de compatibilité de cette session."), 4,
-          function() SAK.Diagnostics.ShowWindow() end),
-      } },
-      steps = { type = "group", name = L("Préparer un signalement"), inline = true, order = 3, args = {
-        reproduce = { type = "description", order = 1, name = L("1. Reproduis le problème avec la fenêtre concernée ouverte : maître de classe, marchand ou sacs.") },
-        export = { type = "description", order = 2, name = L("2. Ouvre le rapport correspondant, puis utilise son export pour copier le texte.") },
-        isolate = { type = "description", order = 3, name = L("3. Si nécessaire, compare après avoir désactivé manuellement un addon suspect et rechargé l'interface. Un addon présent dans le rapport n'est pas une preuve de conflit.") },
-      } },
-      commands = { type = "description", order = 4,
-        name = L("Options : /sam settings. Résumé : /sam ou /skillsandmore. Tous les rapports restent accessibles par les commandes indiquées sur les boutons.") },
-    } },
+    diagnostics = SAK.DevTools and SAK.DevTools.Options(command) or nil,
   } }
+  -- Keep optional developer controls inside Display, with no empty native category.
+  if options.args.diagnostics then
+    options.args.diagnostics.inline = true
+    options.args.diagnostics.order = 11
+    options.args.display.args.development = options.args.diagnostics
+    options.args.diagnostics = nil
+  end
+  return options
 end
 
 function Config.LaunchReport(callback)
@@ -476,31 +560,68 @@ function Config.Notify()
   if registry then registry:NotifyChange(APP) end
 end
 
+local function sectionKeys()
+  local options = Config.Options()
+  local keys = {}
+  for key, option in pairs(options.args) do
+    if key ~= "home" and option.type == "group" then keys[#keys + 1] = key end
+  end
+  table.sort(keys, function(a,b)
+    local x, y = options.args[a].order or 0, options.args[b].order or 0
+    return x == y and a < b or x < y
+  end)
+  return keys, options
+end
+
+local function registerModernSections(dialog)
+  panel, category = dialog:AddToBlizOptions(APP, title, nil, "home")
+  local keys, options = sectionKeys()
+  for _, key in ipairs(keys) do
+    local frame, id = dialog:AddToBlizOptions(APP, options.args[key].name, title, key)
+    sectionPanels[key] = { frame = frame, category = id }
+  end
+end
+
+local function registerLegacySections(dialog)
+  local gui = lib("AceGUI-3.0")
+  if not gui then return end
+  local function create(name, path, parent)
+    local group = gui:Create("BlizOptionsGroup")
+    group:SetName(name); group:SetTitle(name)
+    group.frame.parent = parent
+    group:SetCallback("OnShow", function() dialog:Open(APP, group, path) end)
+    group:SetCallback("OnHide", function() group:ReleaseChildren() end)
+    InterfaceOptions_AddCategory(group.frame)
+    return group
+  end
+  legacyGroup = create(title, "home")
+  panel = legacyGroup.frame
+  local keys, options = sectionKeys()
+  for _, key in ipairs(keys) do
+    local group = create(options.args[key].name, key, title)
+    sectionPanels[key] = { frame = group.frame, group = group }
+  end
+end
+
 function Config.Register()
   if panel then return true end
   local config, dialog = lib("AceConfig-3.0"), lib("AceConfigDialog-3.0")
   if not config or not dialog then return false end
   if not registered then
-    config:RegisterOptionsTable(APP, Config.Options()) -- /sam remains ours.
+    config:RegisterOptionsTable(APP, Config.Options())
     dialog:SetDefaultSize(APP, 620, 620)
     registered = true
   end
   if Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterAddOnCategory then
-    panel, category = dialog:AddToBlizOptions(APP, title)
-  elseif InterfaceOptions_AddCategory then
-    -- Current upstream AceConfigDialog targets Settings. On older clients feed
-    -- the same model into an upstream BlizOptionsGroup without patching Ace3.
-    local gui = lib("AceGUI-3.0")
-    if gui then
-      legacyGroup = gui:Create("BlizOptionsGroup")
-      legacyGroup:SetName(title); legacyGroup:SetTitle(title)
-      legacyGroup:SetCallback("OnShow", function() dialog:Open(APP, legacyGroup) end)
-      legacyGroup:SetCallback("OnHide", function() legacyGroup:ReleaseChildren() end)
-      panel = legacyGroup.frame
-      InterfaceOptions_AddCategory(panel)
+    if Settings.RegisterCanvasLayoutSubcategory then
+      registerModernSections(dialog)
+    else
+      panel, category = dialog:AddToBlizOptions(APP, title)
     end
+  elseif InterfaceOptions_AddCategory then
+    registerLegacySections(dialog)
   end
-  Config.panel, Config.category = panel, category
+  Config.panel, Config.category, Config.sections = panel, category, sectionPanels
   return true
 end
 
@@ -518,11 +639,11 @@ function Config.Open(firstUse)
     dialog:Open(APP, "spellbook")
   elseif category and Settings and Settings.OpenToCategory then
     dialog:Close(APP)
-    Settings.OpenToCategory(category)
+    Settings.OpenToCategory(sectionPanels.display and sectionPanels.display.category or category)
   elseif category and C_SettingsUtil and C_SettingsUtil.OpenSettingsPanel then
-    C_SettingsUtil.OpenSettingsPanel(category)
+    C_SettingsUtil.OpenSettingsPanel(sectionPanels.display and sectionPanels.display.category or category)
   elseif panel and InterfaceOptionsFrame_OpenToCategory then
-    InterfaceOptionsFrame_OpenToCategory(panel)
+    InterfaceOptionsFrame_OpenToCategory(sectionPanels.display and sectionPanels.display.frame or panel)
   else
     dialog:Open(APP)
   end
@@ -558,6 +679,8 @@ function Config.ResetDefaults()
   end
   db.language = nil
   db.displayOptions = {}
+  db.badgeRules = nil
+  if SAK.BadgeEditor then SAK.BadgeEditor.ResetDraft() end
   db.levelingProfile = nil
   db.levelingDraft = nil
   db.profilePromptSeen = nil

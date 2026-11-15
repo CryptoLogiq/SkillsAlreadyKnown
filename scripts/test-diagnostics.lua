@@ -108,6 +108,8 @@ local _, occurrences=report:gsub("SAM compatibility report", "")
 assert(occurrences==1)
 local opened
 sak.ShowDebugTextWindow=function(key, _, text) opened=key; contains(text,"SAM compatibility report") end
+assert(loadfile(root .. "/DevTools.lua"))()
+sak.DevTools.SetEnabled(true)
 assert(loadfile(root .. "/Main.lua"))()
 assert(loadfile(root .. "/Events.lua"))()
 SlashCmdList.SKILLSALREADYKNOWN("conflicts")

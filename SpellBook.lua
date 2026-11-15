@@ -194,6 +194,7 @@ local function paint(owner, icon, state)
   if SAK.RecentVisuals then
     SAK.RecentVisuals.Paint(owner, icon, state and state.id, state and state.pet and "pets" or "spells", "iconsSpellbook")
   end
+  if SAK.SpellUsage then SAK.SpellUsage.Paint(owner, nil, nil, "iconsSpellbook") end
   local display = displays[owner]
   if not state or not visible(owner) or not visible(icon) then if display then display:Hide() end; return end
   if not display then
@@ -222,6 +223,10 @@ local function paint(owner, icon, state)
     display.optionalTexture:SetShown(true)
   elseif display.optionalTexture then display.optionalTexture:SetShown(false) end
   display:Show()
+  if SAK.RecentSparkles then SAK.RecentSparkles.Paint(display, owner, icon, state) end
+  if SAK.SpellUsage then
+    SAK.SpellUsage.Paint(owner, display, state.id, "iconsSpellbook")
+  end
 end
 
 local function renderModern(book, touched)

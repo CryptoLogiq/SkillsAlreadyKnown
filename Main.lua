@@ -5,6 +5,7 @@ local L = SAK.L or function(text) return text end
 if SAK.disabledByDev then return end
 
 function SAK.Refresh()
+  if SAK.UnusedSpells then SAK.UnusedSpells.Refresh() end
   if SAK.RecentVisuals then SAK.RecentVisuals.Refresh() end
   if SAK.TrainerSpellsBadges then
     SAK.TrainerSpellsBadges.Refresh()
@@ -49,12 +50,11 @@ function SAK.SummaryText()
     "",
     L("Commandes :"),
     L("/sam settings — options, rôles et spécialisations"),
-    L("/sam debug — maître de classe"),
-    "/sam bookdebug — grimoire",
-    L("/sam pet — sorts du familier"),
-    L("/sam petdebug — grimoires du familier"),
-    L("/sam conflicts — compatibilité"),
+
   }
+  if SAK.DevTools then
+    for _, line in ipairs(SAK.DevTools.CommandSummary()) do lines[#lines + 1] = line end
+  end
   return table.concat(lines, "\n")
 end
 
@@ -72,26 +72,11 @@ SlashCmdList.SKILLSALREADYKNOWN = function(text)
   if text == "settings" or text == "profile" then
     if SAK.RankPolicy then SAK.RankPolicy.ShowSettings() end
     return
-  elseif text == "bookdebug" then
-    if SAK.SpellBook then SAK.SpellBook.ShowDebugWindow()
-    else SAK.ShowDebugTextWindow("SpellBook", "Skills & More — Spellbook Debug", "Spellbook module not loaded.") end
-    return
-  elseif text == "debug" then
-    SAK.ClassTrainer.ShowDebugWindow()
-    return
-  elseif text == "conflicts" then
-    SAK.Diagnostics.ShowWindow()
-    return
-  elseif text == "pet" then
-    SAK.PetGrimoires.ShowSummaryWindow()
-    return
-  elseif text == "petdebug" then
-    SAK.PetGrimoires.ShowDebugWindow()
-    return
   end
+  if SAK.DevTools and SAK.DevTools.RunCommand(text) then return end
 
   SAK.ShowSummaryWindow()
 end
 SAK.slashHandler = SlashCmdList.SKILLSALREADYKNOWN
 SLASH_SKILLSALREADYKNOWNCONFLICTS1 = "/samconflicts"
-SlashCmdList.SKILLSALREADYKNOWNCONFLICTS = function() SAK.Diagnostics.ShowWindow() end
+SlashCmdList.SKILLSALREADYKNOWNCONFLICTS = function() if SAK.DevTools then SAK.DevTools.RunCommand("conflicts") end end

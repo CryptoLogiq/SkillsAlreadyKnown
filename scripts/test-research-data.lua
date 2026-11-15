@@ -43,7 +43,7 @@ for class,profiles in pairs(active) do
   end
  end
 end
-assert(count>=165)
+assert(count==157)
 local toc=assert(io.open(root.."/SkillsAlreadyKnown.toc")):read("*a")
 local dataAt=toc:find("data/LevelingAdvice.lua",1,true)
 local policyAt=toc:find("RankPolicy.lua",1,true)

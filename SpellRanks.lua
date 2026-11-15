@@ -43,6 +43,11 @@ local function collectFamilies(spells)
 end
 
 local function classifyLearnedRank(spell, family, class)
+  local override = not spell.pet and SAK.BadgeRules and SAK.BadgeRules.Resolve(class,spell.id,"advice")
+  if override ~= nil then
+    if override == "eco" and SAK.RankPolicy.EcoEnabled() then return "eco", SAK.BadgeRules.Reason() end
+    return spell.rank == family.max and "best" or "low"
+  end
   local policy = not spell.pet and SAK.RankPolicy
   local ecoReason = policy and policy.RankOneAdvice(class, family)
 
@@ -67,8 +72,16 @@ local function addPurchaseAdvice(state, spell, family, class)
     if upgrade then state.kind, state.upgrade = "buy", upgrade end
     return
   end
+  local override = SAK.BadgeRules and SAK.BadgeRules.Resolve(class,spell.id,"advice")
+  if override == "optional" and SAK.RankPolicy.OptionalEnabled() then
+    state.optionalReason, state.optionalScope = SAK.BadgeRules.Reason(), "custom"
+    return
+  end
+  local essential = SAK.SpellUsage and SAK.SpellUsage.EssentialSkill(class, { ids = { [spell.id] = true } })
+  -- CLASS describes a required utility; rank-one utility does not demand upgrades.
+  if essential and essential.rankOneUtility then return end
   local policy = SAK.RankPolicy
-  if policy then
+  if policy and override == nil then
     state.optionalReason, state.optionalScope = policy.OptionalAdvice(class, family, spell.rank)
   end
 
@@ -80,7 +93,7 @@ local function addPurchaseAdvice(state, spell, family, class)
   if upgrade then
     state.kind = "buy"
     state.upgrade = upgrade
-  elseif waitReason and policy.OptionalEnabled() and not state.optionalReason then
+  elseif waitReason and override == nil and policy.OptionalEnabled() and not state.optionalReason then
     state.optionalReason = waitReason
     state.optionalScope = waitScope
   end
