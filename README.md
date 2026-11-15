@@ -2,15 +2,17 @@
 
 By **CryptoLogiq** — spell ranks, talents, roles and smarter training for **WoW Forever**.
 
-## Screenshots
+Helper, for guidance for your spells (perfect for new players) tooltip and grimory talents tagued with category for taunt, kick, aoe, eco, optionnal for stay tuned for what you really need and talents have resume utility for how is used.
 
-These screenshots show an older version and will be updated.
+i need you, for feedback me in github or here, please send me your bugs or errors, i havent alls class in forever for testing...
 
-![Class trainer](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/trainer-preview.png)
+# Preview
 
+## Class trainer
+![Class trainer](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/trainer-preview.jpg)
+
+## Warlock pet grimoires
 ![Warlock pet grimoires](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/spellsbookmarks_trainer.png)
-
-![Already-owned grimoire](https://raw.githubusercontent.com/CryptoLogiq/SkillsAlreadyKnown/main/assets/spellsbookmarks_in_possesion_tooltip_updated.png)
 
 ## Learn at a glance
 
@@ -81,6 +83,10 @@ Bag markers are confirmed with **Blizzard bags** and **EllesmereUI Bags**. Other
 DarkMode and TrainerSpells have dedicated handling. TrainerSpells keeps control of its trainer text; supported lists can show purchase and usage markers, RECENT and learned pet checks.
 
 For a bug report, include the affected window, a screenshot and steps to reproduce.
+
+## Locales
+
+addon support english and french, if you need more, you can contact me. i see if i can help =)
 
 ## Installation
 
