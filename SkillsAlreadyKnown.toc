@@ -5,7 +5,7 @@
 ## IconTexture: Interface\AddOns\SkillsAlreadyKnown\assets\launcher-icon.tga
 ## Author: CryptoLogiq
 ## X-Curse-Project-ID: 1725046
-## Version: 0.4.1
+## Version: 0.5.0
 ## SavedVariables: SkillsAlreadyKnownAccountDB
 ## SavedVariablesPerCharacter: SkillsAlreadyKnownDB
 ## OptionalDeps: TrainerSpells, SkillsAlreadyKnown_dev

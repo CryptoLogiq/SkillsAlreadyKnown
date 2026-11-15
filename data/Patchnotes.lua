@@ -8,7 +8,13 @@ SAK.Patchnotes = {
   {
     version = "Unreleased",
     status = "development",
-    basedOn = "0.4.1",
+    basedOn = "0.5.0",
+    additions = {},
+    fixes = {},
+  },
+  {
+    version = "0.5.0",
+    status = "released",
     additions = {
       "De nouveaux repères distinguent les usages des sorts : CLASS, AOE, SURVIVAL, KICK, TAUNT et AGGRO. Les infobulles expliquent leurs conditions ; plusieurs usages peuvent se cumuler.",
       "Les formes, postures et auras renseignées affichent TANK, HEAL ou DPS, notamment les auras du paladin. Ces indications ne changent pas le rôle choisi.",

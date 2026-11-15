@@ -1,29 +1,22 @@
-Version 0.4.0
+Skills & More — 0.5.0
 
-Skills Already Known is now Skills & More — By CryptoLogiq.
-The main command is now /sam.
+### Features
 
-NEW FEATURES
+- New markers distinguish spell uses: CLASS, AOE, SURVIVAL, KICK, TAUNT and AGGRO. Tooltips explain their conditions; several uses can combine.
+- Supported forms, stances and auras show TANK, HEAL or DPS, including Paladin auras. These hints do not change the selected role.
+- In the spellbook, RECENT sparkles gold while a spell is missing from action bars, then blue after placement until a successful use is recorded. Tracking survives reload and the RECENT badge remains after use.
+- Blue sparkles also appear on supported Blizzard and EllesmereUI bars, including stance, form and aura bars. The tooltip explains the hint.
+- NEW + icons sparkle at class and profession trainers. Recognized unlearned recipes sparkle at merchants and in loot, only around their icon. These effects can be toggled in Display.
+- In Custom → Spell badges, customize your class’s usage, PvP and purchase markers, or add a spell by ID. Choices can apply to this character or the class across the account, with All ranks checked by default.
+- Badges can appear above tooltips. In the spellbook, categories sit just above BEST, LOW or ECO to keep spell names clear.
+- Selected hints explain useful combinations: Judgement with a Seal, Ice Lance against a frozen target, Swiftmend with a heal over time, Fire Nova with a Fire totem and Conflagrate with Immolate.
+- Selected Paladin talents show recommended specializations with their icons and the guide’s precise build context. Situational variants are distinguished from the standard build.
+- Talents that improve area spells show the affected spells with their game icons and descriptions. Their AOE marker describes the mechanic, not a requirement to choose the talent.
+- Settings sections appear in the left-hand list of Options → AddOns under Skills & More, leaving more room for their content.
 
-• Trainer markers: NEW +, learned check, NEXT and NOT NOW, with colored outlines and an optional NEW + glow.
-• Spellbook rank markers: BEST, LOW and BUY NEW RANK.
-• Role-based ECO and OPTIONAL training advice, with explanations in spell tooltips.
-• RECENT markers and a saved list of your latest learned spells, talents and recipes. First use can highlight known spells from your latest accessible level tier.
-• ALREADY KNOWN markers for learned recipes in bags and group or raid loot-roll windows.
-• Class-appropriate role and specialization choices, confirmed before advice becomes active.
-• Specialization summaries, advantages, drawbacks and leveling recommendations.
-• Role labels, LEVELING recommendations and selected PVP / PVE PVP markers.
-• Purchase advice, usage markers and RECENT in the TrainerSpells class list where space allows.
-• Separate display zones and controls for icons, outlines, text and backgrounds.
-• A minimap button, HidingBar / Titan Panel launcher, reset confirmations and in-game patchnotes.
+### Bug fixes
 
-BUG FIXES
-
-• Unlearned and future-level ranks no longer cause incorrect LOW markers.
-• Eligible unranked spells can receive OPTIONAL advice, including Eye of Kilrogg.
-• Spellbook markers hide when switching to another addon's tab.
-• Specialization labels remain recognized when DarkMode recolors titles.
-• TrainerSpells list markers follow the correct spells while scrolling.
-• The next profession training step shows NEXT with its yellow background.
-• Talent usage markers and RECENT sit below icons to keep their images and spent points visible.
-• Reset and first-use confirmation buttons work correctly; dismissing the first-use window no longer repeatedly reopens it during play.
+- Badge explanations and usage advice follow the selected language, including outside the spellbook.
+- In TrainerSpells, recorded demon abilities show their learned check even with translated names or grimoires using a different ID.
+- Recognized area spells are no longer recommended as OPTIONAL purchases. Drain Soul shows CLASS and retains appropriate rank advice without being presented as an optional spell.
+- Usage categories remain recognized across a spell’s ranks. Divine Protection is recognized at both ranks.

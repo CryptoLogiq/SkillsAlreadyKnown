@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+## 0.5.0
+
+### Features
+
+- New markers distinguish spell uses: CLASS, AOE, SURVIVAL, KICK, TAUNT and AGGRO. Tooltips explain their conditions; several uses can combine.
+- Supported forms, stances and auras show TANK, HEAL or DPS, including Paladin auras. These hints do not change the selected role.
+- In the spellbook, RECENT sparkles gold while a spell is missing from action bars, then blue after placement until a successful use is recorded. Tracking survives reload and the RECENT badge remains after use.
+- Blue sparkles also appear on supported Blizzard and EllesmereUI bars, including stance, form and aura bars. The tooltip explains the hint.
+- NEW + icons sparkle at class and profession trainers. Recognized unlearned recipes sparkle at merchants and in loot, only around their icon. These effects can be toggled in Display.
+- In Custom → Spell badges, customize your class’s usage, PvP and purchase markers, or add a spell by ID. Choices can apply to this character or the class across the account, with All ranks checked by default.
+- Badges can appear above tooltips. In the spellbook, categories sit just above BEST, LOW or ECO to keep spell names clear.
+- Selected hints explain useful combinations: Judgement with a Seal, Ice Lance against a frozen target, Swiftmend with a heal over time, Fire Nova with a Fire totem and Conflagrate with Immolate.
+- Selected Paladin talents show recommended specializations with their icons and the guide’s precise build context. Situational variants are distinguished from the standard build.
+- Talents that improve area spells show the affected spells with their game icons and descriptions. Their AOE marker describes the mechanic, not a requirement to choose the talent.
+- Settings sections appear in the left-hand list of Options → AddOns under Skills & More, leaving more room for their content.
+
+### Bug fixes
+
+- Badge explanations and usage advice follow the selected language, including outside the spellbook.
+- In TrainerSpells, recorded demon abilities show their learned check even with translated names or grimoires using a different ID.
+- Recognized area spells are no longer recommended as OPTIONAL purchases. Drain Soul shows CLASS and retains appropriate rank advice without being presented as an optional spell.
+- Usage categories remain recognized across a spell’s ranks. Divine Protection is recognized at both ranks.
+
 ## 0.4.1
 
 ### Features
