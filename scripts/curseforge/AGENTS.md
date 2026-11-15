@@ -48,3 +48,13 @@
   Keep automation/setup instructions here, in CONTRIBUTING.md or maintainer docs.
 - Report the actual state: prepared, tested, committed, pushed and published are
   distinct. State missing setup explicitly; never claim publication from a build.
+
+## Langues des changelogs publics
+
+- Toujours exporter l'anglais intégral en premier, puis le français intégral.
+- Même ordre pour les releases GitHub, CurseForge et les artefacts stables/bêta.
+- Une seule source maintenue : notes Lua françaises et catalogues de traduction.
+- Vérifier l'ordre et l'absence de repli français dans la partie anglaise avant
+  publication. Une traduction manquante bloque la génération du Markdown.
+- Une correction de Markdown ne doit pas reconstruire une archive déjà livrée
+  ni déplacer un tag publié.

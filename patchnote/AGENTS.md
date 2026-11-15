@@ -44,3 +44,10 @@ restent conservées ; latest ne contient que la copie de la livraison courante.
 Les notes Lua restent des textes français simples. Ajouter leurs clés aux deux
 catalogues traductions/fr_FR.lua et traductions/en-EN.lua pour l’historique bilingue
 en jeu ; ne pas insérer d’appels de traduction dans les sources de patchnotes.
+
+Ordre obligatoire des notes publiques : section ENGLISH complète en premier, puis
+section FRANÇAIS complète. Le générateur réutilise les traductions des notes et
+des titres dans en-EN.lua et fr_FR.lua ; ne pas tenir de liste anglaise manuelle.
+S'applique aux versions stables et bêta. Une traduction manquante doit bloquer
+l'export, jamais laisser une note française dans la section anglaise. Les sources
+Lua restent en français ; l'historique en jeu suit toujours la langue choisie.

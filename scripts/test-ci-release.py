@@ -43,6 +43,10 @@ def fixture(parent, name):
         if notes.stem not in ("0.4.0", "Unreleased"):
             notes.unlink()
     (target / "patchnote/Unreleased.lua").write_text('return {\n version = "Unreleased",\n status = "development",\n basedOn = "0.4.0",\n additions = {"Beta-only feature."},\n fixes = {"Beta-only fix."},\n}\n')
+    for language in ("en-EN", "fr_FR"):
+        catalog = target / "traductions" / (language + ".lua")
+        source = catalog.read_text(); end = source.rfind("}")
+        catalog.write_text(source[:end] + '  ["Beta-only feature."] = "Beta-only feature.",\n  ["Beta-only fix."] = "Beta-only fix.",\n' + source[end:])
     command(target, "git", "init", "-b", "dev")
     command(target, "git", "config", "user.name", "Release tests")
     command(target, "git", "config", "user.email", "release-tests@example.invalid")
@@ -84,6 +88,7 @@ with tempfile.TemporaryDirectory(prefix="sam-ci-release-") as directory:
     assert 'version = "0.4.1-beta.42.1"' in runtime and 'status = "beta"' in runtime
     markdown = (beta / "release/latest/patchnote.md").read_text()
     assert "0.4.1-beta.42.1" in markdown and "Beta-only feature." in markdown
+    assert markdown.index("## English") < markdown.index("## Français")
     assert "Skills Already Known devient" not in markdown, "Beta notes must describe pending changes, not the previous stable release"
 
     packager = os.environ.get("SAM_TEST_PACKAGER")

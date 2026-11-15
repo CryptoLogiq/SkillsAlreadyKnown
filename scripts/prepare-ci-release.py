@@ -88,7 +88,7 @@ def plan(root, ref, run_number, attempt, expected_sha=None):
     else:
         raise ValueError("Only dev builds and stable vX.Y.Z tags on main are allowed")
     title = re.search(r"^## Title:\s*(.+)", toc, re.M)[1]
-    markdown = notes.render_markdown(title, version, source)
+    markdown = notes.render_markdown(title, version, source, notes.read_catalogs(root))
     return {
         "version": version, "channel": channel, "tag": tag, "commit": head,
         "source_ref": ref, "archive": f"SkillsAndMore-{version}.zip",
